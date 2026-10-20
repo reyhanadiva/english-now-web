@@ -1,0 +1,33 @@
+---
+description: Aturan desain & kode untuk redesign landing page English Now
+alwaysApply: true
+---
+
+# English Now: landing page redesign
+
+Stack: Next.js (App Router) + TypeScript + Tailwind CSS v4 + Framer Motion.
+Baca juga AGENTS.md (catatan versi Next.js) sebelum mengubah konvensi framework.
+
+## Brand
+- Warna hanya dari token di `app/globals.css`: sky, cobalt (+700/900), sun (+600), mist (+50), ink. Jangan hardcode hex baru.
+- Proporsi: dasar terang ~60%, cobalt ~25%, kuning & sky sebagai aksen ~15%. Kuning bukan warna teks di atas putih.
+- Font: `font-display` (Lilita One) hanya untuk headline, angka besar, dan label tombol. Body memakai `font-sans` (Plus Jakarta Sans).
+
+## Gaya UI
+- Playful tapi rapi: sudut sangat bulat (rounded-2xl s/d rounded-[2.75rem]), tombol "chunky" dengan bayangan solid di bawah (lihat `components/ui/button.tsx`), kartu dengan border-2 mist.
+- Tekstur halftone tipis (class `.halftone`), bukan gelombang besar.
+- Animasi selalu menghormati `prefers-reduced-motion`.
+
+## Dua audiens (toggle)
+- `data-audience="kids" | "adult"` di `<html>`, di-set oleh `AudienceProvider`. Tema lewat CSS variables, bukan komponen terpisah.
+- Default `kids`. URL: `?for=kids` / `?for=adult`. Pilihan tersimpan di localStorage.
+- Semua teks per audiens ada di `lib/content.ts`. Jangan taruh copy di dalam komponen.
+
+## Copy
+- Tagline resmi tetap: "Unleash your English Potential Now!"
+- Bahasa Indonesia santai, konkret, membumi. Tidak melebih-lebihkan: setiap klaim harus bisa dibuktikan (sertifikasi CELTA/DELTA/TKT, native speaker, kurikulum Cambridge).
+- CTA utama selalu "Coba Kelas Gratis". CTA kedua "Cek Level".
+
+## Kode
+- Komponen kecil, satu section satu file di `components/`. Server component secara default; `"use client"` hanya jika butuh state/animasi.
+- Mobile-first. Cek tampilan 375px, 768px, 1280px.

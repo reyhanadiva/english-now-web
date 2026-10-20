@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens English Now
+   Warna utama dari brand guide: 07A9F8, 405FDA, FFF275, DED9E2, 363636.
+   Varian "-700/-900/-600/-50" adalah tint/shade turunan dari warna yang sama.
+------------------------------------------------------------------- */
+@theme {
+  --color-sky: #07a9f8;
+  --color-cobalt: #405fda;
+  --color-cobalt-700: #2f47b0;
+  --color-cobalt-900: #1e2f78;
+  --color-sun: #fff275;
+  --color-sun-600: #e3d24a;
+  --color-mist: #ded9e2;
+  --color-mist-50: #f7f5f9;
+  --color-ink: #363636;
+  /* lanjutan suasana hero di section berikutnya */
+  --color-meadow-50: #f2f9ea;
+  --color-meadow: #a9da86;
+  --color-ivory: #fbf6ee;
+}
+
+@theme inline {
+  --font-display: "Lilita One", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-hand: "Kite One", cursive;
+}
+
+/* ------------------------------------------------------------------
+   Tema per audiens. Atribut data-audience di-set di <html>
+   oleh AudienceProvider ("kids" | "adult").
+------------------------------------------------------------------- */
+:root {
+  --hero-bg: var(--color-cobalt);
+  --blob: var(--color-sun);
+}
+
+[data-audience="adult"] {
+  --hero-bg: var(--color-cobalt-700);
+  --blob: var(--color-sky);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-mist-50);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Tekstur titik halftone ala referensi Elsewhere / AURAI */
+.halftone {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.28) 2px,
+    transparent 2.6px
+  );
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(ellipse at top right, #000, transparent 65%);
+  mask-image: radial-gradient(ellipse at top right, #000, transparent 65%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Hero: gambar latar bergerak sangat pelan */
+@keyframes hero-drift {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.08) translate3d(-1%, -0.6%, 0);
+  }
+}
+.hero-drift {
+  animation: hero-drift 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-drift {
+    animation: none;
+  }
+}
+
+/* Galeri: kolom foto berjalan naik / turun tanpa putus */
+@keyframes gallery-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes gallery-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+/* Ganti Anak <-> Dewasa di luar hero: lingkaran yang membesar (lihat audience-provider) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}

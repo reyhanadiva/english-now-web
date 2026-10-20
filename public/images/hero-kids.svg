@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 720" fill="none">
+  <rect x="120" y="180" width="400" height="540" rx="200" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="320" cy="300" r="92" fill="#ffffff"/>
+  <path d="M130 720c0-120 80-200 190-200s190 80 190 200H130z" fill="#ffffff"/>
+  <text x="320" y="602" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="800" fill="#405fda">GANTI DENGAN FOTO</text>
+  <text x="320" y="636" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#405fda">cutout murid / pengajar (PNG/WebP)</text>
+</svg>
