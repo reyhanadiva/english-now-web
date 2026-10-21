@@ -8,19 +8,32 @@ import { Button } from "./ui/button";
 import { SafeImage } from "./ui/safe-image";
 
 /**
- * Section ajakan utama: kelas percobaan gratis (satu fokus, satu tombol).
- * Foto kelas memenuhi layar. Di tengahnya ada deretan kapsul: kapsul tengah berupa
- * "bingkai" berisi judul, diapit kapsul berwarna dengan tanda centang yang meluncur masuk.
- * Di bawahnya: tiga langkah singkat + satu tombol WhatsApp.
+ * Section penutup: galeri + ajakan trial class dalam satu layar.
+ * Latarnya dinding foto kelas yang miring & bergeser pelan, digelapkan dengan vignette
+ * (foto-foto ini menggantikan section Galeri yang terpisah). Di tengahnya hanya:
+ * judul besar, satu kalimat, satu tombol WhatsApp, dan satu baris keuntungan.
+ * Tepi atas & bawahnya memudar singkat ke warna FAQ dan footer.
  */
 export function StartSection() {
   const { audience, instant } = useAudience();
   const reduce = (useReducedMotion() ?? false) || instant;
   const kids = audience === "kids";
   const c = trialContent[audience];
+  const [lead, accent] = c.title.split(", ");
+
+  const rise = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 24 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true, margin: "-80px" },
+          transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
+        };
 
   return (
     <section id="coba-gratis" className="relative isolate overflow-hidden text-white" style={{ background: SECTION_BG[audience] }}>
+      <span id="galeri" className="absolute top-0" aria-hidden />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -28,42 +41,45 @@ export function StartSection() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 0.35 }}
-          className="relative flex min-h-[115svh] flex-col items-center justify-center py-40 sm:py-48"
+          className="relative flex min-h-[105svh] flex-col items-center justify-center px-5 py-36 text-center sm:py-44"
         >
-          {/* dinding foto miring yang bergerak pelan; tepi atas & bawahnya memudar ke warna
-              section FAQ dan footer, jadi tidak terlihat seperti kotak terpisah */}
-          <PhotoWall photos={galleryContent[audience].photos} dark={kids ? "30,47,120" : "20,22,40"} kids={kids} reduce={reduce} />
+          <PhotoWall photos={galleryContent[audience].photos} dark={kids ? "14,22,66" : "11,12,22"} kids={kids} reduce={reduce} />
 
-          {/* deretan kapsul */}
-          <CapsuleRow title={c.title} perks={c.perks} kids={kids} reduce={reduce} />
-
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-8 flex max-w-xl flex-col items-center px-5 text-center"
+          <motion.h2
+            {...rise(0)}
+            className={
+              kids
+                ? "max-w-4xl font-display text-[3.2rem] leading-[0.98] text-balance sm:text-8xl"
+                : "max-w-4xl text-[3rem] leading-[0.98] font-semibold tracking-[-0.045em] text-balance sm:text-8xl"
+            }
           >
-            <p className="text-base leading-relaxed text-white/85 sm:text-lg">{c.sub}</p>
+            {lead}
+            {accent && (
+              <>
+                , <span className={kids ? "text-sun" : "text-white/45"}>{accent}</span>
+              </>
+            )}
+          </motion.h2>
 
-            <ol className="mt-6 flex flex-wrap justify-center gap-2">
-              {c.steps.map((s, i) => (
-                <li key={s} className="flex items-center gap-2 rounded-full bg-white/12 py-1.5 pr-3.5 pl-1.5 text-sm font-medium ring-1 ring-white/25 backdrop-blur-md">
-                  <span className={`grid size-6 place-items-center rounded-full text-xs font-bold ${i === 1 ? "bg-sun text-cobalt-900" : "bg-white/90 text-cobalt-900"}`}>
-                    {i + 1}
-                  </span>
-                  {s}
-                </li>
-              ))}
-            </ol>
+          <motion.p {...rise(0.12)} className="mt-6 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+            {c.sub}
+          </motion.p>
 
-            <Button href={c.cta.href} variant={kids ? "sun" : "sunPill"} size="md" className="mt-8 px-8 text-lg">
+          <motion.div {...rise(0.24)} className="mt-10 flex flex-col items-center">
+            <Button href={c.cta.href} variant={kids ? "sun" : "sunPill"} size="md" className="px-8 text-lg">
               {c.cta.label}
               <WaIcon />
             </Button>
-            <p className="mt-3 text-xs text-white/65">{c.note}</p>
+            <p className="mt-5 flex max-w-md flex-wrap justify-center gap-x-2 gap-y-1 text-sm text-white/55">
+              {c.perks.map((p, i) => (
+                <span key={p} className="whitespace-nowrap">
+                  {i > 0 && <span className="mr-2">·</span>}
+                  {p}
+                </span>
+              ))}
+            </p>
             {kids && (
-              <a href={CTA.levelHref} className="mt-4 text-sm font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline">
+              <a href={CTA.levelHref} className="mt-6 text-sm font-semibold text-white/75 underline-offset-4 hover:text-white hover:underline">
                 Ingin cek level dulu? Tes online di sini →
               </a>
             )}
@@ -78,20 +94,20 @@ export function StartSection() {
 
 /**
  * Grid foto miring (perspektif + rotasi), baris-barisnya bergeser kiri/kanan bergantian.
- * Seluruh lapisan gelap di-mask: memudar di atas & bawah ke warna section sekitarnya.
+ * Seluruh lapisan gelap di-mask: memudar singkat di atas & bawah ke warna section sekitarnya.
  */
 function PhotoWall({ photos, dark, kids, reduce }: { photos: string[]; dark: string; kids: boolean; reduce: boolean }) {
-  const rows = Array.from({ length: 8 }, (_, r) => Array.from({ length: 8 }, (_, k) => photos[(r * 5 + k * 3) % photos.length]));
-  // pudar dengan kurva halus (bukan garis lurus) supaya peralihan terang→gelap tidak terlihat abu-abu
+  const rows = Array.from({ length: 9 }, (_, r) => Array.from({ length: 8 }, (_, k) => photos[(r * 5 + k * 3) % photos.length]));
+  // pudar singkat dengan kurva halus, supaya tidak ada pita abu-abu yang panjang
   const fade =
-    "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 6%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.7) 19%, #000 26%, #000 74%, rgba(0,0,0,0.7) 81%, rgba(0,0,0,0.3) 88%, rgba(0,0,0,0.08) 94%, transparent 100%)";
+    "linear-gradient(180deg, transparent 0, rgba(0,0,0,0.35) 50px, rgba(0,0,0,0.8) 110px, #000 160px, #000 calc(100% - 160px), rgba(0,0,0,0.8) calc(100% - 110px), rgba(0,0,0,0.35) calc(100% - 50px), transparent 100%)";
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ maskImage: fade, WebkitMaskImage: fade }}>
       <div className="absolute inset-0" style={{ background: `rgb(${dark})` }} />
-      <div className="absolute inset-0 grid place-items-center overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
         <div
-          className="flex w-[240vw] flex-col gap-4 sm:w-[170vw] sm:gap-5"
-          style={{ transform: "perspective(1600px) rotateX(22deg) rotateZ(-9deg)" }}
+          className="absolute top-1/2 left-1/2 flex w-[240vw] flex-col gap-4 sm:w-[170vw] sm:gap-5"
+          style={{ transform: "translate(-50%, -50%) perspective(1600px) rotateX(22deg) rotateZ(-9deg)" }}
         >
           {rows.map((row, r) => (
             <div
@@ -111,108 +127,14 @@ function PhotoWall({ photos, dark, kids, reduce }: { photos: string[]; dark: str
           ))}
         </div>
       </div>
-      {/* redupkan foto + vignette supaya judul & tombol tetap jelas */}
+      {/* gelap seperti inspirasi: foto masih terlihat di tengah, pinggirnya tenggelam */}
       <div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 55% 45% at 50% 50%, rgba(${dark},0.82) 0%, rgba(${dark},0.6) 55%, rgba(${dark},0.85) 100%)`,
+          background: `radial-gradient(ellipse 60% 55% at 50% 50%, rgba(${dark},0.62) 0%, rgba(${dark},0.78) 55%, rgba(${dark},0.97) 100%)`,
         }}
       />
     </div>
-  );
-}
-
-const CHECK = (
-  <svg viewBox="0 0 24 24" className="size-5 shrink-0 sm:size-7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M5 12.5l4.5 4.5L19 7.5" />
-  </svg>
-);
-
-/**
- * Deretan kapsul selebar layar. Kapsul = "apa yang Anda dapat" di trial class
- * (gratis, tanpa komitmen, dst.), masing-masing dengan tanda centang.
- * Kapsul paling luar terpotong tepi layar, jadi terasa terus berlanjut.
- */
-function CapsuleRow({ title, perks, kids, reduce }: { title: string; perks: string[]; kids: boolean; reduce: boolean }) {
-  const tones = [
-    { bg: "linear-gradient(135deg,#FFF275,#F5B83A)", fg: "text-cobalt-900" },
-    { bg: "linear-gradient(135deg,#07A9F8,#405FDA)", fg: "text-white" },
-    { bg: "linear-gradient(135deg,#07A9F8,#7FD6A8)", fg: "text-cobalt-900" },
-    { bg: "linear-gradient(135deg,#405FDA,#B9AAF2)", fg: "text-white" },
-  ];
-  const slide = (from: number, delay: number) =>
-    reduce
-      ? {}
-      : {
-          initial: { x: from, opacity: 0 },
-          whileInView: { x: 0, opacity: 1 },
-          viewport: { once: true, margin: "-80px" },
-          transition: { type: "spring" as const, stiffness: 90, damping: 18, delay },
-        };
-  const cap = "flex h-20 items-center rounded-full shadow-[0_20px_40px_-20px_rgba(0,0,0,0.5)] sm:h-32";
-  const perk = (i: number, from: number, delay: number, extra = "") => (
-    <motion.div
-      {...slide(from, delay)}
-      className={`${cap} ${tones[i].fg} shrink-0 gap-2.5 px-6 font-semibold lg:px-8 ${extra}`}
-      style={{ background: tones[i].bg }}
-    >
-      {CHECK}
-      <span className={kids ? "font-display text-lg tracking-wide lg:text-2xl" : "text-base lg:text-xl"}>{perks[i]}</span>
-    </motion.div>
-  );
-
-  return (
-    <div className="flex w-full items-center gap-3 sm:gap-4">
-      {/* ujung kiri: terpotong tepi layar */}
-      <motion.div {...slide(-200, 0.35)} className={`${cap} -ml-10 min-w-12 flex-1`} style={{ background: tones[3].bg }} />
-      {perk(0, -160, 0.2, "hidden md:flex")}
-      {perk(1, -160, 0.05, "hidden xl:flex")}
-
-      {/* bingkai tengah berisi judul */}
-      <motion.div
-        initial={reduce ? false : { scale: 0.9, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative grid h-20 w-[min(70vw,24rem)] shrink-0 place-items-center px-6 sm:h-32"
-      >
-        <Brackets />
-        <h2
-          className={
-            kids
-              ? "relative text-center font-display text-[1.8rem] leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-5xl"
-              : "relative text-center text-[1.7rem] leading-none font-semibold tracking-[-0.03em] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-[2.8rem]"
-          }
-        >
-          {title}
-        </h2>
-      </motion.div>
-
-      {perk(2, 160, 0.05, "hidden xl:flex")}
-      {perk(3, 160, 0.2, "hidden md:flex")}
-      {/* ujung kanan: terpotong tepi layar */}
-      <motion.div {...slide(200, 0.35)} className={`${cap} -mr-10 min-w-12 flex-1`} style={{ background: tones[0].bg }} />
-    </div>
-  );
-}
-
-/** sudut-sudut bingkai bergradasi di kiri & kanan kapsul tengah */
-function Brackets() {
-  return (
-    <svg aria-hidden viewBox="0 0 400 120" preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
-      <defs>
-        <linearGradient id="br-l" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#FFF275" />
-          <stop offset="1" stopColor="#07A9F8" />
-        </linearGradient>
-        <linearGradient id="br-r" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#07A9F8" />
-          <stop offset="1" stopColor="#FFF275" />
-        </linearGradient>
-      </defs>
-      <path d="M60 4 H18 a14 14 0 0 0 -14 14 V102 a14 14 0 0 0 14 14 H60" fill="none" stroke="url(#br-l)" strokeWidth="7" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
-      <path d="M340 4 H382 a14 14 0 0 1 14 14 V102 a14 14 0 0 1 -14 14 H340" fill="none" stroke="url(#br-r)" strokeWidth="7" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
-    </svg>
   );
 }
 

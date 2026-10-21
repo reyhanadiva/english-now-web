@@ -1,7 +1,6 @@
 import { Hero } from "@/components/hero";
 import { FaqSection } from "@/components/faq-section";
 import { Footer } from "@/components/footer";
-import { GallerySection } from "@/components/gallery-section";
 import { Navbar } from "@/components/navbar";
 import { ProgramSection } from "@/components/program-section";
 import { StartSection } from "@/components/start-section";
@@ -21,7 +20,6 @@ export default function Home() {
         <LevelSection />
         <ProgramSection />
         <TestimonialSection />
-        <GallerySection />
         <FaqSection />
         <StartSection />
       </main>

@@ -20,7 +20,7 @@ export function FaqSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="relative overflow-x-clip pt-8 pb-24 sm:pb-32" style={{ background: SECTION_BG[audience] }}>
+    <section id="faq" className="relative overflow-x-clip pt-8 pb-12 sm:pb-16" style={{ background: SECTION_BG[audience] }}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}

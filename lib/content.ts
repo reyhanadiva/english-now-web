@@ -588,7 +588,7 @@ export const footerContent = {
         { label: "Kenapa English Now", href: "#kenapa" },
         { label: "Pengajar", href: "#pengajar" },
         { label: "Testimoni", href: "#testimoni" },
-        { label: "Galeri", href: "#galeri" },
+        { label: "Free Trial Class", href: "#coba-gratis" },
         { label: "FAQ", href: "#faq" },
       ],
     },
