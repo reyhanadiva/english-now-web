@@ -72,7 +72,7 @@ function useAutoStep(count: number, reduce: boolean, fallback: number) {
   const [auto, setAuto] = useState(!reduce);
   useEffect(() => {
     if (!auto || !inView || reduce) return;
-    const t = window.setTimeout(() => setSel((s) => (s + 1) % count), sel === count - 1 ? 3600 : 2200);
+    const t = window.setTimeout(() => setSel((s) => (s + 1) % count), sel === count - 1 ? 4800 : 3400);
     return () => window.clearTimeout(t);
   }, [auto, inView, reduce, sel, count]);
   const pick = (i: number) => {
@@ -107,8 +107,6 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
   const lv = KIDS_LEVELS[sel];
   const ys = [62, 30, 58, 26, 54, 22]; // tinggi tiap pos (persen), naik turun seperti jalan
 
-  const seg = (i: number) => `M ${50 + (i - 1) * 100} ${ys[i - 1]} C ${i * 100} ${ys[i - 1]}, ${i * 100} ${ys[i]}, ${50 + i * 100} ${ys[i]}`;
-
   return (
     <div ref={ref}>
       <div className="relative mt-6 h-56 sm:h-56">
@@ -122,21 +120,30 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
-          {/* jalur yang sudah dilalui menyala kuning, ruas demi ruas */}
-          {ys.slice(1).map((_, k) => (
-            <motion.path
-              key={k}
-              d={seg(k + 1)}
-              fill="none"
-              stroke="#FFF275"
-              strokeWidth="4"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              initial={false}
-              animate={{ pathLength: k + 1 <= sel ? 1 : 0, opacity: k + 1 <= sel ? 1 : 0 }}
-              transition={{ duration: reduce ? 0 : 0.6, ease: "easeInOut" }}
-            />
-          ))}
+          {/* titik-titik jalur yang sudah dilalui berubah kuning satu per satu:
+              jalur kuning yang sama persis, dipotong oleh kotak yang melebar ke pos terpilih */}
+          <defs>
+            <clipPath id="trail-clip">
+              <motion.rect
+                x="0"
+                y="0"
+                height="100"
+                initial={false}
+                animate={{ width: 50 + sel * 100 }}
+                transition={{ duration: reduce ? 0 : 1.2, ease: "linear" }}
+              />
+            </clipPath>
+          </defs>
+          <path
+            d={ys.reduce((d, y, i) => (i === 0 ? `M 50 ${y}` : `${d} C ${i * 100} ${ys[i - 1]}, ${i * 100} ${y}, ${50 + i * 100} ${y}`), "")}
+            fill="none"
+            stroke="#FFF275"
+            strokeWidth="3"
+            strokeDasharray="2 9"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            clipPath="url(#trail-clip)"
+          />
         </svg>
         {/* kupu-kupu dari hero terbang ke pos yang dipilih */}
         <motion.div
@@ -207,7 +214,7 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
           </div>
         </div>
         {/* contoh percakapan sesuai level yang dipilih */}
-        <ChatWindow kids title={`Contoh percakapan level ${lv.name}`} lines={lv.chat} />
+        <ChatWindow kids once title={`Contoh percakapan level ${lv.name}`} lines={lv.chat} />
       </div>
     </div>
   );
@@ -299,7 +306,7 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
             <Replay auto={auto} onClick={replay} />
           </div>
         </div>
-        <ChatWindow kids={false} title={`Contoh percakapan level ${lv.code}`} lines={lv.chat} />
+        <ChatWindow kids={false} once title={`Contoh percakapan level ${lv.code}`} lines={lv.chat} />
       </div>
     </div>
   );

@@ -12,10 +12,13 @@ export function ChatBubbles({
   lines,
   theme,
   className = "",
+  once = false,
 }: {
   lines: [string, string, string];
   theme: "kids" | "adult";
   className?: string;
+  /** true: tiga bubble muncul cepat berurutan lalu diam (tidak berulang) */
+  once?: boolean;
 }) {
   const reduce = useReducedMotion() ?? false;
   const ref = useRef<HTMLDivElement>(null);
@@ -24,9 +27,14 @@ export function ChatBubbles({
 
   useEffect(() => {
     if (reduce || !inView) return;
+    if (once) {
+      if (shown >= 3) return;
+      const t = window.setTimeout(() => setShown((n) => n + 1), 550);
+      return () => window.clearTimeout(t);
+    }
     const id = window.setInterval(() => setShown((n) => (n >= 6 ? 1 : n + 1)), 1300);
     return () => window.clearInterval(id);
-  }, [reduce, inView]);
+  }, [reduce, inView, once, shown]);
 
   const left = theme === "kids" ? "bg-white text-ink" : "bg-white/90 text-ink";
   const right = theme === "kids" ? "bg-cobalt text-white" : "bg-sun text-cobalt-900";
@@ -56,7 +64,7 @@ export function ChatBubbles({
 }
 
 /** jendela chat ala aplikasi (titik merah-kuning-hijau, label live) berisi ChatBubbles */
-export function ChatWindow({ kids, title, lines }: { kids: boolean; title: string; lines: [string, string, string] }) {
+export function ChatWindow({ kids, title, lines, once = false }: { kids: boolean; title: string; lines: [string, string, string]; once?: boolean }) {
   return (
     <div
       className={`overflow-hidden ${
@@ -77,7 +85,7 @@ export function ChatWindow({ kids, title, lines }: { kids: boolean; title: strin
         </span>
       </div>
       <div className={`px-4 py-4 ${kids ? "bg-sky/10" : "bg-[#F6F1E8]"}`}>
-        <ChatBubbles key={lines[0]} lines={lines} theme={kids ? "kids" : "adult"} className="min-h-[8.5rem]" />
+        <ChatBubbles key={lines[0]} once={once} lines={lines} theme={kids ? "kids" : "adult"} className="min-h-[8.5rem]" />
       </div>
     </div>
   );
