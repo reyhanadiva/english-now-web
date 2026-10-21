@@ -57,11 +57,10 @@ export function FaqSection() {
               ) : (
                 <Moon className="pointer-events-none absolute -top-12 -right-12 w-28" />
               )}
-              <span className={`grid size-12 shrink-0 place-items-center rounded-full ${kids ? "bg-sun text-cobalt-900" : "bg-white/10 text-sun"}`}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
-                  <path d="M9.5 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4v.3M12 16.5h.01" />
-                </svg>
+              <span className={`grid size-14 shrink-0 place-items-center rounded-full ${kids ? "bg-sun text-cobalt-900" : "bg-white/10 text-sun"}`}>
+                <span aria-hidden className={kids ? "font-display text-[2rem] leading-none" : "text-[1.75rem] leading-none font-bold"}>
+                  ?
+                </span>
               </span>
               <span className="flex-1">
                 <span className={kids ? "block font-display text-lg leading-tight" : "block font-semibold"}>Masih ada pertanyaan?</span>

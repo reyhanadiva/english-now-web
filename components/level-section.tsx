@@ -6,7 +6,7 @@ import { CTA, KIDS_LEVELS, LEVELS, levelContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 import { SECTION_BG } from "@/lib/theme";
-import { Bokeh, Butterfly } from "./ornaments";
+import { Butterfly } from "./ornaments";
 
 /**
  * Section 3: simulasi level.
@@ -21,7 +21,6 @@ export function LevelSection() {
 
   return (
     <section id="level" className="relative overflow-hidden" style={{ background: SECTION_BG[audience] }}>
-      {!kids && <Bokeh reduce={reduce} count={8} className="inset-0" />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}

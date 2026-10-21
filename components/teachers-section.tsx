@@ -13,7 +13,7 @@ import {
 import { TEACHERS, teachersContent, type Teacher } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { Butterfly, Stars } from "./ornaments";
+import { Stars } from "./ornaments";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -35,12 +35,6 @@ export function TeachersSection() {
     <section id="pengajar" className="relative overflow-hidden pt-8 pb-24 sm:pb-32" style={{ background: SECTION_BG[audience] }}>
       {!kids && <Stars reduce={reduce} className="absolute inset-x-0 top-0 h-72 w-full" />}
       <div className="relative mx-auto max-w-3xl px-5 text-center">
-        {kids && (
-          <>
-            <Butterfly tone={0} reduce={reduce} className="pointer-events-none absolute -top-6 -left-6 hidden w-16 sm:block" />
-            <Butterfly tone={3} reduce={reduce} delay={1.2} className="pointer-events-none absolute top-14 -right-4 hidden w-12 sm:block" />
-          </>
-        )}
         <h2
           className={
             kids

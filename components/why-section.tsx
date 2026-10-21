@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ADULT_PHOTOS, CERTS, whyAdult, whyKids, type Reason } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { Bokeh, Butterfly, KiteFlight, Moon, Stars } from "./ornaments";
+import { Butterfly, KiteFlight, Stars } from "./ornaments";
 import { ChatBubbles } from "./chat-bubbles";
 import { SafeImage } from "./ui/safe-image";
 
@@ -101,8 +101,6 @@ export function WhySection() {
       ) : (
         <>
           <Stars reduce={reduce} className="absolute top-0 right-0 h-80 w-1/2" />
-          <Moon className="pointer-events-none absolute top-4 right-[5%] w-28 opacity-90" />
-          <Bokeh reduce={reduce} className="inset-x-0 bottom-0 h-72" />
         </>
       )}
       <AnimatePresence mode="wait" initial={false}>

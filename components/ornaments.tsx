@@ -145,9 +145,12 @@ export function CatOnCard({ reduce = false }: { reduce?: boolean }) {
         {/* badan rebahan (roti tawar) */}
         <ellipse cx="90" cy="50" rx="46" ry="18" fill={body} />
         <path d="M78 34 Q 82 42 78 50 M94 33 Q 98 42 94 50 M110 35 Q 114 43 110 51" stroke={stripe} strokeWidth="3.4" strokeLinecap="round" fill="none" />
+        {/* dada & leher: menyambungkan kepala dengan kaki depan */}
+        <ellipse cx="40" cy="52" rx="23" ry="14" fill={body} />
+        <ellipse cx="40" cy="55" rx="12" ry="8" fill="#FFF3E2" />
         {/* kaki depan menjuntai di tepi kartu */}
-        <ellipse cx="30" cy="64" rx="8.5" ry="7" fill={body} />
-        <ellipse cx="50" cy="64" rx="8.5" ry="7" fill={body} />
+        <ellipse cx="31" cy="63" rx="8.5" ry="7" fill={body} />
+        <ellipse cx="49" cy="63" rx="8.5" ry="7" fill={body} />
         <path d="M27 66 v3 M32 66 v3 M47 66 v3 M52 66 v3" stroke={stripe} strokeWidth="1.3" strokeLinecap="round" />
         {/* kepala */}
         <g transform="translate(-4 -7) scale(0.72)">

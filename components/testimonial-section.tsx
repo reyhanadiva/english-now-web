@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LOGOS, testimonialContent, type Testimonial } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { Bokeh, Butterfly, Petals, Stars as Twinkles } from "./ornaments";
+import { Petals, Stars as Twinkles } from "./ornaments";
 import { SafeImage as Image } from "./ui/safe-image";
 
 /**
@@ -26,7 +26,7 @@ export function TestimonialSection() {
 
   return (
     <section id="testimoni" className="relative overflow-hidden" style={{ background: SECTION_BG[audience] }}>
-      {kids ? <Petals reduce={reduce} count={6} /> : <Bokeh reduce={reduce} count={7} className="inset-x-0 top-0 h-[28rem]" />}
+      {kids && <Petals reduce={reduce} count={6} />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -39,14 +39,7 @@ export function TestimonialSection() {
           {!kids && <LogoWall />}
 
           <div className={`relative mx-auto max-w-6xl px-5 ${kids ? "text-center" : ""}`}>
-            {kids ? (
-              <>
-                <Butterfly tone={2} reduce={reduce} className="pointer-events-none absolute -top-4 left-[12%] hidden w-14 md:block" />
-                <Butterfly tone={0} reduce={reduce} delay={0.8} className="pointer-events-none absolute top-10 right-[14%] hidden w-10 md:block" />
-              </>
-            ) : (
-              <Twinkles reduce={reduce} count={9} className="absolute -top-6 right-0 h-32 w-1/3" />
-            )}
+            {!kids && <Twinkles reduce={reduce} count={9} className="absolute -top-6 right-0 h-32 w-1/3" />}
             <h2
               className={
                 kids

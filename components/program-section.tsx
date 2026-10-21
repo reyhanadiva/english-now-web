@@ -4,7 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CTA, PROGRAMS, programContent, wa, type Program } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
-import { Bokeh, Butterfly, KidsClouds } from "./ornaments";
+import { Butterfly, KidsClouds } from "./ornaments";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 
@@ -22,7 +22,7 @@ export function ProgramSection() {
 
   return (
     <section id="biaya" className="relative overflow-x-clip" style={{ background: SECTION_BG[audience] }}>
-      {kids ? <KidsClouds /> : <Bokeh reduce={reduce} count={8} className="inset-0" />}
+      {kids && <KidsClouds />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}

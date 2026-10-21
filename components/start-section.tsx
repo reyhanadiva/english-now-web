@@ -158,7 +158,11 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                 dragElastic={{ left: 0, top: 0, right: 0.35, bottom: 0.35 }}
                 dragSnapToOrigin
                 onDragEnd={(_, info) => {
-                  if ((wide ? info.offset.x : info.offset.y) > 70) setTorn(true);
+                  if ((wide ? info.offset.x : info.offset.y) > 70) {
+                    setTorn(true);
+                    // tiket disobek = langsung daftar: buka WhatsApp seperti tombol
+                    window.open(c.cta.href, "_blank", "noopener,noreferrer");
+                  }
                 }}
                 exit={wide ? { x: 520, y: 260, rotate: 38, opacity: 0 } : { y: 420, x: 60, rotate: -18, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 120, damping: 20 }}
@@ -199,8 +203,24 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                 style={{ borderRadius: wide ? `0 ${R} ${R} 0` : `0 0 ${R} ${R}`, background: bg }}
               >
                 <p className={kids ? "font-display text-2xl" : "text-xl font-semibold tracking-tight"}>Tiketnya sudah di tanganmu!</p>
-                <p className="text-sm text-ink/65">Tinggal satu langkah: klik tombol daftar, admin kami akan membalas lewat WhatsApp.</p>
-                <button type="button" onClick={() => setTorn(false)} className="mt-1 text-xs font-semibold text-cobalt underline-offset-4 hover:underline">
+                <p className="text-sm text-ink/65">Kami membukakan WhatsApp untuk mendaftar. Admin kami akan segera membalas.</p>
+                <a
+                  href={c.cta.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 text-sm font-semibold text-cobalt underline underline-offset-4"
+                >
+                  WhatsApp belum terbuka? Klik di sini
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sx.set(0);
+                    sy.set(0);
+                    setTorn(false);
+                  }}
+                  className="text-xs font-semibold text-ink/50 underline-offset-4 hover:underline"
+                >
                   ↺ Pasang lagi
                 </button>
               </motion.div>
