@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { CTA, trialContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
@@ -33,7 +33,7 @@ export function StartSection() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 0.35 }}
-          className="relative flex flex-col items-center pt-16 pb-28 sm:pt-20 sm:pb-36"
+          className="relative flex flex-col items-center pt-16 pb-14 sm:pt-20 sm:pb-16"
         >
           <PerkBand perks={c.perks} kids={kids} reduce={reduce} />
           <Ticket kids={kids} reduce={reduce} bg={bg} />
@@ -59,8 +59,17 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
   const rx = useSpring(useTransform(py, (v) => v * -5), { stiffness: 120, damping: 18 });
   const ry = useSpring(useTransform(px, (v) => v * 7), { stiffness: 120, damping: 18 });
 
-  const face = kids ? "bg-cobalt text-white shadow-[0_10px_0_0_var(--color-cobalt-900),0_40px_80px_-30px_rgba(30,47,120,0.6)]" : "bg-[#14162A] text-white shadow-[0_40px_90px_-30px_rgba(20,22,42,0.65)]";
-  const notch = "absolute z-10 size-9 rounded-full";
+  const [torn, setTorn] = useState(false);
+  const wide = useSyncExternalStore(subscribeWide, getWide, () => true);
+  const face = kids ? "bg-cobalt text-white" : "bg-[#14162A] text-white";
+  const lift = kids ? "shadow-[0_10px_0_0_var(--color-cobalt-900),0_40px_80px_-30px_rgba(30,47,120,0.6)]" : "shadow-[0_40px_90px_-30px_rgba(20,22,42,0.65)]";
+  const R = kids ? "2.2rem" : "1.75rem";
+  const notch = "absolute z-30 size-9 rounded-full";
+
+  // potongan tiket bisa ditarik untuk "disobek": desktop ke kanan, HP ke bawah
+  const sx = useMotionValue(0);
+  const sy = useMotionValue(0);
+  const tilt = useTransform(wide ? sx : sy, (v) => (wide ? v / 9 : -v / 12));
 
   return (
     <div className="relative w-full max-w-5xl px-5" style={{ perspective: 1400 }}>
@@ -82,10 +91,13 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
           py.set(0);
         }}
         style={{ rotateX: rx, rotateY: ry }}
-        className={`relative flex flex-col md:flex-row ${kids ? "rounded-[2.2rem]" : "rounded-[1.75rem]"} ${face}`}
+        className="relative flex flex-col md:flex-row"
       >
         {/* bagian utama */}
-        <div className="relative flex-1 p-7 sm:p-10 lg:p-12">
+        <div
+          className={`relative flex-1 p-7 sm:p-10 lg:p-12 ${face} ${lift}`}
+          style={{ borderRadius: wide ? `${R} 0 0 ${R}` : `${R} ${R} 0 0` }}
+        >
           <p className={kids ? "font-hand text-xl text-sun" : "text-sm font-medium tracking-[0.2em] text-white/50 uppercase"}>
             {kids ? "Tiket kelas pertama" : "Free trial pass"}
           </p>
@@ -114,34 +126,99 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
           </ol>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <Button href={c.cta.href} variant={kids ? "sun" : "sunPill"} size="md" className="px-7 text-lg">
-              {c.cta.label}
-              <WaIcon />
-            </Button>
+            <motion.div
+              animate={torn && !reduce ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+              transition={torn ? { duration: 0.9, repeat: 2, ease: "easeInOut" } : { duration: 0 }}
+            >
+              <Button href={c.cta.href} variant={kids ? "sun" : "sunPill"} size="md" className="px-7 text-lg">
+                {c.cta.label}
+                <WaIcon />
+              </Button>
+            </motion.div>
             <p className="max-w-[15rem] text-xs leading-snug text-white/55">{c.note}</p>
           </div>
+
+          {/* garis sobekan + dua lubang, menempel di tepi bagian utama */}
+          <span
+            aria-hidden
+            className={`absolute border-dashed border-white/25 ${wide ? "inset-y-7 right-0 border-r-2" : "inset-x-7 bottom-0 border-b-2"}`}
+          />
+          <span aria-hidden className={`${notch} ${wide ? "-top-[1.125rem] right-0 translate-x-1/2" : "bottom-0 -left-[1.125rem] translate-y-1/2"}`} style={{ background: bg }} />
+          <span aria-hidden className={`${notch} ${wide ? "right-0 -bottom-[1.125rem] translate-x-1/2" : "-right-[1.125rem] bottom-0 translate-y-1/2"}`} style={{ background: bg }} />
         </div>
 
-        {/* sobekan: garis putus-putus + dua lubang setengah lingkaran */}
-        <div aria-hidden className="relative h-0 md:h-auto md:w-0">
-          <span className="absolute inset-x-7 top-0 border-t-2 border-dashed border-white/25 md:inset-x-auto md:inset-y-7 md:left-0 md:border-t-0 md:border-l-2" />
-          <span className={`${notch} top-0 -left-[1.125rem] -translate-y-1/2 md:-top-[1.125rem] md:left-0 md:-translate-x-1/2 md:translate-y-0`} style={{ background: bg }} />
-          <span className={`${notch} top-0 -right-[1.125rem] -translate-y-1/2 md:top-auto md:right-auto md:-bottom-[1.125rem] md:left-0 md:-translate-x-1/2 md:translate-y-0`} style={{ background: bg }} />
-        </div>
-
-        {/* potongan tiket: foto kelas + cap GRATIS */}
-        <div className="relative p-4 md:w-[19rem] md:p-5">
-          <div className={`relative h-56 overflow-hidden md:h-full ${kids ? "rounded-[1.6rem]" : "rounded-2xl"}`}>
-            <SafeImage src={c.photo} alt="" fill sizes="(min-width: 768px) 300px, 90vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-            <p className="absolute bottom-4 left-4 text-xs font-semibold tracking-[0.18em] text-white/90 uppercase">1 kelas · 0 rupiah</p>
-          </div>
-          <Stamp kids={kids} reduce={reduce} />
+        {/* potongan tiket: foto kelas + cap GRATIS. Tarik untuk menyobek. */}
+        <div className="relative md:w-[19rem]">
+          <AnimatePresence initial={false}>
+            {!torn ? (
+              <motion.div
+                key="stub"
+                drag={reduce ? false : wide ? "x" : "y"}
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                dragElastic={{ left: 0, top: 0, right: 0.35, bottom: 0.35 }}
+                dragSnapToOrigin
+                onDragEnd={(_, info) => {
+                  if ((wide ? info.offset.x : info.offset.y) > 70) setTorn(true);
+                }}
+                exit={wide ? { x: 520, y: 260, rotate: 38, opacity: 0 } : { y: 420, x: 60, rotate: -18, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                style={{
+                  x: sx,
+                  y: sy,
+                  rotate: tilt,
+                  originX: 0,
+                  originY: wide ? 1 : 0,
+                  borderRadius: wide ? `0 ${R} ${R} 0` : `0 0 ${R} ${R}`,
+                }}
+                className={`relative z-20 h-full touch-pan-y p-4 md:p-5 ${reduce ? "" : "cursor-grab active:cursor-grabbing"} ${face} ${lift}`}
+              >
+                <div className={`pointer-events-none relative h-56 overflow-hidden md:h-full ${kids ? "rounded-[1.6rem]" : "rounded-2xl"}`}>
+                  <SafeImage src={c.photo} alt="" fill sizes="(min-width: 768px) 300px, 90vw" className="object-cover" draggable={false} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+                  <p className="absolute bottom-4 left-4 text-xs font-semibold tracking-[0.18em] text-white/90 uppercase">1 kelas · 0 rupiah</p>
+                  {!reduce && (
+                    <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                      Tarik untuk menyobek
+                      <motion.span animate={{ x: wide ? [0, 4, 0] : 0, y: wide ? 0 : [0, 3, 0] }} transition={{ duration: 1.1, repeat: Infinity }}>
+                        {wide ? "→" : "↓"}
+                      </motion.span>
+                    </span>
+                  )}
+                </div>
+                <Stamp kids={kids} reduce={reduce} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="kept"
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.25, duration: 0.4 }}
+                className={`flex h-full min-h-56 flex-col items-center justify-center gap-3 border-2 border-dashed p-6 text-center ${
+                  kids ? "border-cobalt/35 text-cobalt-900" : "border-ink/20 text-cobalt-900"
+                }`}
+                style={{ borderRadius: wide ? `0 ${R} ${R} 0` : `0 0 ${R} ${R}`, background: bg }}
+              >
+                <p className={kids ? "font-display text-2xl" : "text-xl font-semibold tracking-tight"}>Tiketnya sudah di tanganmu!</p>
+                <p className="text-sm text-ink/65">Tinggal satu langkah: klik tombol daftar, admin kami akan membalas lewat WhatsApp.</p>
+                <button type="button" onClick={() => setTorn(false)} className="mt-1 text-xs font-semibold text-cobalt underline-offset-4 hover:underline">
+                  ↺ Pasang lagi
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </div>
   );
 }
+
+const MQ = "(min-width: 768px)";
+function subscribeWide(cb: () => void) {
+  const m = window.matchMedia(MQ);
+  m.addEventListener("change", cb);
+  return () => m.removeEventListener("change", cb);
+}
+const getWide = () => window.matchMedia(MQ).matches;
 
 /** cap bundar "GRATIS" yang dicapkan ke tiket (membesar lalu menghentak) */
 function Stamp({ kids, reduce }: { kids: boolean; reduce: boolean }) {

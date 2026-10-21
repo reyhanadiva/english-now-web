@@ -33,7 +33,7 @@ export function Footer() {
       style={{ background: bg }}
     >
       <FooterBackdrop kids={kids} x={sx} />
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-12 px-5 pt-20 sm:pt-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="relative z-10 mx-auto grid max-w-6xl gap-12 px-5 pt-12 sm:pt-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         {/* identitas */}
         <div>
           <Link href="/" className="flex items-center gap-2" aria-label="English Now, beranda">

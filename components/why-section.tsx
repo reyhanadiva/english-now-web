@@ -128,7 +128,7 @@ export function WhySection() {
                 <div className="mt-6">{reasons}</div>
               </div>
               <div className="hidden lg:block">
-                <div className="sticky top-28 pt-16">
+                <div className="sticky top-24 pt-2">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={c.reasons[active].id}

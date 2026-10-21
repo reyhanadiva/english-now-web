@@ -120,7 +120,7 @@ function CurvedCarousel({ teachers }: { teachers: Teacher[] }) {
 
   useAnimationFrame((_, dt) => {
     if (reduce || paused.current || dragging.current) return;
-    x.set(wrapX(x.get() - dt * 0.035));
+    x.set(wrapX(x.get() - dt * 0.06));
   });
 
   // 3 salinan supaya layar lebar selalu penuh saat berputar
