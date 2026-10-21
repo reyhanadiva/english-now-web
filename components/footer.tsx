@@ -87,7 +87,11 @@ export function Footer() {
                   {CONTACT.email}
                 </a>
               </li>
-              <li>{CONTACT.address}</li>
+              <li>
+                <a href={CONTACT.mapsUrl} target="_blank" rel="noopener noreferrer" className="transition hover:text-cobalt">
+                  {CONTACT.addressShort}
+                </a>
+              </li>
               <li>{CONTACT.hours}</li>
             </ul>
             <div className="mt-5 flex flex-wrap gap-2">

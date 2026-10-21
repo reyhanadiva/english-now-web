@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CTA, KIDS_LEVELS, LEVELS, levelContent } from "@/lib/content";
+import { CTA, KIDS_LEVELS, LEVELS, LEVEL_SOURCE, levelContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 import { SECTION_BG } from "@/lib/theme";
@@ -52,6 +52,7 @@ export function LevelSection() {
             </h2>
             <p className={`mt-3 max-w-lg text-[15px] leading-relaxed ${kids ? "text-white/80" : "text-ink/65"}`}>{c.sub}</p>
             {kids ? <AdventureMap reduce={reduce} cta={c.cta} /> : <CefrBar reduce={reduce} cta={c.cta} />}
+            <p className={`mt-4 text-[11px] ${kids ? "text-white/55" : "text-ink/45"}`}>{LEVEL_SOURCE[audience]}</p>
           </motion.div>
         </motion.div>
       </AnimatePresence>
@@ -140,7 +141,7 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
             <p className="mt-0.5 text-[15px] text-white/90">{lv.body}</p>
           </motion.div>
         </AnimatePresence>
-        <Button href={CTA.levelHref} variant="sun" size="sm" className="shrink-0 self-start sm:self-auto">
+        <Button href={CTA.level.kids} variant="sun" size="sm" className="shrink-0 self-start sm:self-auto">
           {cta}
         </Button>
       </div>
@@ -229,7 +230,7 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
             <p className="mt-1 text-[15px] text-ink/70">{lv.adult}</p>
           </motion.div>
         </AnimatePresence>
-        <Button href={CTA.levelHref} variant="dark" size="sm" className="shrink-0 self-start sm:self-auto">
+        <Button href={CTA.level.adult} variant="dark" size="sm" className="shrink-0 self-start sm:self-auto">
           {cta}
         </Button>
       </div>

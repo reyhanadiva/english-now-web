@@ -25,8 +25,11 @@ export const CTA = {
   /** Free trial class membuka pop-up formulir (lihat components/trial-modal.tsx). href = cadangan. */
   trial: { label: "Free Trial Class", href: wa(`${HI} saya ingin mencoba ikut free trial class.`) },
   consult: { label: "Konsultasi gratis", href: wa(`${HI} saya ingin konsultasi gratis mengenai program kelas bahasa Inggris.`) },
-  /** TODO: ganti dengan URL halaman tes level yang sudah ada */
-  levelHref: "/tes-level",
+  /** tes level online di website English Now */
+  level: {
+    kids: "https://englishnow.co.id/level-check-kids/",
+    adult: "https://englishnow.co.id/level-check/",
+  },
 };
 
 /** konsultasi gratis untuk program tertentu */
@@ -99,24 +102,68 @@ export const CERTS = [
   { code: "TKT", short: "Tes pengetahuan mengajar", name: "Teaching Knowledge Test", by: "Cambridge" },
 ];
 
+/**
+ * Level CEFR. Deskripsi Dewasa diringkas dari skala global CEFR (Council of Europe, Table 1 CEFR 3.3),
+ * deskripsi Anak disederhanakan dari sumber yang sama.
+ */
 export const LEVELS = [
-  { code: "A1", name: "Pemula", kids: "Kenalan, menyapa, dan kalimat sehari-hari yang sederhana.", adult: "Perkenalan diri dan kalimat dasar untuk kebutuhan sehari-hari." },
-  { code: "A2", name: "Dasar", kids: "Cerita soal diri sendiri, keluarga, sekolah, dan hobi.", adult: "Percakapan rutin: memesan, bertanya arah, small talk singkat." },
-  { code: "B1", name: "Menengah", kids: "Ngobrol topik yang familiar dan mulai berani bercerita panjang.", adult: "Ikut rapat santai, menulis email kerja, dan menjelaskan pendapat." },
-  { code: "B2", name: "Menengah atas", kids: "Diskusi dan presentasi di kelas dengan percaya diri.", adult: "Presentasi, negosiasi, dan diskusi dengan klien secara lancar." },
-  { code: "C1", name: "Mahir", kids: "Bahasa yang fleksibel untuk lomba, studi, dan ujian internasional.", adult: "Bahasa profesional yang luwes untuk karier dan studi lanjut." },
-  { code: "C2", name: "Sangat mahir", kids: "Hampir setara penutur asli.", adult: "Hampir setara penutur asli, di situasi apa pun." },
+  {
+    code: "A1",
+    name: "Pemula",
+    kids: "Memakai ungkapan sehari-hari yang sangat dasar dan memperkenalkan diri.",
+    adult: "Memahami dan memakai ungkapan sehari-hari yang sangat dasar, memperkenalkan diri, dan menjawab pertanyaan pribadi sederhana, asalkan lawan bicara berbicara pelan dan jelas.",
+  },
+  {
+    code: "A2",
+    name: "Dasar",
+    kids: "Bertukar informasi sederhana tentang diri sendiri, keluarga, dan sekitar.",
+    adult: "Bertukar informasi sederhana dalam situasi rutin, misalnya soal pekerjaan, belanja, atau lingkungan sekitar, dan menceritakan latar belakang diri secara sederhana.",
+  },
+  {
+    code: "B1",
+    name: "Menengah",
+    kids: "Memahami poin utama topik yang familiar dan menceritakan pengalaman.",
+    adult: "Memahami poin utama topik yang familiar di pekerjaan atau waktu luang, menghadapi sebagian besar situasi saat bepergian, dan memberi alasan singkat untuk pendapat dan rencana.",
+  },
+  {
+    code: "B2",
+    name: "Menengah atas",
+    kids: "Berdiskusi cukup lancar dan menjelaskan sudut pandang.",
+    adult: "Memahami ide utama teks yang kompleks, termasuk diskusi teknis di bidang sendiri, dan berinteraksi dengan penutur asli cukup lancar tanpa menyulitkan kedua pihak.",
+  },
+  {
+    code: "C1",
+    name: "Mahir",
+    kids: "Memakai bahasa secara luwes untuk keperluan sosial dan akademik.",
+    adult: "Memahami teks panjang yang menuntut beserta makna tersiratnya, dan memakai bahasa secara luwes dan efektif untuk keperluan sosial, akademik, dan profesional.",
+  },
+  {
+    code: "C2",
+    name: "Sangat mahir",
+    kids: "Memahami hampir semua yang didengar atau dibaca dengan mudah.",
+    adult: "Memahami hampir semua yang didengar atau dibaca dengan mudah, dan mengekspresikan diri secara spontan, sangat lancar, dan tepat, bahkan dalam situasi yang kompleks.",
+  },
 ];
 
-/** Jenjang Cambridge untuk anak & remaja (dipakai di "peta petualangan" versi Anak) */
+/**
+ * Jenjang Cambridge English Qualifications untuk anak & remaja (peta petualangan versi Anak).
+ * Deskripsi mengikuti penjelasan resmi Cambridge English untuk tiap ujian
+ * (Starters/Movers/Flyers, A2 Key, B1 Preliminary, B2 First).
+ */
 export const KIDS_LEVELS = [
-  { code: "Pre A1", name: "Starters", body: "Kata dan kalimat pertama: warna, angka, hewan, keluarga." },
-  { code: "A1", name: "Movers", body: "Mulai bercerita pendek tentang diri sendiri dan sekitarnya." },
-  { code: "A2", name: "Flyers", body: "Ngobrol soal kegiatan sehari-hari dan membaca cerita pendek." },
-  { code: "A2", name: "Key", body: "Memahami teks sederhana dan menulis pesan singkat." },
-  { code: "B1", name: "Preliminary", body: "Ngobrol lancar topik sehari-hari dan menulis cerita sendiri." },
-  { code: "B2", name: "First", body: "Diskusi dan presentasi dengan percaya diri." },
+  { code: "Pre A1", name: "Starters", body: "Mengenal bahasa Inggris lisan dan tulisan sehari-hari, misalnya mengeja nama dan menyebutkan usia." },
+  { code: "A1", name: "Movers", body: "Mulai bercakap sederhana, misalnya menjawab pertanyaan tentang kegiatan sehari-hari." },
+  { code: "A2", name: "Flyers", body: "Menyusun dan merangkai kalimat, misalnya bercerita tentang pengalaman yang sudah lewat." },
+  { code: "A2", name: "Key", body: "Berkomunikasi dalam situasi sederhana: memahami tulisan sederhana, memperkenalkan diri, dan menjawab pertanyaan dasar." },
+  { code: "B1", name: "Preliminary", body: "Bahasa Inggris praktis sehari-hari: memahami bacaan sederhana dan menulis email tentang topik rutin." },
+  { code: "B2", name: "First", body: "Mengikuti percakapan berbagai topik, menyampaikan pendapat beserta alasannya, dan membaca media dengan pemahaman yang baik." },
 ];
+
+/** sumber deskripsi level, ditampilkan kecil di bawah simulasi level */
+export const LEVEL_SOURCE = {
+  kids: "Mengacu pada Cambridge English Qualifications & CEFR",
+  adult: "Mengacu pada skala global CEFR (Council of Europe)",
+};
 
 /**
  * Section 2 "Kenapa English Now": tiga alasan + angka.
@@ -585,8 +632,10 @@ export const faqContent: Record<Audience, { title: string; sub: string; items: {
 
 /** TODO: isi data kontak & media sosial asli */
 export const CONTACT = {
-  address: "Jl. Contoh No. 123, Bandung",
-  hours: "Senin–Sabtu, 09.00–18.00",
+  address: "Jl. Terate No.12, Samoja, Kec. Batununggal, Kota Bandung, Jawa Barat 40273",
+  addressShort: "Jl. Terate No.12, Samoja, Bandung",
+  hours: "Senin–Jumat, 09.00–17.00",
+  mapsUrl: "https://maps.app.goo.gl/PWGThfjpTqybYuvY6",
   email: "halo@englishnow.id",
   social: [
     { name: "Instagram", href: "https://instagram.com/" },
@@ -616,6 +665,7 @@ export const footerContent = {
         { label: "Pengajar", href: "#pengajar" },
         { label: "Testimoni", href: "#testimoni" },
         { label: "Galeri", href: "#galeri" },
+        { label: "Lokasi", href: "#lokasi" },
         { label: "FAQ", href: "#faq" },
       ],
     },

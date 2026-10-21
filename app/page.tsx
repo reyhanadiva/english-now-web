@@ -8,6 +8,7 @@ import { StartSection } from "@/components/start-section";
 import { TestimonialSection } from "@/components/testimonial-section";
 import { TeachersSection } from "@/components/teachers-section";
 import { LevelSection } from "@/components/level-section";
+import { LocationSection } from "@/components/location-section";
 import { WhySection } from "@/components/why-section";
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
         <TestimonialSection />
         <GallerySection />
         <FaqSection />
+        <LocationSection />
         <StartSection />
       </main>
       <Footer />
