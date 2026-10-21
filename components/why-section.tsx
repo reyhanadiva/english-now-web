@@ -7,7 +7,6 @@ import { ADULT_PHOTOS, CERTS, whyAdult, whyKids, type Reason } from "@/lib/conte
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { Butterfly, KiteFlight, Stars } from "./ornaments";
-import { ChatWindow } from "./chat-bubbles";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -251,10 +250,6 @@ function KidsStage({ reasons, active, reduce }: { reasons: Reason[]; active: num
           );
         })}
       </div>
-      {/* jendela obrolan: info tambahan, menempel di pojok kanan bawah tumpukan foto */}
-      <div className="absolute right-0 bottom-0 z-10 w-[17.5rem] sm:w-72">
-        <ChatWindow kids title={whyKids.chatTitle} lines={whyKids.chat} />
-      </div>
     </div>
   );
 }
@@ -355,14 +350,11 @@ function AdultPanel({ id, reduce, large = false }: { id: Reason["id"]; reduce: b
     );
   }
 
-  // pengajar bersertifikat & native speaker: foto kelas + jendela obrolan
+  // pengajar bersertifikat & native speaker: foto kelas
   return (
     <div className={`${shell} relative`}>
       <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
         <SafeImage src={ADULT_PHOTOS.teacher} alt="" fill sizes="(min-width: 1024px) 520px, 100vw" className="object-cover" />
-      </div>
-      <div className={`relative z-10 ${large ? "-mt-24 ml-auto w-[82%]" : "-mt-16 ml-auto w-[92%]"}`}>
-        <ChatWindow kids={false} title={whyAdult.chatTitle} lines={whyAdult.chat} />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
         {CERTS.map((c) => (

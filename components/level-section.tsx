@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { CTA, KIDS_LEVELS, LEVELS, LEVEL_SOURCE, levelContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
@@ -61,15 +61,56 @@ export function LevelSection() {
   );
 }
 
+/**
+ * Level berjalan sendiri dari yang terendah ke tertinggi saat section terlihat,
+ * lalu mengulang. Berhenti begitu pengunjung memilih level sendiri.
+ */
+function useAutoStep(count: number, reduce: boolean, fallback: number) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.4 });
+  const [sel, setSel] = useState(reduce ? fallback : 0);
+  const [auto, setAuto] = useState(!reduce);
+  useEffect(() => {
+    if (!auto || !inView || reduce) return;
+    const t = window.setTimeout(() => setSel((s) => (s + 1) % count), sel === count - 1 ? 3600 : 2200);
+    return () => window.clearTimeout(t);
+  }, [auto, inView, reduce, sel, count]);
+  const pick = (i: number) => {
+    setAuto(false);
+    setSel(i);
+  };
+  const replay = () => {
+    setSel(0);
+    setAuto(true);
+  };
+  return { ref, sel, pick, auto, replay };
+}
+
+function Replay({ auto, onClick, light }: { auto: boolean; onClick: () => void; light?: boolean }) {
+  if (auto) return null;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-xs font-semibold underline-offset-4 hover:underline ${light ? "text-white/70 hover:text-white" : "text-ink/50 hover:text-cobalt-900"}`}
+    >
+      ↻ Putar ulang dari awal
+    </button>
+  );
+}
+
 /* ---------- Anak: peta petualangan ---------- */
 
 function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
-  const [sel, setSel] = useState(1);
+  const { ref, sel, pick, auto, replay } = useAutoStep(KIDS_LEVELS.length, reduce, 1);
+  const setSel = pick;
   const lv = KIDS_LEVELS[sel];
   const ys = [62, 30, 58, 26, 54, 22]; // tinggi tiap pos (persen), naik turun seperti jalan
 
+  const seg = (i: number) => `M ${50 + (i - 1) * 100} ${ys[i - 1]} C ${i * 100} ${ys[i - 1]}, ${i * 100} ${ys[i]}, ${50 + i * 100} ${ys[i]}`;
+
   return (
-    <div>
+    <div ref={ref}>
       <div className="relative mt-6 h-56 sm:h-56">
         <svg viewBox="0 0 600 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
           <path
@@ -81,6 +122,21 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
+          {/* jalur yang sudah dilalui menyala kuning, ruas demi ruas */}
+          {ys.slice(1).map((_, k) => (
+            <motion.path
+              key={k}
+              d={seg(k + 1)}
+              fill="none"
+              stroke="#FFF275"
+              strokeWidth="4"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              initial={false}
+              animate={{ pathLength: k + 1 <= sel ? 1 : 0, opacity: k + 1 <= sel ? 1 : 0 }}
+              transition={{ duration: reduce ? 0 : 0.6, ease: "easeInOut" }}
+            />
+          ))}
         </svg>
         {/* kupu-kupu dari hero terbang ke pos yang dipilih */}
         <motion.div
@@ -143,9 +199,12 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
               <p className="mt-0.5 max-w-md text-[15px] text-white/90">{lv.body}</p>
             </motion.div>
           </AnimatePresence>
-          <Button href={CTA.level.kids} variant="sun" size="sm">
-            {cta}
-          </Button>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button href={CTA.level.kids} variant="sun" size="sm">
+              {cta}
+            </Button>
+            <Replay auto={auto} onClick={replay} light />
+          </div>
         </div>
         {/* contoh percakapan sesuai level yang dipilih */}
         <ChatWindow kids title={`Contoh percakapan level ${lv.name}`} lines={lv.chat} />
@@ -165,11 +224,11 @@ function Star() {
 /* ---------- Dewasa: bar CEFR ---------- */
 
 function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
-  const [sel, setSel] = useState(3);
-  const [touched, setTouched] = useState(false);
+  const { ref, sel, pick, auto, replay } = useAutoStep(LEVELS.length, reduce, 3);
+  const touched = !auto;
   const lv = LEVELS[sel];
   return (
-    <div>
+    <div ref={ref}>
       {/* tiap level = tombol yang jelas bisa diklik */}
       <div role="radiogroup" aria-label="Level CEFR" className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6">
         {LEVELS.map((l, i) => {
@@ -181,10 +240,7 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
               role="radio"
               aria-checked={on}
               aria-label={`${l.code} ${l.name}`}
-              onClick={() => {
-                setSel(i);
-                setTouched(true);
-              }}
+              onClick={() => pick(i)}
               whileHover={reduce ? undefined : { y: -3 }}
               whileTap={reduce ? undefined : { scale: 0.97 }}
               className={`group flex cursor-pointer flex-col gap-2.5 rounded-2xl p-3 text-left ring-1 transition-colors ${
@@ -236,9 +292,12 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
               <p className="mt-1 max-w-lg text-[15px] text-ink/70">{lv.adult}</p>
             </motion.div>
           </AnimatePresence>
-          <Button href={CTA.level.adult} variant="dark" size="sm">
-            {cta}
-          </Button>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button href={CTA.level.adult} variant="dark" size="sm">
+              {cta}
+            </Button>
+            <Replay auto={auto} onClick={replay} />
+          </div>
         </div>
         <ChatWindow kids={false} title={`Contoh percakapan level ${lv.code}`} lines={lv.chat} />
       </div>
