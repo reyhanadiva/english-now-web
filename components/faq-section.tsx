@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
+import { Moon, PeekingCat, Petals, Stars } from "./ornaments";
 
 /**
  * Section FAQ.
@@ -21,6 +22,7 @@ export function FaqSection() {
 
   return (
     <section id="faq" className="relative overflow-x-clip pt-8 pb-12 sm:pb-16" style={{ background: SECTION_BG[audience] }}>
+      {kids ? <Petals reduce={reduce} count={7} /> : <Stars reduce={reduce} count={10} className="absolute top-0 left-0 h-64 w-1/3" />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -44,12 +46,17 @@ export function FaqSection() {
               href={c.ask}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group mt-8 flex max-w-sm items-center gap-4 p-5 transition ${
+              className={`group relative mt-14 flex max-w-sm items-center gap-4 p-5 transition ${
                 kids
                   ? "rounded-3xl bg-cobalt text-white shadow-[0_6px_0_0_var(--color-cobalt-900)] hover:-translate-y-0.5"
                   : "rounded-2xl bg-cobalt-900 text-white hover:bg-cobalt-700"
               }`}
             >
+              {kids ? (
+                <PeekingCat reduce={reduce} className="absolute right-8 bottom-[calc(100%-0.6rem)] w-24" />
+              ) : (
+                <Moon className="pointer-events-none absolute -top-12 -right-12 w-28" />
+              )}
               <span className={`grid size-12 shrink-0 place-items-center rounded-full ${kids ? "bg-sun text-cobalt-900" : "bg-white/10 text-sun"}`}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
