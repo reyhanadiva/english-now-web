@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CTA, HI, PROGRAMS, consultHref, programContent, registerFor, wa, type Program } from "@/lib/content";
@@ -19,6 +20,21 @@ export function ProgramSection() {
   const kids = audience === "kids";
   const c = programContent[audience];
   const list = c.list.map((id) => PROGRAMS[id]);
+  // sorotan dari asisten pilih kelas (event "en:program")
+  const [hi, setHi] = useState<string | null>(null);
+  useEffect(() => {
+    let t = 0;
+    const on = (e: Event) => {
+      setHi((e as CustomEvent<string>).detail);
+      window.clearTimeout(t);
+      t = window.setTimeout(() => setHi(null), 3200);
+    };
+    window.addEventListener("en:program", on);
+    return () => {
+      window.removeEventListener("en:program", on);
+      window.clearTimeout(t);
+    };
+  }, []);
 
   return (
     <section id="biaya" className="relative overflow-x-clip" style={{ background: SECTION_BG[audience] }}>
@@ -48,14 +64,20 @@ export function ProgramSection() {
           {kids ? (
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {list.map((p, i) => (
-                <KidsCard key={p.id} p={p} i={i} reduce={reduce} />
+                <Spotlight key={p.id} id={p.id} on={hi === p.id} kids>
+                  <KidsCard p={p} i={i} reduce={reduce} />
+                </Spotlight>
               ))}
             </div>
           ) : (
             <div className="mt-12 grid gap-5 md:grid-cols-2">
-              <AdultFeatured p={list[0]} reduce={reduce} />
+              <Spotlight id={list[0].id} on={hi === list[0].id} className="md:col-span-2">
+                <AdultFeatured p={list[0]} reduce={reduce} />
+              </Spotlight>
               {list.slice(1).map((p, i) => (
-                <AdultCard key={p.id} p={p} i={i} reduce={reduce} />
+                <Spotlight key={p.id} id={p.id} on={hi === p.id}>
+                  <AdultCard p={p} i={i} reduce={reduce} />
+                </Spotlight>
               ))}
             </div>
           )}
@@ -64,6 +86,27 @@ export function ProgramSection() {
         </motion.div>
       </AnimatePresence>
     </section>
+  );
+}
+
+/** bingkai sorotan saat kartu dipilih asisten: cincin berdenyut */
+function Spotlight({ id, on, kids = false, className = "", children }: { id: string; on: boolean; kids?: boolean; className?: string; children: React.ReactNode }) {
+  return (
+    <div id={`program-${id}`} className={`relative flex scroll-mt-28 flex-col *:flex-1 ${className}`}>
+      {children}
+      <AnimatePresence>
+        {on && (
+          <motion.span
+            aria-hidden
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: [0, 1, 0.6, 1], scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9 }}
+            className={`pointer-events-none absolute -inset-2 ${kids ? "rounded-[2.4rem] ring-4 ring-sun" : "rounded-[1.9rem] ring-2 ring-cobalt"}`}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

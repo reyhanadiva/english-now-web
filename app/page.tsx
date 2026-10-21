@@ -2,6 +2,7 @@ import { Hero } from "@/components/hero";
 import { FaqSection } from "@/components/faq-section";
 import { Footer } from "@/components/footer";
 import { GallerySection } from "@/components/gallery-section";
+import { GuideChat } from "@/components/guide-chat";
 import { Navbar } from "@/components/navbar";
 import { ProgramSection } from "@/components/program-section";
 import { StartSection } from "@/components/start-section";
@@ -28,6 +29,7 @@ export default function Home() {
         <StartSection />
       </main>
       <Footer />
+      <GuideChat />
     </>
   );
 }
