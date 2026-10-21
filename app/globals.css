@@ -93,6 +93,14 @@ body {
   from { transform: translateY(0); }
   to { transform: translateY(-50%); }
 }
+@keyframes wall-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes wall-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
 @keyframes gallery-down {
   from { transform: translateY(-50%); }
   to { transform: translateY(0); }

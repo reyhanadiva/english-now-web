@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CTA, trialContent } from "@/lib/content";
+import { CTA, galleryContent, trialContent } from "@/lib/content";
+import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 import { SafeImage } from "./ui/safe-image";
@@ -19,7 +20,7 @@ export function StartSection() {
   const c = trialContent[audience];
 
   return (
-    <section id="coba-gratis" className="relative isolate overflow-hidden bg-cobalt-900 text-white">
+    <section id="coba-gratis" className="relative isolate overflow-hidden text-white" style={{ background: SECTION_BG[audience] }}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -27,27 +28,11 @@ export function StartSection() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 0.35 }}
-          className="relative flex min-h-[100svh] flex-col items-center justify-center py-24"
+          className="relative flex min-h-[115svh] flex-col items-center justify-center py-40 sm:py-48"
         >
-          {/* foto penuh */}
-          <motion.div
-            className="absolute inset-0 -z-10"
-            initial={reduce ? false : { scale: 1.12 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <SafeImage src={c.photo} alt="" fill sizes="100vw" quality={85} className="object-cover object-[50%_40%]" />
-          </motion.div>
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10"
-            style={{
-              background: kids
-                ? "linear-gradient(180deg, rgba(30,47,120,0.35) 0%, rgba(30,47,120,0.15) 35%, rgba(30,47,120,0.55) 75%, rgba(30,47,120,0.85) 100%)"
-                : "linear-gradient(180deg, rgba(20,22,40,0.45) 0%, rgba(20,22,40,0.2) 35%, rgba(20,22,40,0.6) 75%, rgba(20,22,40,0.9) 100%)",
-            }}
-          />
+          {/* dinding foto miring yang bergerak pelan; tepi atas & bawahnya memudar ke warna
+              section FAQ dan footer, jadi tidak terlihat seperti kotak terpisah */}
+          <PhotoWall photos={galleryContent[audience].photos} dark={kids ? "30,47,120" : "20,22,40"} kids={kids} reduce={reduce} />
 
           {/* deretan kapsul */}
           <CapsuleRow title={c.title} perks={c.perks} kids={kids} reduce={reduce} />
@@ -90,6 +75,52 @@ export function StartSection() {
 }
 
 /* ------------------------------------------------------------------ */
+
+/**
+ * Grid foto miring (perspektif + rotasi), baris-barisnya bergeser kiri/kanan bergantian.
+ * Seluruh lapisan gelap di-mask: memudar di atas & bawah ke warna section sekitarnya.
+ */
+function PhotoWall({ photos, dark, kids, reduce }: { photos: string[]; dark: string; kids: boolean; reduce: boolean }) {
+  const rows = Array.from({ length: 8 }, (_, r) => Array.from({ length: 8 }, (_, k) => photos[(r * 5 + k * 3) % photos.length]));
+  // pudar dengan kurva halus (bukan garis lurus) supaya peralihan terang→gelap tidak terlihat abu-abu
+  const fade =
+    "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 6%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.7) 19%, #000 26%, #000 74%, rgba(0,0,0,0.7) 81%, rgba(0,0,0,0.3) 88%, rgba(0,0,0,0.08) 94%, transparent 100%)";
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ maskImage: fade, WebkitMaskImage: fade }}>
+      <div className="absolute inset-0" style={{ background: `rgb(${dark})` }} />
+      <div className="absolute inset-0 grid place-items-center overflow-hidden">
+        <div
+          className="flex w-[240vw] flex-col gap-4 sm:w-[170vw] sm:gap-5"
+          style={{ transform: "perspective(1600px) rotateX(22deg) rotateZ(-9deg)" }}
+        >
+          {rows.map((row, r) => (
+            <div
+              key={r}
+              className="flex w-max gap-4 sm:gap-5"
+              style={{ animation: reduce ? undefined : `wall-${r % 2 ? "right" : "left"} ${90 + r * 14}s linear infinite` }}
+            >
+              {[...row, ...row].map((src, k) => (
+                <div
+                  key={k}
+                  className={`relative aspect-[16/10] w-[42vw] shrink-0 overflow-hidden bg-white/5 sm:w-[22vw] ${kids ? "rounded-[1.6rem]" : "rounded-2xl"}`}
+                >
+                  <SafeImage src={src} alt="" fill sizes="(min-width: 640px) 22vw, 42vw" className="object-cover" />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* redupkan foto + vignette supaya judul & tombol tetap jelas */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 55% 45% at 50% 50%, rgba(${dark},0.82) 0%, rgba(${dark},0.6) 55%, rgba(${dark},0.85) 100%)`,
+        }}
+      />
+    </div>
+  );
+}
 
 const CHECK = (
   <svg viewBox="0 0 24 24" className="size-5 shrink-0 sm:size-7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
