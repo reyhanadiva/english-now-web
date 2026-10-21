@@ -112,42 +112,42 @@ export const LEVELS = [
     name: "Pemula",
     kids: "Memakai ungkapan sehari-hari yang sangat dasar dan memperkenalkan diri.",
     adult: "Memahami dan memakai ungkapan sehari-hari yang sangat dasar, memperkenalkan diri, dan menjawab pertanyaan pribadi sederhana, asalkan lawan bicara berbicara pelan dan jelas.",
-    chat: ["Hello! What's your job?", "I'm Rina. I work in a bank.", "Nice to meet you, Rina."] as [string, string, string],
+    chat: ["Where do you live?", "I live in Bandung. I work in a bank.", "Do you like your job?"] as [string, string, string],
   },
   {
     code: "A2",
     name: "Dasar",
     kids: "Bertukar informasi sederhana tentang diri sendiri, keluarga, dan sekitar.",
     adult: "Bertukar informasi sederhana dalam situasi rutin, misalnya soal pekerjaan, belanja, atau lingkungan sekitar, dan menceritakan latar belakang diri secara sederhana.",
-    chat: ["Where do you work?", "In the finance team. I check reports every week.", "Do you enjoy it?"] as [string, string, string],
+    chat: ["How do you get to work?", "By motorbike. It takes about twenty minutes.", "Do you prefer a motorbike or a car? Why?"] as [string, string, string],
   },
   {
     code: "B1",
     name: "Menengah",
     kids: "Memahami poin utama topik yang familiar dan menceritakan pengalaman.",
     adult: "Memahami poin utama topik yang familiar di pekerjaan atau waktu luang, menghadapi sebagian besar situasi saat bepergian, dan memberi alasan singkat untuk pendapat dan rencana.",
-    chat: ["How was your business trip?", "It went well. The meetings were busy, but I learned a lot.", "What was the main result?"] as [string, string, string],
+    chat: ["Tell me about a trip you enjoyed.", "Last year I went to Bali for work, and I visited the beach too.", "What did you like most about it?"] as [string, string, string],
   },
   {
     code: "B2",
     name: "Menengah atas",
     kids: "Berdiskusi cukup lancar dan menjelaskan sudut pandang.",
     adult: "Memahami ide utama teks yang kompleks, termasuk diskusi teknis di bidang sendiri, dan berinteraksi dengan penutur asli cukup lancar tanpa menyulitkan kedua pihak.",
-    chat: ["The client wants a lower price.", "We could offer a discount if they sign a two-year contract.", "Good idea. Let's propose that."] as [string, string, string],
+    chat: ["Which would help the team more, training or new software?", "Training, I'd say. Software only helps if people know how to use it.", "Fair point. Shall we go with training, then?"] as [string, string, string],
   },
   {
     code: "C1",
     name: "Mahir",
     kids: "Memakai bahasa secara luwes untuk keperluan sosial dan akademik.",
     adult: "Memahami teks panjang yang menuntut beserta makna tersiratnya, dan memakai bahasa secara luwes dan efektif untuk keperluan sosial, akademik, dan profesional.",
-    chat: ["What's your view on the new strategy?", "It's promising, though I'd question whether the timeline is realistic.", "Fair. What would you adjust?"] as [string, string, string],
+    chat: ["How has remote work changed teamwork?", "It's made us more flexible, though spontaneous ideas arguably happen less often.", "How could companies make up for that?"] as [string, string, string],
   },
   {
     code: "C2",
     name: "Sangat mahir",
     kids: "Memahami hampir semua yang didengar atau dibaca dengan mudah.",
     adult: "Memahami hampir semua yang didengar atau dibaca dengan mudah, dan mengekspresikan diri secara spontan, sangat lancar, dan tepat, bahkan dalam situasi yang kompleks.",
-    chat: ["How would you sum up the debate?", "Both sides share the goal; the real tension lies in how fast to get there.", "Beautifully put."] as [string, string, string],
+    chat: ["Some say technology makes us less patient. What's your view?", "There's some truth in it, yet I'd argue it has reshaped patience rather than eroded it.", "That's a subtle distinction."] as [string, string, string],
   },
 ];
 
@@ -157,18 +157,28 @@ export const LEVELS = [
  * (Starters/Movers/Flyers, A2 Key, B1 Preliminary, B2 First).
  */
 export const KIDS_LEVELS = [
-  { code: "Pre A1", name: "Starters", body: "Mengenal bahasa Inggris lisan dan tulisan sehari-hari, misalnya mengeja nama dan menyebutkan usia.", chat: ["What's your name?", "My name is Dina. I'm seven!", "Great! What colour is your bag?"] as [string, string, string] },
-  { code: "A1", name: "Movers", body: "Mulai bercakap sederhana, misalnya menjawab pertanyaan tentang kegiatan sehari-hari.", chat: ["What do you do after school?", "I play football with my brother.", "That sounds fun!"] as [string, string, string] },
-  { code: "A2", name: "Flyers", body: "Menyusun dan merangkai kalimat, misalnya bercerita tentang pengalaman yang sudah lewat.", chat: ["What did you do last weekend?", "I visited my grandma and we baked a cake.", "Yum! Was it a chocolate cake?"] as [string, string, string] },
-  { code: "A2", name: "Key", body: "Berkomunikasi dalam situasi sederhana: memahami tulisan sederhana, memperkenalkan diri, dan menjawab pertanyaan dasar.", chat: ["Tell me about your best friend.", "Her name is Sari. She's funny and we sit together.", "How did you two meet?"] as [string, string, string] },
-  { code: "B1", name: "Preliminary", body: "Bahasa Inggris praktis sehari-hari: memahami bacaan sederhana dan menulis email tentang topik rutin.", chat: ["Do you prefer books or films?", "Films, because the stories feel more real to me.", "Interesting! Can you give an example?"] as [string, string, string] },
-  { code: "B2", name: "First", body: "Mengikuti percakapan berbagai topik, menyampaikan pendapat beserta alasannya, dan membaca media dengan pemahaman yang baik.", chat: ["Should students wear uniforms?", "I think so, although it limits how we express ourselves.", "That's a fair point."] as [string, string, string] },
+  { code: "Pre A1", name: "Starters", body: "Mengenal bahasa Inggris lisan dan tulisan sehari-hari, misalnya mengeja nama dan menyebutkan usia.", chat: ["How old are you?", "I'm seven.", "What's your favourite animal?"] as [string, string, string] },
+  { code: "A1", name: "Movers", body: "Mulai bercakap sederhana, misalnya menjawab pertanyaan tentang kegiatan sehari-hari.", chat: ["Who do you play with at school?", "My friend Rafi. We play football.", "What do you have for lunch?"] as [string, string, string] },
+  { code: "A2", name: "Flyers", body: "Menyusun dan merangkai kalimat, misalnya bercerita tentang pengalaman yang sudah lewat.", chat: ["What did you do last weekend?", "I went to the park with my family and we had a picnic.", "Tell me about your best friend."] as [string, string, string] },
+  { code: "A2", name: "Key", body: "Berkomunikasi dalam situasi sederhana: memahami tulisan sederhana, memperkenalkan diri, dan menjawab pertanyaan dasar.", chat: ["How often do you see your friends?", "Every day at school, and on Sundays we ride our bikes.", "What's your favourite room at home? Why?"] as [string, string, string] },
+  { code: "B1", name: "Preliminary", body: "Bahasa Inggris praktis sehari-hari: memahami bacaan sederhana dan menulis email tentang topik rutin.", chat: ["Do you prefer studying alone or with friends?", "With friends, because we can help each other.", "Why do you think that helps?"] as [string, string, string] },
+  { code: "B2", name: "First", body: "Mengikuti percakapan berbagai topik, menyampaikan pendapat beserta alasannya, dan membaca media dengan pemahaman yang baik.", chat: ["Which of these ideas would help students most?", "I'd say a study club, although a reading corner is useful too.", "So, shall we choose the study club?"] as [string, string, string] },
 ];
 
-/** sumber deskripsi level, ditampilkan kecil di bawah simulasi level */
+/**
+ * Sumber deskripsi level, ditampilkan kecil di bawah simulasi level.
+ * Contoh percakapan (field `chat`) ditulis sendiri mengikuti jenis tugas & topik tes Speaking Cambridge:
+ *  - Starters/Movers/Flyers: Part 4 pertanyaan pribadi (umur, hal favorit, sekolah, teman, akhir pekan lalu)
+ *    — Cambridge English Young Learners Handbook.
+ *  - A2 Key: Part 1 wawancara topik teman & rumah — A2 Key Handbook.
+ *  - B1 Preliminary: Part 4 suka/tidak suka, pengalaman, pendapat — format ujian B1 Preliminary.
+ *  - B2 First: Part 3 diskusi pilihan & mengambil keputusan bersama — format ujian B2 First.
+ *  - Dewasa C1–C2: tingkat kerumitan mengikuti skala global CEFR.
+ * Kalimatnya bukan kutipan soal ujian asli.
+ */
 export const LEVEL_SOURCE = {
-  kids: "Mengacu pada Cambridge English Qualifications & CEFR",
-  adult: "Mengacu pada skala global CEFR (Council of Europe)",
+  kids: "Mengacu pada Cambridge English Qualifications & CEFR · contoh percakapan mengikuti format tes Speaking Cambridge",
+  adult: "Mengacu pada skala global CEFR (Council of Europe) · contoh percakapan mengikuti format tes Speaking Cambridge",
 };
 
 /**
