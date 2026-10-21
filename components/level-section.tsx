@@ -6,6 +6,7 @@ import { CTA, KIDS_LEVELS, LEVELS, levelContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 import { SECTION_BG } from "@/lib/theme";
+import { Bokeh, Butterfly } from "./ornaments";
 
 /**
  * Section 3: simulasi level.
@@ -20,6 +21,7 @@ export function LevelSection() {
 
   return (
     <section id="level" className="relative overflow-hidden" style={{ background: SECTION_BG[audience] }}>
+      {!kids && <Bokeh reduce={reduce} count={8} className="inset-0" />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -79,6 +81,16 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
             vectorEffect="non-scaling-stroke"
           />
         </svg>
+        {/* kupu-kupu dari hero terbang ke pos yang dipilih */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute z-10 w-10 sm:w-14"
+          initial={false}
+          animate={{ left: `calc(${(50 + sel * 100) / 6}% + 14px)`, top: `calc(${ys[sel]}% - 58px)` }}
+          transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 40, damping: 9 }}
+        >
+          <Butterfly tone={0} reduce={reduce} className="w-full" />
+        </motion.div>
         <div role="radiogroup" aria-label="Level Cambridge" className="absolute inset-0">
           {KIDS_LEVELS.map((l, i) => {
             const active = i === sel;

@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { Moon, PeekingCat, Petals, Stars } from "./ornaments";
+import { CatOnCard, Moon, Petals, Stars } from "./ornaments";
 
 /**
  * Section FAQ.
@@ -53,7 +53,7 @@ export function FaqSection() {
               }`}
             >
               {kids ? (
-                <PeekingCat reduce={reduce} className="absolute right-8 bottom-[calc(100%-0.6rem)] w-24" />
+                <CatOnCard reduce={reduce} />
               ) : (
                 <Moon className="pointer-events-none absolute -top-12 -right-12 w-28" />
               )}

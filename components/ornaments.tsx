@@ -76,14 +76,14 @@ const WINGS = [
   { a: "#E6F6FF", b: "#7CC8F8", edge: "#1E3A66" },
 ];
 
-export function Butterfly({ tone = 0, className = "", reduce = false, delay = 0 }: { tone?: number; className?: string; reduce?: boolean; delay?: number }) {
+export function Butterfly({ tone = 0, className = "", reduce = false, delay = 0, rest = false }: { tone?: number; className?: string; reduce?: boolean; delay?: number; rest?: boolean }) {
   const w = WINGS[tone % WINGS.length];
   const id = `bf-${tone}`;
   const wing = () => (
     <motion.g
       style={{ originX: 0, originY: 0.5 }}
-      animate={reduce ? undefined : { scaleX: [1, 0.4, 1] }}
-      transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut", delay }}
+      animate={reduce ? undefined : rest ? { scaleX: [1, 1, 0.35, 1, 0.35, 1, 1] } : { scaleX: [1, 0.4, 1] }}
+      transition={rest ? { duration: 3.6, repeat: Infinity, delay, times: [0, 0.6, 0.66, 0.72, 0.78, 0.84, 1] } : { duration: 0.5, repeat: Infinity, ease: "easeInOut", delay }}
     >
       <path d="M50 49 C 54 22, 86 18, 82 40 C 80 47, 64 50, 50 49 Z" fill={`url(#${id})`} stroke={w.edge} strokeWidth="1.4" />
       <path d="M50 51 C 66 52, 74 66, 64 74 C 58 78, 52 64, 50 51 Z" fill={`url(#${id})`} stroke={w.edge} strokeWidth="1.4" />
@@ -95,7 +95,7 @@ export function Butterfly({ tone = 0, className = "", reduce = false, delay = 0 
       aria-hidden
       viewBox="0 0 100 100"
       className={className}
-      animate={reduce ? undefined : { y: [0, -10, 0], x: [0, 6, 0], rotate: [-8, 6, -8] }}
+      animate={reduce || rest ? undefined : { y: [0, -10, 0], x: [0, 6, 0], rotate: [-8, 6, -8] }}
       transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay }}
     >
       <defs>
@@ -114,58 +114,101 @@ export function Butterfly({ tone = 0, className = "", reduce = false, delay = 0 
 }
 
 /**
- * Kucing oranye dari hero, mengintip dari balik tepi atas sebuah elemen
- * (letakkan di dalam elemen ber-`relative`, di tepi atasnya). Telinga berkedut & mata berkedip.
+ * Kucing oranye dari hero yang rebahan di atas sebuah kartu: badan & kepala di tepi atas,
+ * kaki depan menjuntai, ekor menggantung di sisi kanan kartu dan bergoyang pelan.
+ * Letakkan di dalam elemen ber-`relative` (kartunya); kucing menempel di pojok kanan atas.
  */
-export function PeekingCat({ className = "", reduce = false }: { className?: string; reduce?: boolean }) {
+export function CatOnCard({ reduce = false }: { reduce?: boolean }) {
   const body = "#F2A65A";
   const stripe = "#D9833A";
   return (
-    <motion.svg
+    <motion.span
       aria-hidden
-      viewBox="0 0 120 70"
-      className={className}
-      initial={reduce ? false : { y: 26 }}
-      whileInView={{ y: 0 }}
-      viewport={{ once: true, amount: 0.6 }}
-      transition={{ type: "spring", stiffness: 160, damping: 12, delay: 0.3 }}
+      className="pointer-events-none absolute -top-[54px] right-3 block h-[66px] w-[128px]"
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ type: "spring", stiffness: 160, damping: 13, delay: 0.3 }}
     >
-      {/* telinga */}
-      <motion.g
-        style={{ originX: "38px", originY: "30px" }}
-        animate={reduce ? undefined : { rotate: [0, 0, -12, 0, 0] }}
-        transition={{ duration: 3.4, repeat: Infinity, times: [0, 0.7, 0.75, 0.82, 1] }}
+      {/* ekor: dari pantat kucing, melewati tepi kanan kartu, menggantung ke bawah */}
+      <motion.svg
+        viewBox="0 0 60 130"
+        className="absolute top-[30px] -right-[36px] h-[130px] w-[60px] overflow-visible"
+        style={{ originX: 0.2, originY: 0.12 }}
+        animate={reduce ? undefined : { rotate: [0, 7, 0, -5, 0] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <path d="M24 34 L30 6 L48 24 Z" fill={body} />
-        <path d="M29 28 L32 13 L42 24 Z" fill="#FFB3C1" />
-      </motion.g>
-      <path d="M96 34 L90 6 L72 24 Z" fill={body} />
-      <path d="M91 28 L88 13 L78 24 Z" fill="#FFB3C1" />
-      {/* kepala */}
-      <ellipse cx="60" cy="44" rx="40" ry="30" fill={body} />
-      <path d="M52 16 Q 54 26 50 32 M60 14 V 30 M68 16 Q 66 26 70 32" stroke={stripe} strokeWidth="3.4" strokeLinecap="round" fill="none" />
-      <ellipse cx="60" cy="56" rx="17" ry="12" fill="#FFF3E2" />
-      {/* mata berkedip */}
-      <motion.g
-        style={{ originY: "44px" }}
-        animate={reduce ? undefined : { scaleY: [1, 1, 0.1, 1, 1] }}
-        transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.93, 0.96, 1] }}
-      >
-        <ellipse cx="45" cy="44" rx="4" ry="5" fill="#2B1D12" />
-        <ellipse cx="75" cy="44" rx="4" ry="5" fill="#2B1D12" />
-        <circle cx="46.3" cy="42.4" r="1.4" fill="#fff" />
-        <circle cx="76.3" cy="42.4" r="1.4" fill="#fff" />
-      </motion.g>
-      <path d="M57 52 L63 52 L60 55.5 Z" fill="#E77A8A" />
-      <path d="M60 55.5 Q 57 59 54 58 M60 55.5 Q 63 59 66 58" stroke="#2B1D12" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-      <path d="M38 53 L22 50 M38 57 L23 59 M82 53 L98 50 M82 57 L97 59" stroke="#FFF3E2" strokeWidth="1.2" strokeLinecap="round" />
-      <ellipse cx="36" cy="55" rx="5" ry="3" fill="#FFB3C1" opacity="0.55" />
-      <ellipse cx="84" cy="55" rx="5" ry="3" fill="#FFB3C1" opacity="0.55" />
-      {/* kaki depan menggantung di tepi */}
-      <ellipse cx="34" cy="70" rx="11" ry="7" fill={body} />
-      <ellipse cx="86" cy="70" rx="11" ry="7" fill={body} />
-      <path d="M30 70 V74 M35 70 V74 M82 70 V74 M87 70 V74" stroke={stripe} strokeWidth="1.4" strokeLinecap="round" />
-    </motion.svg>
+        <path d="M6 22 C 26 14, 40 22, 42 40 C 44 62, 38 84, 40 100 C 42 114, 30 120, 24 112" fill="none" stroke={body} strokeWidth="11" strokeLinecap="round" />
+        <path d="M41 56 h4 M40 72 h4 M40 88 h4" stroke={stripe} strokeWidth="3" strokeLinecap="round" />
+      </motion.svg>
+      <svg viewBox="0 0 140 72" className="absolute inset-0 h-full w-full overflow-visible">
+        {/* badan rebahan (roti tawar) */}
+        <ellipse cx="90" cy="50" rx="46" ry="18" fill={body} />
+        <path d="M78 34 Q 82 42 78 50 M94 33 Q 98 42 94 50 M110 35 Q 114 43 110 51" stroke={stripe} strokeWidth="3.4" strokeLinecap="round" fill="none" />
+        {/* kaki depan menjuntai di tepi kartu */}
+        <ellipse cx="30" cy="64" rx="8.5" ry="7" fill={body} />
+        <ellipse cx="50" cy="64" rx="8.5" ry="7" fill={body} />
+        <path d="M27 66 v3 M32 66 v3 M47 66 v3 M52 66 v3" stroke={stripe} strokeWidth="1.3" strokeLinecap="round" />
+        {/* kepala */}
+        <g transform="translate(-4 -7) scale(0.72)">
+          <motion.g
+            style={{ originX: 0.6, originY: 1 }}
+            animate={reduce ? undefined : { rotate: [0, 0, -14, 0, 0] }}
+            transition={{ duration: 3.4, repeat: Infinity, times: [0, 0.7, 0.75, 0.82, 1] }}
+          >
+            <path d="M24 34 L30 6 L48 24 Z" fill={body} />
+            <path d="M29 28 L32 13 L42 24 Z" fill="#FFB3C1" />
+          </motion.g>
+          <path d="M96 34 L90 6 L72 24 Z" fill={body} />
+          <path d="M91 28 L88 13 L78 24 Z" fill="#FFB3C1" />
+          <ellipse cx="60" cy="44" rx="40" ry="30" fill={body} />
+          <path d="M52 16 Q 54 26 50 32 M60 14 V 30 M68 16 Q 66 26 70 32" stroke={stripe} strokeWidth="3.4" strokeLinecap="round" fill="none" />
+          <ellipse cx="60" cy="56" rx="17" ry="12" fill="#FFF3E2" />
+          <motion.g
+            style={{ originY: 0.5 }}
+            animate={reduce ? undefined : { scaleY: [1, 1, 0.1, 1, 1] }}
+            transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.93, 0.96, 1] }}
+          >
+            <ellipse cx="45" cy="44" rx="4" ry="5" fill="#2B1D12" />
+            <ellipse cx="75" cy="44" rx="4" ry="5" fill="#2B1D12" />
+            <circle cx="46.3" cy="42.4" r="1.4" fill="#fff" />
+            <circle cx="76.3" cy="42.4" r="1.4" fill="#fff" />
+          </motion.g>
+          <path d="M57 52 L63 52 L60 55.5 Z" fill="#E77A8A" />
+          <path d="M60 55.5 Q 57 59 54 58 M60 55.5 Q 63 59 66 58" stroke="#2B1D12" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+          <path d="M38 53 L22 50 M38 57 L23 59 M82 53 L98 50 M82 57 L97 59" stroke="#FFF3E2" strokeWidth="1.2" strokeLinecap="round" />
+          <ellipse cx="36" cy="55" rx="5" ry="3" fill="#FFB3C1" opacity="0.55" />
+          <ellipse cx="84" cy="55" rx="5" ry="3" fill="#FFB3C1" opacity="0.55" />
+        </g>
+      </svg>
+    </motion.span>
+  );
+}
+
+/** awan putih lembut (bentuk awan hero) yang bergeser pelan di latar section Anak */
+export function KidsClouds({ className = "inset-0" }: { className?: string }) {
+  const reduce = useReducedMotion() ?? false;
+  const clouds = [
+    { top: "6%", left: "4%", w: 150, o: 0.9, d: 38 },
+    { top: "18%", left: "82%", w: 110, o: 0.8, d: 46 },
+    { top: "62%", left: "-2%", w: 90, o: 0.7, d: 52 },
+    { top: "78%", left: "88%", w: 130, o: 0.75, d: 42 },
+  ];
+  return (
+    <div aria-hidden className={`pointer-events-none absolute overflow-hidden ${className}`}>
+      {clouds.map((c, i) => (
+        <motion.svg
+          key={i}
+          viewBox="0 0 120 50"
+          className="absolute drop-shadow-[0_6px_10px_rgba(64,95,218,0.08)]"
+          style={{ top: c.top, left: c.left, width: c.w, opacity: c.o }}
+          animate={reduce ? undefined : { x: [0, 40, 0] }}
+          transition={{ duration: c.d, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path d="M15 40 a14 14 0 0 1 10-22 a18 18 0 0 1 33-6 a16 16 0 0 1 30 4 a12 12 0 0 1 17 24 z" fill="#fff" />
+        </motion.svg>
+      ))}
+    </div>
   );
 }
 
@@ -247,35 +290,36 @@ export function Stars({ count = 14, className = "", reduce = false, color = "#B9
   );
 }
 
-/** siluet kota tipis (garis + beberapa jendela menyala), untuk tepi bawah section Dewasa */
-export function Skyline({ className = "" }: { className?: string }) {
-  // gedung deterministik supaya tidak berubah tiap render
-  const blocks: { x: number; w: number; h: number }[] = [];
-  let x = 0;
-  let s = 7;
-  const rnd = () => ((s = (s * 9301 + 49297) % 233280), s / 233280);
-  while (x < 1200) {
-    const w = 26 + rnd() * 46;
-    const tall = Math.exp(-(((x - 300) / 120) ** 2)) + Math.exp(-(((x - 880) / 140) ** 2));
-    blocks.push({ x, w, h: 24 + rnd() * 50 + tall * 70 });
-    x += w + 3;
-  }
+/**
+ * Titik-titik cahaya kota yang buram (bokeh), seperti lampu kota senja di hero.
+ * Melayang & berdenyut pelan. Taruh di dalam elemen ber-`relative`.
+ */
+export function Bokeh({ count = 9, className = "", reduce = false }: { count?: number; className?: string; reduce?: boolean }) {
+  const cols = ["255,200,140", "244,180,143", "185,170,242", "255,226,170"];
+  const items = Array.from({ length: count }, (_, i) => ({
+    x: (i * 41 + 9) % 100,
+    y: (i * 67 + 23) % 100,
+    s: 40 + ((i * 37) % 90),
+    c: cols[i % cols.length],
+    d: 7 + (i % 5) * 2,
+  }));
   return (
-    <svg aria-hidden viewBox="0 0 1200 160" preserveAspectRatio="xMidYMax slice" className={`pointer-events-none ${className}`}>
-      <defs>
-        <linearGradient id="sky-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#405FDA" stopOpacity="0.10" />
-          <stop offset="1" stopColor="#405FDA" stopOpacity="0.02" />
-        </linearGradient>
-      </defs>
-      {blocks.map((b, i) => (
-        <g key={i}>
-          <rect x={b.x} y={160 - b.h} width={b.w} height={b.h} fill="url(#sky-fill)" stroke="rgba(64,95,218,0.18)" strokeWidth="1" />
-          {Array.from({ length: Math.floor(b.h / 22) }, (_, k) =>
-            (i + k) % 3 === 0 ? <rect key={k} x={b.x + 6 + ((k * 11) % Math.max(1, b.w - 14))} y={160 - b.h + 10 + k * 20} width="4" height="5" fill="#F4C77B" opacity="0.7" /> : null,
-          )}
-        </g>
+    <div aria-hidden className={`pointer-events-none absolute ${className}`}>
+      {items.map((b, i) => (
+        <motion.span
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: `${b.x}%`,
+            top: `${b.y}%`,
+            width: b.s,
+            height: b.s,
+            background: `radial-gradient(circle, rgba(${b.c},0.55) 0%, rgba(${b.c},0.22) 45%, rgba(${b.c},0) 70%)`,
+          }}
+          animate={reduce ? undefined : { y: [0, -18, 0], opacity: [0.55, 1, 0.55] }}
+          transition={{ duration: b.d, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }}
+        />
       ))}
-    </svg>
+    </div>
   );
 }

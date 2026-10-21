@@ -4,6 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CTA, PROGRAMS, programContent, wa, type Program } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
+import { Bokeh, Butterfly, KidsClouds } from "./ornaments";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 
@@ -20,7 +21,8 @@ export function ProgramSection() {
   const list = c.list.map((id) => PROGRAMS[id]);
 
   return (
-    <section id="biaya" className="relative" style={{ background: SECTION_BG[audience] }}>
+    <section id="biaya" className="relative overflow-x-clip" style={{ background: SECTION_BG[audience] }}>
+      {kids ? <KidsClouds /> : <Bokeh reduce={reduce} count={8} className="inset-0" />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={audience}
@@ -98,8 +100,9 @@ function KidsCard({ p, i, reduce }: { p: Program; i: number; reduce: boolean }) 
     <motion.article
       {...rise(reduce, i)}
       whileHover={reduce ? undefined : { y: -6 }}
-      className={`flex flex-col rounded-[2rem] p-4 pb-6 ${t.card}`}
+      className={`relative flex flex-col rounded-[2rem] p-4 pb-6 ${t.card}`}
     >
+      {i === 1 && <Butterfly tone={1} rest reduce={reduce} className="pointer-events-none absolute -top-8 -right-5 z-10 w-20 rotate-12" />}
       <div
         className="relative aspect-[4/3.2] overflow-hidden rounded-[1.5rem] border-4 border-white shadow-[0_10px_24px_-14px_rgba(30,47,120,0.5)]"
         style={{ rotate: `${t.tilt}deg` }}

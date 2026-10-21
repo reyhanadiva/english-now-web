@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { galleryContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
+import { KiteFlight, Moon, Stars } from "./ornaments";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -88,11 +89,19 @@ export function GallerySection() {
                 background: `radial-gradient(ellipse 34% 30% at 50% 50%, ${SECTION_BG[audience]} 0%, ${SECTION_BG[audience]}e6 38%, ${SECTION_BG[audience]}00 100%)`,
               }}
             >
+              {kids ? (
+                <KiteFlight className="top-[6%] left-[18%] hidden h-44 w-24 md:block" />
+              ) : (
+                <>
+                  <Moon className="absolute top-[30%] left-[66%] w-20" />
+                  <Stars reduce={reduce} count={10} className="absolute inset-x-[25%] top-[20%] h-[60%]" />
+                </>
+              )}
               <h2
                 className={
                   kids
-                    ? "text-center font-display text-5xl leading-[1.02] text-cobalt-900 sm:text-7xl"
-                    : "text-center text-5xl leading-[1.02] font-semibold tracking-[-0.04em] text-cobalt-900 sm:text-7xl"
+                    ? "relative text-center font-display text-5xl leading-[1.02] text-cobalt-900 sm:text-7xl"
+                    : "relative text-center text-5xl leading-[1.02] font-semibold tracking-[-0.04em] text-cobalt-900 sm:text-7xl"
                 }
               >
                 {c.title}
