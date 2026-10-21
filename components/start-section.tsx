@@ -202,16 +202,8 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                 }`}
                 style={{ borderRadius: wide ? `0 ${R} ${R} 0` : `0 0 ${R} ${R}`, background: bg }}
               >
-                <p className={kids ? "font-display text-2xl" : "text-xl font-semibold tracking-tight"}>Tiketnya sudah di tanganmu!</p>
-                <p className="text-sm text-ink/65">Kami membukakan WhatsApp untuk mendaftar. Admin kami akan segera membalas.</p>
-                <a
-                  href={c.cta.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 text-sm font-semibold text-cobalt underline underline-offset-4"
-                >
-                  WhatsApp belum terbuka? Klik di sini
-                </a>
+                <p className={kids ? "font-display text-2xl" : "text-xl font-semibold tracking-tight"}>Tiket sudah di tanganmu!</p>
+                <p className="text-sm text-ink/60">Lanjutkan di WhatsApp, ya.</p>
                 <button
                   type="button"
                   onClick={() => {
@@ -219,7 +211,7 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                     sy.set(0);
                     setTorn(false);
                   }}
-                  className="text-xs font-semibold text-ink/50 underline-offset-4 hover:underline"
+                  className="mt-2 text-xs font-semibold text-ink/45 underline-offset-4 hover:underline"
                 >
                   ↺ Pasang lagi
                 </button>
