@@ -6,7 +6,7 @@ import { CTA, TAGLINE, heroContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
 import { HeroBackdrop } from "./hero/hero-backdrop";
-import { Button } from "./ui/button";
+import { TrialButton } from "./trial-modal";
 
 /* Deteksi layar sentuh: swipe kiri/kanan hanya aktif di HP/tablet */
 function subscribeCoarse(onChange: () => void) {
@@ -93,10 +93,10 @@ export function Hero() {
             <AudienceToggle size="lg" tone="stage" />
           </div>
 
-          <Button href={CTA.trial.href} variant={isKids ? "dark" : "sunPill"} size="sm" className="mt-5">
+          <TrialButton variant={isKids ? "dark" : "sunPill"} size="sm" className="mt-5">
             {CTA.trial.label}
             <ArrowIcon />
-          </Button>
+          </TrialButton>
         </div>
       </div>
     </motion.section>

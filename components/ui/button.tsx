@@ -31,18 +31,30 @@ const sizes: Record<Size, string> = {
 
 export function Button({
   href,
+  onClick,
+  type = "button",
   variant = "sun",
   size = "md",
   className = "",
   children,
 }: {
-  href: string;
+  /** tujuan link; jika tidak ada, tombol memakai onClick (mis. membuka pop-up) */
+  href?: string;
+  onClick?: () => void;
+  type?: "button" | "submit";
   variant?: Variant;
   size?: Size;
   className?: string;
   children: React.ReactNode;
 }) {
   const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  if (!href) {
+    return (
+      <button type={type} onClick={onClick} className={`${cls} cursor-pointer`}>
+        {children}
+      </button>
+    );
+  }
   // link keluar (mis. WhatsApp) dibuka di tab baru
   if (/^https?:\/\//.test(href)) {
     return (

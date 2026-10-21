@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CTA, PROGRAMS, programContent, wa, type Program } from "@/lib/content";
+import { CTA, HI, PROGRAMS, consultHref, programContent, registerFor, wa, type Program } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { Butterfly, KidsClouds } from "./ornaments";
 import { useAudience } from "./audience-provider";
@@ -128,9 +128,17 @@ function KidsCard({ p, i, reduce }: { p: Program; i: number; reduce: boolean }) 
           ))}
         </ul>
         <div className="mt-auto pt-7">
-          <Button href={wa(`Halo English Now, saya ingin konsultasi ${p.name}.`)} variant="cobalt" size="md" className="w-full text-base">
-            {CTA.consult.label}
+          <Button href={registerFor(p.id, p.name).href} variant="cobalt" size="md" className="w-full text-base">
+            {registerFor(p.id, p.name).label}
           </Button>
+          <a
+            href={consultHref(p.name)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 block text-center text-sm font-semibold text-cobalt-900/70 underline-offset-4 hover:text-cobalt hover:underline"
+          >
+            atau {CTA.consult.label.toLowerCase()} dulu
+          </a>
         </div>
       </div>
     </motion.article>
@@ -171,7 +179,7 @@ function AdultFeatured({ p, reduce }: { p: Program; reduce: boolean }) {
           ))}
         </ul>
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Button href={wa(`Halo English Now, saya ingin diskusi ${p.name} untuk tim kami.`)} variant="sunPill" size="md" className="text-base">
+          <Button href={wa(`${HI} saya ingin berdiskusi mengenai ${p.name} untuk tim/perusahaan kami.`)} variant="sunPill" size="md" className="text-base">
             Diskusikan kebutuhan tim
           </Button>
           <span className="text-sm text-white/55">Harga final mengikuti kebutuhan & jumlah peserta.</span>
@@ -211,9 +219,17 @@ function AdultCard({ p, i, reduce }: { p: Program; i: number; reduce: boolean })
           ))}
         </ul>
         <div className="mt-auto pt-7">
-          <Button href={wa(`Halo English Now, saya ingin konsultasi ${p.name}.`)} variant="dark" size="md" className="w-full text-base">
-            {CTA.consult.label}
+          <Button href={registerFor(p.id, p.name).href} variant="dark" size="md" className="w-full text-base">
+            {registerFor(p.id, p.name).label}
           </Button>
+          <a
+            href={consultHref(p.name)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 block text-center text-sm font-semibold text-ink/55 underline-offset-4 hover:text-cobalt-900 hover:underline"
+          >
+            atau {CTA.consult.label.toLowerCase()} dulu
+          </a>
         </div>
       </div>
     </motion.article>

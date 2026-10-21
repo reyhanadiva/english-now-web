@@ -6,6 +6,7 @@ import { CTA, trialContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
+import { useTrial } from "./trial-modal";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -60,6 +61,7 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
   const ry = useSpring(useTransform(px, (v) => v * 7), { stiffness: 120, damping: 18 });
 
   const [torn, setTorn] = useState(false);
+  const { open: openTrial } = useTrial();
   const wide = useSyncExternalStore(subscribeWide, getWide, () => true);
   const face = kids ? "bg-cobalt text-white" : "bg-[#14162A] text-white";
   const lift = kids ? "shadow-[0_10px_0_0_var(--color-cobalt-900),0_40px_80px_-30px_rgba(30,47,120,0.6)]" : "shadow-[0_40px_90px_-30px_rgba(20,22,42,0.65)]";
@@ -130,7 +132,7 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
               animate={torn && !reduce ? { scale: [1, 1.08, 1] } : { scale: 1 }}
               transition={torn ? { duration: 0.9, repeat: 2, ease: "easeInOut" } : { duration: 0 }}
             >
-              <Button href={c.cta.href} variant={kids ? "sun" : "sunPill"} size="md" className="px-7 text-lg">
+              <Button onClick={openTrial} variant={kids ? "sun" : "sunPill"} size="md" className="px-7 text-lg">
                 {c.cta.label}
                 <WaIcon />
               </Button>
@@ -160,8 +162,8 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                 onDragEnd={(_, info) => {
                   if ((wide ? info.offset.x : info.offset.y) > 70) {
                     setTorn(true);
-                    // tiket disobek = langsung daftar: buka WhatsApp seperti tombol
-                    window.open(c.cta.href, "_blank", "noopener,noreferrer");
+                    // tiket disobek = langsung daftar: buka formulir free trial seperti tombol
+                    window.setTimeout(openTrial, 450);
                   }
                 }}
                 exit={wide ? { x: 520, y: 260, rotate: 38, opacity: 0 } : { y: 420, x: 60, rotate: -18, opacity: 0 }}
@@ -203,7 +205,7 @@ function Ticket({ kids, reduce, bg }: { kids: boolean; reduce: boolean; bg: stri
                 style={{ borderRadius: wide ? `0 ${R} ${R} 0` : `0 0 ${R} ${R}`, background: bg }}
               >
                 <p className={kids ? "font-display text-2xl" : "text-xl font-semibold tracking-tight"}>Tiket sudah di tanganmu!</p>
-                <p className="text-sm text-ink/60">Lanjutkan di WhatsApp, ya.</p>
+                <p className="text-sm text-ink/60">Tinggal isi data singkatnya.</p>
                 <button
                   type="button"
                   onClick={() => {

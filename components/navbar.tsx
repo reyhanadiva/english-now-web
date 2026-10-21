@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CTA, NAV_LINKS } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
-import { Button } from "./ui/button";
+import { TrialButton } from "./trial-modal";
 
 /* "Sudah lewat hero?" dibaca dari posisi scroll. Server selalu false. */
 function subscribeScroll(onChange: () => void) {
@@ -113,9 +113,9 @@ export function Navbar() {
                 )}
                 {past && (
                   <motion.div key="cta" {...pop} transition={{ ...t, delay: reduce ? 0 : 0.05 }} className="hidden sm:block">
-                    <Button href={CTA.trial.href} size="sm" variant="dark">
+                    <TrialButton size="sm" variant="dark">
                       {CTA.trial.label}
-                    </Button>
+                    </TrialButton>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -164,9 +164,9 @@ export function Navbar() {
                   </li>
                 ))}
               </ul>
-              <Button href={CTA.trial.href} variant="dark" className="mt-2 w-full">
+              <TrialButton variant="dark" className="mt-2 w-full">
                 {CTA.trial.label}
-              </Button>
+              </TrialButton>
             </motion.div>
           )}
         </AnimatePresence>
@@ -182,9 +182,9 @@ export function Navbar() {
             transition={t}
             className="fixed inset-x-4 bottom-4 z-50 sm:hidden"
           >
-            <Button href={CTA.trial.href} variant="dark" className="w-full">
+            <TrialButton variant="dark" className="w-full">
               {CTA.trial.label}
-            </Button>
+            </TrialButton>
           </motion.div>
         )}
       </AnimatePresence>

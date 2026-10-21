@@ -9,14 +9,41 @@ export type Audience = "kids" | "adult";
  * tapi pesan pembukanya berbeda supaya admin langsung tahu konteksnya.
  * TODO: ganti nomor di bawah (format 62..., tanpa + atau 0 di depan).
  */
-export const WA_NUMBER = "628000000000";
+export const WA_NUMBER = "6282126292501";
 export const wa = (message: string) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+/** sapaan baku untuk semua pesan WhatsApp (mengikuti website lama) */
+export const HI = "Halo Admin English Now,";
+
+/**
+ * Link formulir registrasi untuk siswa sekolah (SD–SMP–SMA), sama seperti website lama.
+ * TODO: isi dengan URL formulir registrasi yang dipakai sekarang.
+ * Selama masih kosong, tombol "Daftar" untuk Kids/Teens diarahkan ke WhatsApp.
+ */
+export const REGISTER_URL = "";
 
 export const CTA = {
-  trial: { label: "Free Trial Class", href: wa("Halo English Now, saya ingin ikut free trial class.") },
-  consult: { label: "Konsultasi program", href: wa("Halo English Now, saya ingin konsultasi program.") },
+  /** Free trial class membuka pop-up formulir (lihat components/trial-modal.tsx). href = cadangan. */
+  trial: { label: "Free Trial Class", href: wa(`${HI} saya ingin mencoba ikut free trial class.`) },
+  consult: { label: "Konsultasi gratis", href: wa(`${HI} saya ingin konsultasi gratis mengenai program kelas bahasa Inggris.`) },
   /** TODO: ganti dengan URL halaman tes level yang sudah ada */
   levelHref: "/tes-level",
+};
+
+/** konsultasi gratis untuk program tertentu */
+export const consultHref = (program: string) => wa(`${HI} saya ingin konsultasi gratis mengenai program ${program}.`);
+
+/**
+ * Tombol daftar per program:
+ *  - Kids & Teens (siswa sekolah SD–SMP–SMA) → formulir registrasi.
+ *  - Private, Exam (dewasa), Business → WhatsApp.
+ */
+export const registerFor = (id: string, name: string) => {
+  const school = id === "kids" || id === "teens";
+  if (school && REGISTER_URL) return { label: "Daftar sekarang", href: REGISTER_URL };
+  return {
+    label: school ? "Daftar sekarang" : "Daftar via WhatsApp",
+    href: wa(`${HI} saya ingin mendaftar ${name}.`),
+  };
 };
 
 export const NAV_LINKS = [
@@ -348,8 +375,8 @@ export const trialContent: Record<
     steps: ["Tes penempatan", "Trial class", "Mulai belajar"],
     perks: ["Gratis", "Tanpa komitmen", "Guru bersertifikat", "Native speaker"],
     photo: STOCK.kidsTrial,
-    cta: { label: "Daftar free trial class", href: wa("Halo English Now, saya ingin mendaftarkan anak saya untuk free trial class.") },
-    note: "Gratis, tanpa komitmen. Langsung terhubung ke admin kami via WhatsApp.",
+    cta: { label: "Daftar free trial class", href: wa(`${HI} saya ingin mendaftarkan anak saya untuk free trial class.`) },
+    note: "Gratis, tanpa komitmen. Isi data singkat, admin kami akan menghubungi via WhatsApp.",
   },
   adult: {
     title: "Coba dulu, gratis.",
@@ -357,8 +384,8 @@ export const trialContent: Record<
     steps: ["Konsultasi kebutuhan", "Trial class", "Program dimulai"],
     perks: ["Gratis", "Tanpa komitmen", "Sesuai kebutuhan", "Jadwal fleksibel"],
     photo: STOCK.adultTrial,
-    cta: { label: "Jadwalkan free trial class", href: wa("Halo English Now, saya ingin menjadwalkan free trial class untuk kelas dewasa/bisnis.") },
-    note: "Gratis, tanpa komitmen. Langsung terhubung ke tim kami via WhatsApp.",
+    cta: { label: "Daftar free trial class", href: wa(`${HI} saya ingin mencoba ikut free trial class untuk kelas dewasa/bisnis.`) },
+    note: "Gratis, tanpa komitmen. Isi data singkat, tim kami akan menghubungi via WhatsApp.",
   },
 };
 
@@ -527,7 +554,7 @@ export const faqContent: Record<Audience, { title: string; sub: string; items: {
   kids: {
     title: "Pertanyaan yang sering ditanyakan.",
     sub: "Belum menemukan jawabannya? Tanyakan langsung ke admin kami.",
-    ask: wa("Halo English Now, saya punya pertanyaan tentang kelas anak."),
+    ask: wa(`${HI} saya ingin bertanya tentang kelas anak.`),
     items: [
       { q: "Apakah ada free trial class?", a: "Ya, tersedia 1x trial class gratis agar anak dapat merasakan pengalaman belajar sebelum mendaftar." },
       { q: "Mulai usia berapa anak bisa ikut kelas?", a: "Kids Class untuk usia 6–12 tahun (SD kelas 1–6), dan Teens Class untuk usia 12–19 tahun (SMP–SMA)." },
@@ -540,7 +567,7 @@ export const faqContent: Record<Audience, { title: string; sub: string; items: {
   adult: {
     title: "Pertanyaan yang sering ditanyakan.",
     sub: "Belum menemukan jawabannya? Tanyakan langsung ke tim kami.",
-    ask: wa("Halo English Now, saya punya pertanyaan tentang kelas dewasa/bisnis."),
+    ask: wa(`${HI} saya ingin bertanya tentang kelas dewasa/bisnis.`),
     items: [
       { q: "Apakah ada free trial class?", a: "Ya, tersedia 1x trial class gratis agar Anda atau tim dapat merasakan pengalaman belajar sebelum mendaftar." },
       { q: "Apa materi & kurikulum untuk Business Class?", a: "Materi disesuaikan dengan kebutuhan perusahaan, mulai dari business communication, presentation skills, hingga meeting & discussion. Sebelum program dimulai, kami melakukan diskusi kebutuhan untuk menyesuaikan materi, target pembelajaran, dan metode pelatihan." },

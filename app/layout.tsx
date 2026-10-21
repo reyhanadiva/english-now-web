@@ -8,6 +8,7 @@ import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 import "@fontsource/plus-jakarta-sans/800.css";
 import { AudienceProvider } from "@/components/audience-provider";
+import { TrialProvider } from "@/components/trial-modal";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="id" data-audience="kids" className="antialiased" suppressHydrationWarning>
       <body className="min-h-screen" suppressHydrationWarning>
-        <AudienceProvider>{children}</AudienceProvider>
+        <AudienceProvider>
+          <TrialProvider>{children}</TrialProvider>
+        </AudienceProvider>
       </body>
     </html>
   );

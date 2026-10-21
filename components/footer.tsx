@@ -7,6 +7,7 @@ import { CONTACT, CTA, TAGLINE, footerContent } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { FooterBackdrop } from "./footer-backdrop";
+import { useTrial } from "./trial-modal";
 
 /**
  * Footer. Latarnya versi sederhana dari dunia hero (bukit & awan untuk Anak, siluet kota senja
@@ -16,6 +17,7 @@ import { FooterBackdrop } from "./footer-backdrop";
 export function Footer() {
   const { audience } = useAudience();
   const kids = audience === "kids";
+  const { open: openTrial } = useTrial();
   const ref = useRef<HTMLElement>(null);
   const mx = useMotionValue(50);
   const sx = useSpring(mx, { stiffness: 60, damping: 20 });
@@ -45,16 +47,15 @@ export function Footer() {
           </Link>
           <p className="mt-2 font-hand text-lg text-cobalt">{TAGLINE}</p>
           <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-ink/70">{footerContent.blurb}</p>
-          <a
-            href={CTA.trial.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          <button
+            type="button"
+            onClick={openTrial}
+            className={`mt-6 inline-flex cursor-pointer items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
               kids ? "bg-sun text-cobalt-900 shadow-[0_4px_0_0_var(--color-sun-600)] hover:-translate-y-0.5" : "bg-cobalt-900 text-white hover:bg-cobalt-700"
             }`}
           >
             {CTA.trial.label} →
-          </a>
+          </button>
         </div>
 
         {/* tautan & kontak */}
