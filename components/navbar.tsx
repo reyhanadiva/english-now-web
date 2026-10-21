@@ -32,7 +32,7 @@ const pop = {
  *    navy senja untuk Dewasa), hanya logo + menu (toggle & CTA sudah ada di hero).
  *  - Setelah lewat hero: bilah menyusut jadi pil kaca melayang, lalu toggle kecil +
  *    tombol Free Trial Class muncul.
- *    Di HP, CTA muncul sebagai tombol melayang di bawah layar.
+ *    Di HP, tombol bawah ada di dok asisten (guide-chat.tsx).
  */
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -172,22 +172,7 @@ export function Navbar() {
         </AnimatePresence>
       </header>
 
-      {/* HP: CTA melayang di bawah layar setelah lewat hero */}
-      <AnimatePresence>
-        {past && !open && (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 24 }}
-            transition={t}
-            className="fixed inset-x-4 bottom-4 z-50 sm:hidden"
-          >
-            <TrialButton variant="dark" className="w-full">
-              {CTA.trial.label}
-            </TrialButton>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* HP: tombol melayang di bawah ada di components/guide-chat.tsx (dok asisten + Free Trial) */}
     </>
   );
 }

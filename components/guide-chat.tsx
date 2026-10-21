@@ -108,6 +108,7 @@ export function GuideChat() {
   const [result, setResult] = useState<ResultId | null>(null);
   const [typing, setTyping] = useState(false);
   const [nudge, setNudge] = useState(false);
+  const [nearEnd, setNearEnd] = useState(false);
   const keyRef = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
@@ -126,6 +127,18 @@ export function GuideChat() {
   }, [past, open]);
 
   useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
+
+  // HP: dok bawah disembunyikan saat tiket trial class / footer terlihat (tombolnya sudah ada di sana)
+  useEffect(() => {
+    const els = [document.getElementById("coba-gratis"), document.querySelector("footer")].filter(Boolean) as Element[];
+    const seen = new Set<Element>();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));
+      setNearEnd(seen.size > 0);
+    });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: reduce ? "auto" : "smooth" });
@@ -163,6 +176,21 @@ export function GuideChat() {
     setOpen(!open);
   };
 
+  // bisa dibuka dari mana saja: window.dispatchEvent(new Event("en:chat-open"))
+  const openRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    openRef.current = () => {
+      setNudge(false);
+      if (msgs.length === 0) start();
+      setOpen(true);
+    };
+  });
+  useEffect(() => {
+    const on = () => openRef.current();
+    window.addEventListener("en:chat-open", on);
+    return () => window.removeEventListener("en:chat-open", on);
+  }, []);
+
   const choose = (o: Option) => {
     setStep(null);
     setMsgs((m) => [...m, { from: "me", text: o.label, key: keyRef.current++ }]);
@@ -196,7 +224,8 @@ export function GuideChat() {
   const accent = kids ? "bg-cobalt text-white" : "bg-cobalt-900 text-white";
 
   return (
-    <div className={`fixed right-4 z-[60] flex flex-col items-end gap-3 sm:right-6 sm:bottom-6 ${past ? "bottom-20" : "bottom-4"}`}>
+    <>
+    <div className="pointer-events-none fixed right-3 bottom-[5.25rem] left-3 z-[60] flex flex-col items-end gap-3 sm:right-6 sm:bottom-6 sm:left-auto">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -207,7 +236,7 @@ export function GuideChat() {
             exit={{ opacity: 0, y: 12, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             style={{ originX: 1, originY: 1 }}
-            className={`flex h-[min(34rem,calc(100svh-9rem))] w-[min(23rem,calc(100vw-2rem))] flex-col overflow-hidden ${
+            className={`pointer-events-auto flex h-[min(34rem,calc(100svh-8rem))] w-full flex-col overflow-hidden sm:w-[23rem] ${
               kids
                 ? "rounded-[1.75rem] border-2 border-mist bg-[#F2F9EA] shadow-[0_8px_0_0_var(--color-mist),0_30px_60px_-20px_rgba(30,47,120,0.45)]"
                 : "rounded-3xl bg-[#FBF6EE] shadow-[0_30px_80px_-20px_rgba(20,22,42,0.5)] ring-1 ring-ink/10"
@@ -337,7 +366,8 @@ export function GuideChat() {
         )}
       </AnimatePresence>
 
-      <div className="relative flex items-center gap-2">
+      {/* desktop: ikon di pojok kanan bawah */}
+      <div className="pointer-events-auto relative hidden items-center gap-2 sm:flex">
         <AnimatePresence>
           {nudge && !open && (
             <motion.button
@@ -373,6 +403,66 @@ export function GuideChat() {
         </motion.button>
       </div>
     </div>
+
+    {/* HP: dok bawah = asisten + Free Trial Class dalam satu baris.
+        Muncul setelah hero, hilang saat tiket trial class / footer terlihat. */}
+    <AnimatePresence>
+      {((past && !nearEnd) || open) && (
+        <motion.div
+          initial={reduce ? false : { y: 90, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 90, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 30 }}
+          className={`fixed inset-x-3 bottom-3 z-[60] flex items-center gap-2 rounded-full p-1.5 sm:hidden ${
+            kids ? "bg-white/90 shadow-[0_6px_0_0_var(--color-mist),0_14px_40px_-12px_rgba(30,47,120,0.45)] ring-2 ring-mist backdrop-blur-xl" : "bg-white/85 shadow-[0_14px_40px_-12px_rgba(20,22,42,0.45)] ring-1 ring-ink/10 backdrop-blur-xl"
+          }`}
+        >
+          <div className="relative">
+            <AnimatePresence>
+              {nudge && !open && (
+                <motion.span
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="pointer-events-none absolute bottom-full left-0 mb-3 rounded-2xl rounded-bl-md bg-cobalt-900 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-white shadow-lg"
+                >
+                  Bingung pilih kelas?
+                </motion.span>
+              )}
+            </AnimatePresence>
+            <button
+              type="button"
+              onClick={toggle}
+              aria-expanded={open}
+              aria-label={open ? "Tutup asisten" : "Buka asisten pilih kelas"}
+              className={`grid size-12 place-items-center rounded-full ${kids ? "bg-cobalt" : "bg-cobalt-900"}`}
+            >
+              {open ? (
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-white" aria-hidden>
+                  <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <Avatar kids={kids} plain />
+              )}
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              openTrial();
+            }}
+            className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-full text-[15px] font-semibold ${
+              kids ? "bg-sun font-display tracking-wide text-cobalt-900" : "bg-cobalt-900 text-white"
+            }`}
+          >
+            {CTA.trial.label}
+            <span aria-hidden>→</span>
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 

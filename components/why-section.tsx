@@ -7,7 +7,7 @@ import { ADULT_PHOTOS, CERTS, whyAdult, whyKids, type Reason } from "@/lib/conte
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { Butterfly, KiteFlight, Stars } from "./ornaments";
-import { ChatBubbles } from "./chat-bubbles";
+import { ChatWindow } from "./chat-bubbles";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -378,29 +378,3 @@ function AdultPanel({ id, reduce, large = false }: { id: Reason["id"]; reduce: b
 
 /* ---------- jendela obrolan ---------- */
 
-function ChatWindow({ kids, title, lines }: { kids: boolean; title: string; lines: [string, string, string] }) {
-  return (
-    <div
-      className={`overflow-hidden ${
-        kids
-          ? "rounded-3xl border-2 border-mist bg-white shadow-[0_5px_0_0_var(--color-mist)]"
-          : "rounded-2xl bg-white shadow-[0_18px_40px_-24px_rgba(54,54,54,0.35)] ring-1 ring-ink/10"
-      }`}
-    >
-      <div className={`flex items-center gap-2 border-b px-4 py-2.5 ${kids ? "border-mist" : "border-ink/10"}`}>
-        <span className="flex gap-1" aria-hidden>
-          <span className="size-2 rounded-full bg-[#F28B82]" />
-          <span className="size-2 rounded-full bg-sun-600" />
-          <span className="size-2 rounded-full bg-[#7FD18B]" />
-        </span>
-        <span className="ml-1 text-xs font-semibold text-ink/55">{title}</span>
-        <span className="ml-auto flex items-center gap-1 text-[11px] text-ink/45">
-          <span className="size-1.5 animate-pulse rounded-full bg-[#4CC26B]" /> live
-        </span>
-      </div>
-      <div className={`px-4 py-4 ${kids ? "bg-sky/10" : "bg-[#F6F1E8]"}`}>
-        <ChatBubbles lines={lines} theme={kids ? "kids" : "adult"} className="min-h-[8.5rem]" />
-      </div>
-    </div>
-  );
-}

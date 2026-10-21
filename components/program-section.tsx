@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CTA, HI, PROGRAMS, consultHref, programContent, registerFor, wa, type Program } from "@/lib/content";
@@ -62,30 +62,114 @@ export function ProgramSection() {
           </div>
 
           {kids ? (
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <Rail count={list.length} kids reduce={reduce} className="md:grid-cols-3 md:gap-6">
               {list.map((p, i) => (
-                <Spotlight key={p.id} id={p.id} on={hi === p.id} kids>
+                <Spotlight key={p.id} id={p.id} on={hi === p.id} kids className={SLIDE}>
                   <KidsCard p={p} i={i} reduce={reduce} />
                 </Spotlight>
               ))}
-            </div>
+            </Rail>
           ) : (
-            <div className="mt-12 grid gap-5 md:grid-cols-2">
-              <Spotlight id={list[0].id} on={hi === list[0].id} className="md:col-span-2">
+            <Rail count={list.length} reduce={reduce} className="md:grid-cols-2 md:gap-5">
+              <Spotlight id={list[0].id} on={hi === list[0].id} className={`${SLIDE} md:col-span-2`}>
                 <AdultFeatured p={list[0]} reduce={reduce} />
               </Spotlight>
               {list.slice(1).map((p, i) => (
-                <Spotlight key={p.id} id={p.id} on={hi === p.id}>
+                <Spotlight key={p.id} id={p.id} on={hi === p.id} className={SLIDE}>
                   <AdultCard p={p} i={i} reduce={reduce} />
                 </Spotlight>
               ))}
-            </div>
+            </Rail>
           )}
 
           {c.extra && <p className="mt-8 text-center text-sm text-ink/60">{c.extra}</p>}
         </motion.div>
       </AnimatePresence>
     </section>
+  );
+}
+
+/** lebar tiap kartu di HP (kartu berikutnya mengintip di kanan, tanda bisa digeser) */
+const SLIDE = "w-[84%] shrink-0 snap-center md:w-auto";
+
+/**
+ * HP: kartu harga berjajar mendatar dan bisa digeser (scroll-snap), dengan
+ * label "Geser untuk lihat N pilihan", titik penanda posisi, dan sekali "intip" otomatis
+ * saat pertama terlihat supaya jelas bisa digeser. Desktop: grid biasa.
+ */
+function Rail({ count, kids = false, reduce, className = "", children }: { count: number; kids?: boolean; reduce: boolean; className?: string; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [idx, setIdx] = useState(0);
+  const peeked = useRef(false);
+
+  const onScroll = () => {
+    const el = ref.current;
+    if (!el) return;
+    const kids = Array.from(el.children) as HTMLElement[];
+    const mid = el.scrollLeft + el.clientWidth / 2;
+    let best = 0;
+    kids.forEach((k, i) => {
+      if (Math.abs(k.offsetLeft + k.offsetWidth / 2 - mid) < Math.abs(kids[best].offsetLeft + kids[best].offsetWidth / 2 - mid)) best = i;
+    });
+    setIdx(best);
+  };
+
+  // intip sekali: geser sedikit lalu kembali, hanya di HP
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduce) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting || peeked.current || el.scrollWidth <= el.clientWidth + 4) return;
+        peeked.current = true;
+        el.scrollTo({ left: 70, behavior: "smooth" });
+        window.setTimeout(() => el.scrollTo({ left: 0, behavior: "smooth" }), 650);
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduce]);
+
+  const go = (i: number) => {
+    const el = ref.current;
+    const k = el?.children[i] as HTMLElement | undefined;
+    if (el && k) el.scrollTo({ left: k.offsetLeft - (el.clientWidth - k.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  return (
+    <div className="mt-10 md:mt-12">
+      <p className={`mb-1 flex items-center gap-2 text-sm font-semibold md:hidden ${kids ? "text-cobalt" : "text-cobalt-900/70"}`}>
+        Geser untuk lihat {count} pilihan
+        <motion.span aria-hidden animate={reduce ? undefined : { x: [0, 5, 0] }} transition={{ duration: 1.2, repeat: Infinity }}>
+          →
+        </motion.span>
+      </p>
+      <div
+        ref={ref}
+        onScroll={onScroll}
+        className={`-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 py-4 [scrollbar-width:none] md:mx-0 md:grid md:snap-none md:overflow-visible md:px-0 md:py-0 [&::-webkit-scrollbar]:hidden ${className}`}
+      >
+        {children}
+      </div>
+      {/* titik posisi + nomor */}
+      <div className="mt-2 flex items-center justify-center gap-2 md:hidden" role="tablist" aria-label="Pilihan program">
+        {Array.from({ length: count }, (_, i) => (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-selected={i === idx}
+            aria-label={`Pilihan ${i + 1}`}
+            onClick={() => go(i)}
+            className={`h-2.5 rounded-full transition-all ${i === idx ? `w-7 ${kids ? "bg-cobalt" : "bg-cobalt-900"}` : "w-2.5 bg-ink/20"}`}
+          />
+        ))}
+        <span className="ml-2 text-xs font-semibold text-ink/50">
+          {idx + 1}/{count}
+        </span>
+      </div>
+    </div>
   );
 }
 

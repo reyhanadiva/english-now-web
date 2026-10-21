@@ -112,36 +112,42 @@ export const LEVELS = [
     name: "Pemula",
     kids: "Memakai ungkapan sehari-hari yang sangat dasar dan memperkenalkan diri.",
     adult: "Memahami dan memakai ungkapan sehari-hari yang sangat dasar, memperkenalkan diri, dan menjawab pertanyaan pribadi sederhana, asalkan lawan bicara berbicara pelan dan jelas.",
+    chat: ["Hello! What's your job?", "I'm Rina. I work in a bank.", "Nice to meet you, Rina."] as [string, string, string],
   },
   {
     code: "A2",
     name: "Dasar",
     kids: "Bertukar informasi sederhana tentang diri sendiri, keluarga, dan sekitar.",
     adult: "Bertukar informasi sederhana dalam situasi rutin, misalnya soal pekerjaan, belanja, atau lingkungan sekitar, dan menceritakan latar belakang diri secara sederhana.",
+    chat: ["Where do you work?", "In the finance team. I check reports every week.", "Do you enjoy it?"] as [string, string, string],
   },
   {
     code: "B1",
     name: "Menengah",
     kids: "Memahami poin utama topik yang familiar dan menceritakan pengalaman.",
     adult: "Memahami poin utama topik yang familiar di pekerjaan atau waktu luang, menghadapi sebagian besar situasi saat bepergian, dan memberi alasan singkat untuk pendapat dan rencana.",
+    chat: ["How was your business trip?", "It went well. The meetings were busy, but I learned a lot.", "What was the main result?"] as [string, string, string],
   },
   {
     code: "B2",
     name: "Menengah atas",
     kids: "Berdiskusi cukup lancar dan menjelaskan sudut pandang.",
     adult: "Memahami ide utama teks yang kompleks, termasuk diskusi teknis di bidang sendiri, dan berinteraksi dengan penutur asli cukup lancar tanpa menyulitkan kedua pihak.",
+    chat: ["The client wants a lower price.", "We could offer a discount if they sign a two-year contract.", "Good idea. Let's propose that."] as [string, string, string],
   },
   {
     code: "C1",
     name: "Mahir",
     kids: "Memakai bahasa secara luwes untuk keperluan sosial dan akademik.",
     adult: "Memahami teks panjang yang menuntut beserta makna tersiratnya, dan memakai bahasa secara luwes dan efektif untuk keperluan sosial, akademik, dan profesional.",
+    chat: ["What's your view on the new strategy?", "It's promising, though I'd question whether the timeline is realistic.", "Fair. What would you adjust?"] as [string, string, string],
   },
   {
     code: "C2",
     name: "Sangat mahir",
     kids: "Memahami hampir semua yang didengar atau dibaca dengan mudah.",
     adult: "Memahami hampir semua yang didengar atau dibaca dengan mudah, dan mengekspresikan diri secara spontan, sangat lancar, dan tepat, bahkan dalam situasi yang kompleks.",
+    chat: ["How would you sum up the debate?", "Both sides share the goal; the real tension lies in how fast to get there.", "Beautifully put."] as [string, string, string],
   },
 ];
 
@@ -151,12 +157,12 @@ export const LEVELS = [
  * (Starters/Movers/Flyers, A2 Key, B1 Preliminary, B2 First).
  */
 export const KIDS_LEVELS = [
-  { code: "Pre A1", name: "Starters", body: "Mengenal bahasa Inggris lisan dan tulisan sehari-hari, misalnya mengeja nama dan menyebutkan usia." },
-  { code: "A1", name: "Movers", body: "Mulai bercakap sederhana, misalnya menjawab pertanyaan tentang kegiatan sehari-hari." },
-  { code: "A2", name: "Flyers", body: "Menyusun dan merangkai kalimat, misalnya bercerita tentang pengalaman yang sudah lewat." },
-  { code: "A2", name: "Key", body: "Berkomunikasi dalam situasi sederhana: memahami tulisan sederhana, memperkenalkan diri, dan menjawab pertanyaan dasar." },
-  { code: "B1", name: "Preliminary", body: "Bahasa Inggris praktis sehari-hari: memahami bacaan sederhana dan menulis email tentang topik rutin." },
-  { code: "B2", name: "First", body: "Mengikuti percakapan berbagai topik, menyampaikan pendapat beserta alasannya, dan membaca media dengan pemahaman yang baik." },
+  { code: "Pre A1", name: "Starters", body: "Mengenal bahasa Inggris lisan dan tulisan sehari-hari, misalnya mengeja nama dan menyebutkan usia.", chat: ["What's your name?", "My name is Dina. I'm seven!", "Great! What colour is your bag?"] as [string, string, string] },
+  { code: "A1", name: "Movers", body: "Mulai bercakap sederhana, misalnya menjawab pertanyaan tentang kegiatan sehari-hari.", chat: ["What do you do after school?", "I play football with my brother.", "That sounds fun!"] as [string, string, string] },
+  { code: "A2", name: "Flyers", body: "Menyusun dan merangkai kalimat, misalnya bercerita tentang pengalaman yang sudah lewat.", chat: ["What did you do last weekend?", "I visited my grandma and we baked a cake.", "Yum! Was it a chocolate cake?"] as [string, string, string] },
+  { code: "A2", name: "Key", body: "Berkomunikasi dalam situasi sederhana: memahami tulisan sederhana, memperkenalkan diri, dan menjawab pertanyaan dasar.", chat: ["Tell me about your best friend.", "Her name is Sari. She's funny and we sit together.", "How did you two meet?"] as [string, string, string] },
+  { code: "B1", name: "Preliminary", body: "Bahasa Inggris praktis sehari-hari: memahami bacaan sederhana dan menulis email tentang topik rutin.", chat: ["Do you prefer books or films?", "Films, because the stories feel more real to me.", "Interesting! Can you give an example?"] as [string, string, string] },
+  { code: "B2", name: "First", body: "Mengikuti percakapan berbagai topik, menyampaikan pendapat beserta alasannya, dan membaca media dengan pemahaman yang baik.", chat: ["Should students wear uniforms?", "I think so, although it limits how we express ourselves.", "That's a fair point."] as [string, string, string] },
 ];
 
 /** sumber deskripsi level, ditampilkan kecil di bawah simulasi level */

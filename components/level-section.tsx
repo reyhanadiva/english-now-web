@@ -7,6 +7,7 @@ import { useAudience } from "./audience-provider";
 import { Button } from "./ui/button";
 import { SECTION_BG } from "@/lib/theme";
 import { Butterfly } from "./ornaments";
+import { ChatWindow } from "./chat-bubbles";
 
 /**
  * Section 3: simulasi level.
@@ -126,24 +127,28 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-4 rounded-3xl bg-cobalt-900/40 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={lv.name}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: reduce ? 0 : 0.2 }}
-          >
-            <p className="font-display text-lg text-sun">
-              {lv.name} <span className="text-white/60">· {lv.code}</span>
-            </p>
-            <p className="mt-0.5 text-[15px] text-white/90">{lv.body}</p>
-          </motion.div>
-        </AnimatePresence>
-        <Button href={CTA.level.kids} variant="sun" size="sm" className="shrink-0 self-start sm:self-auto">
-          {cta}
-        </Button>
+      <div className="mt-4 grid gap-4 rounded-3xl bg-cobalt-900/40 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-6">
+        <div className="flex flex-col items-start gap-4">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={lv.name}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: reduce ? 0 : 0.2 }}
+            >
+              <p className="font-display text-lg text-sun">
+                {lv.name} <span className="text-white/60">· {lv.code}</span>
+              </p>
+              <p className="mt-0.5 max-w-md text-[15px] text-white/90">{lv.body}</p>
+            </motion.div>
+          </AnimatePresence>
+          <Button href={CTA.level.kids} variant="sun" size="sm">
+            {cta}
+          </Button>
+        </div>
+        {/* contoh percakapan sesuai level yang dipilih */}
+        <ChatWindow kids title={`Contoh percakapan level ${lv.name}`} lines={lv.chat} />
       </div>
     </div>
   );
@@ -215,24 +220,27 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
         </p>
       )}
 
-      <div className="mt-6 flex flex-col gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={lv.code}
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
-            transition={{ duration: reduce ? 0 : 0.2 }}
-          >
-            <p className="text-sm font-semibold text-cobalt-900">
-              {lv.code} · {lv.name}
-            </p>
-            <p className="mt-1 text-[15px] text-ink/70">{lv.adult}</p>
-          </motion.div>
-        </AnimatePresence>
-        <Button href={CTA.level.adult} variant="dark" size="sm" className="shrink-0 self-start sm:self-auto">
-          {cta}
-        </Button>
+      <div className="mt-6 grid gap-5 border-t border-ink/10 pt-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-8">
+        <div className="flex flex-col items-start gap-4">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={lv.code}
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: reduce ? 0 : 0.2 }}
+            >
+              <p className="text-sm font-semibold text-cobalt-900">
+                {lv.code} · {lv.name}
+              </p>
+              <p className="mt-1 max-w-lg text-[15px] text-ink/70">{lv.adult}</p>
+            </motion.div>
+          </AnimatePresence>
+          <Button href={CTA.level.adult} variant="dark" size="sm">
+            {cta}
+          </Button>
+        </div>
+        <ChatWindow kids={false} title={`Contoh percakapan level ${lv.code}`} lines={lv.chat} />
       </div>
     </div>
   );
