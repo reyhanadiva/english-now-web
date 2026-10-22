@@ -12,6 +12,9 @@ import { SafeImage as Image } from "./ui/safe-image";
  * Lintasannya elips selebar kartu, jadi sebagian logo terpotong tepi kartu (kesan terus berlanjut).
  */
 const TONES = ["#405FDA", "#07A9F8", "#F4B48F", "#7FD6A8", "#B9AAF2", "#F4C77B"];
+/** jarak relatif tiap logo dari pusat (1 = tepi elips) dan sedikit geseran sudut, supaya tidak simetris */
+const RADII = [1.08, 0.7, 0.95, 1.18, 0.78, 1.0, 0.66, 1.12, 0.86, 1.04, 0.74, 0.92];
+const JITTER = [0, 0.1, -0.06, 0.05, -0.1, 0.07, -0.03, 0.1, -0.08, 0.03, 0.08, -0.06];
 
 export function LogoOrbit() {
   const reduce = useReducedMotion() ?? false;
@@ -39,21 +42,32 @@ export function LogoOrbit() {
     return () => ro.disconnect();
   }, []);
 
+  // tiap logo punya jarak, kecepatan & "napas" sendiri, jadi orbitnya tidak bulat sempurna:
+  // logo bergerak menjauh lalu mendekat, yang di dalam lebih kecil & samar (kesan kedalaman)
+  const t = useRef(0);
   const place = () => {
     const { w, h } = size.current;
     const narrow = w < 640;
-    const rx = w * (narrow ? 0.62 : 0.44);
-    const ry = h * (narrow ? 0.44 : 0.5);
+    const rx = w * (narrow ? 0.62 : 0.46);
+    const ry = h * (narrow ? 0.46 : 0.54);
     for (let i = 0; i < n; i++) {
       const el = tiles.current[i];
       if (!el) continue;
-      const a = angle.current + (i / n) * Math.PI * 2;
-      const x = w / 2 + Math.cos(a) * rx;
-      const y = h / 2 + Math.sin(a) * ry;
+      const base = RADII[i % RADII.length];
+      // di HP rentang jaraknya dipersempit supaya logo tidak menutupi teks di tengah
+      const b2 = narrow ? 0.88 + (base - 0.66) * 0.5 : base;
+      const r = b2 * (1 + 0.12 * Math.sin(t.current * 0.35 + i * 1.7));
+      const a = angle.current + (i / n) * Math.PI * 2 + JITTER[i % JITTER.length];
+      const x = w / 2 + Math.cos(a) * rx * r;
+      const y = h / 2 + Math.sin(a) * ry * r;
+      const depth = Math.min(1, Math.max(0, (r - 0.55) / 0.6)); // 0 = dekat pusat, 1 = jauh
       const tilt = (a * 180) / Math.PI + 90 + ((i * 37) % 30) - 15;
       const on = hoverRef.current === i;
-      el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(${on ? 0 : tilt}deg) scale(${on ? 1.22 : 1})`;
-      el.style.zIndex = on ? "20" : "1";
+      const sc = on ? 1.25 : 0.68 + depth * 0.45;
+      el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(${on ? 0 : tilt}deg) scale(${sc})`;
+      el.style.zIndex = on ? "20" : String(1 + Math.round(depth * 5));
+      const inner = el.firstElementChild as HTMLElement | null;
+      if (inner) inner.style.opacity = on ? "1" : String(0.45 + depth * 0.55);
     }
   };
 
@@ -61,18 +75,23 @@ export function LogoOrbit() {
     if (!inView) return;
     const target = hoverRef.current === null ? 1 : 0.12;
     speed.current += (target - speed.current) * Math.min(1, dt / 220);
-    if (!reduce) angle.current += (dt / 1000) * 0.09 * speed.current;
+    if (!reduce) {
+      angle.current += (dt / 1000) * 0.07 * speed.current;
+      t.current += (dt / 1000) * speed.current;
+    }
     place();
   });
 
   return (
     <div
       ref={box}
-      className="relative mx-auto h-[30rem] max-w-6xl overflow-hidden rounded-[2rem] bg-[#14162A] sm:h-[38rem]"
+      className="relative mx-auto h-[30rem] max-w-6xl overflow-hidden rounded-[2rem] sm:h-[38rem]"
+      style={{ background: "radial-gradient(120% 95% at 50% 42%, #2B3178 0%, #1C2257 42%, #14162A 100%)" }}
       onPointerLeave={() => setHover(null)}
     >
-      {/* cahaya hangat di tengah */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_45%_at_50%_50%,rgba(244,199,123,0.16),transparent_70%)]" />
+      {/* warna palet: biru cobalt/sky di tepi, cahaya senja hangat di tengah (selaras hero Dewasa) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_55%_at_8%_100%,rgba(7,169,248,0.22),transparent_70%),radial-gradient(40%_50%_at_95%_0%,rgba(64,95,218,0.35),transparent_70%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(38%_42%_at_50%_50%,rgba(244,180,143,0.22),transparent_70%)]" />
 
       {LOGOS.map((l, i) => {
         const on = hover === i;
