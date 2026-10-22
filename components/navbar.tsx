@@ -51,11 +51,17 @@ export function Navbar() {
   const lastY = useRef(0);
   useEffect(() => {
     lastY.current = window.scrollY;
+    let glassSince = 0; // kapan navbar berubah jadi kaca
     const on = () => {
       const y = window.scrollY;
+      const edge = window.innerHeight * 0.8;
+      if (y <= edge) glassSince = 0;
+      else if (!glassSince) glassSince = performance.now();
       const dy = y - lastY.current;
       if (Math.abs(dy) < 6) return;
-      setHidden(dy > 0 && y > window.innerHeight * 0.8);
+      // setelah lewat hero, navbar tampil dulu sebagai kaca (±1 detik & ±400px) baru boleh sembunyi
+      const settled = glassSince > 0 && performance.now() - glassSince > 1000 && y > edge + 400;
+      setHidden(dy > 0 && settled);
       lastY.current = y;
     };
     window.addEventListener("scroll", on, { passive: true });
