@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { LOGOS, testimonialContent, type Testimonial } from "@/lib/content";
+import { testimonialContent, type Testimonial } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
+import { LogoOrbit } from "./logo-orbit";
 import { Petals, Stars as Twinkles } from "./ornaments";
 import { SafeImage as Image } from "./ui/safe-image";
 
@@ -36,7 +37,11 @@ export function TestimonialSection() {
           transition={{ duration: reduce ? 0 : 0.3 }}
           className="pt-6 pb-24 sm:pt-8 sm:pb-32"
         >
-          {!kids && <LogoWall />}
+          {!kids && (
+            <div className="mb-20 px-5 sm:mb-24">
+              <LogoOrbit />
+            </div>
+          )}
 
           <div className={`relative mx-auto max-w-6xl px-5 ${kids ? "text-center" : ""}`}>
             {!kids && <Twinkles reduce={reduce} count={9} className="absolute -top-6 right-0 h-32 w-1/3" />}
@@ -249,30 +254,5 @@ function SampleBadge({ t }: { t: Testimonial }) {
     <span className="absolute top-3 right-3 z-10 rounded-full bg-[#E8433F] px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
       Contoh
     </span>
-  );
-}
-
-/* ---------- dinding logo (Dewasa) ---------- */
-
-function LogoWall() {
-  return (
-    <div className="mx-auto mb-20 grid max-w-6xl items-center gap-8 px-5 sm:mb-24 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
-      <div>
-        <p className="text-6xl font-semibold tracking-tight text-cobalt-900 sm:text-7xl">
-          {/* TODO: sesuaikan dengan jumlah institusi sebenarnya */}
-          11<span className="text-cobalt">+</span>
-        </p>
-        <p className="mt-2 max-w-xs text-base text-ink/70">perusahaan, instansi pemerintahan, kampus, sekolah, dan komunitas telah mempercayakan pelatihan bahasa Inggrisnya kepada kami.</p>
-      </div>
-      <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-ink/10 ring-1 ring-ink/10 sm:grid-cols-3">
-        {LOGOS.map((l) => (
-          <li key={l.src} className="group relative grid h-28 place-items-center bg-white sm:h-32" title={l.name}>
-            <div className="relative h-16 w-32 grayscale transition duration-300 group-hover:scale-105 group-hover:grayscale-0">
-              <Image src={l.src} alt={l.name} fill sizes="128px" className="object-contain" />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

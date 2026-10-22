@@ -287,7 +287,7 @@ export interface Teacher {
   name: string;
   /** sertifikasi mengajar */
   certs: ("CELTA" | "DELTA" | "TKT")[];
-  /** hasil tes kemampuan bahasa Inggris, mis. "IELTS 8.0" atau "Cambridge C2" */
+  /** hasil tes kemampuan bahasa Inggris, mis. "IELTS 7.5" atau "Cambridge C1" */
   score?: string;
   /** isi untuk native speaker, mis. "UK" */
   native?: string;
@@ -302,19 +302,19 @@ const u = (id: string) => `https://images.unsplash.com/${id}?w=600&h=800&fit=cro
  * lalu isi photo: "/teachers/nama.jpg".
  */
 export const TEACHERS: Teacher[] = [
-  { name: "Miss Anisa", certs: ["CELTA"], score: "IELTS 8.0", photo: u("photo-1494790108377-be9c29b29330") },
+  { name: "Miss Anisa", certs: ["CELTA"], score: "IELTS 7.5", photo: u("photo-1494790108377-be9c29b29330") },
   { name: "Mr. Daniel", certs: ["CELTA", "DELTA"], native: "UK", photo: u("photo-1507003211169-0a1dd7228f2d") },
-  { name: "Miss Clara", certs: ["TKT"], score: "Cambridge C2", photo: u("photo-1438761681033-6461ffad8d80") },
+  { name: "Miss Clara", certs: ["TKT"], score: "Cambridge C1", photo: u("photo-1438761681033-6461ffad8d80") },
   { name: "Mr. Bayu", certs: ["CELTA"], score: "IELTS 7.5", photo: u("photo-1500648767791-00dcc994a43e") },
   { name: "Miss Gita", certs: ["TKT"], score: "Cambridge C1", photo: u("photo-1544005313-94ddf0286df2") },
-  { name: "Mr. Hendra", certs: ["CELTA", "TKT"], score: "IELTS 8.5", photo: u("photo-1472099645785-5658abf4ff4e") },
-  { name: "Miss Intan", certs: ["CELTA"], score: "Cambridge C2", photo: u("photo-1534528741775-53994a69daeb") },
+  { name: "Mr. Hendra", certs: ["CELTA", "TKT"], score: "IELTS 7.5", photo: u("photo-1472099645785-5658abf4ff4e") },
+  { name: "Miss Intan", certs: ["CELTA"], score: "Cambridge C1", photo: u("photo-1534528741775-53994a69daeb") },
   { name: "Mr. James", certs: ["CELTA"], native: "Australia", photo: u("photo-1506794778202-cad84cf45f1d") },
   { name: "Miss Kirana", certs: ["TKT"], score: "IELTS 7.5", photo: u("photo-1580489944761-15a19d654956") },
-  { name: "Mr. Lukas", certs: ["DELTA"], score: "Cambridge C2", photo: u("photo-1599566150163-29194dcaad36") },
-  { name: "Miss Maya", certs: ["CELTA"], score: "IELTS 8.0", photo: u("photo-1573496359142-b8d87734a5a2") },
+  { name: "Mr. Lukas", certs: ["DELTA"], score: "Cambridge C1", photo: u("photo-1599566150163-29194dcaad36") },
+  { name: "Miss Maya", certs: ["CELTA"], score: "IELTS 7.5", photo: u("photo-1573496359142-b8d87734a5a2") },
   { name: "Mr. Nanda", certs: ["TKT"], score: "Cambridge C1", photo: u("photo-1519085360753-af0119f7cbe7") },
-  { name: "Miss Olivia", certs: ["CELTA", "TKT"], score: "IELTS 8.0", photo: u("photo-1531123897727-8f129e1688ce") },
+  { name: "Miss Olivia", certs: ["CELTA", "TKT"], score: "IELTS 7.5", photo: u("photo-1531123897727-8f129e1688ce") },
   { name: "Mr. Raka", certs: ["CELTA"], score: "IELTS 7.5", photo: u("photo-1527980965255-d3b416303d12") },
   { name: "Miss Sekar", certs: ["TKT"], score: "Cambridge C1", photo: u("photo-1544725176-7c40e5a71c5e") },
 ];
@@ -574,7 +574,14 @@ export const LOGOS = [
   { src: "/logos/logo-4.png", name: "Telkom University" },
   { src: "/logos/logo-5.png", name: "KAI" },
   { src: "/logos/logo-6.png", name: "SD Alfa Centauri" },
-];
+  // TODO: 6 logo contoh di bawah ini diganti logo institusi asli (file PNG/SVG di /public/logos)
+  { src: "", name: "Contoh Perusahaan A", dummy: true },
+  { src: "", name: "Contoh Instansi B", dummy: true },
+  { src: "", name: "Contoh Kampus C", dummy: true },
+  { src: "", name: "Contoh Sekolah D", dummy: true },
+  { src: "", name: "Contoh Komunitas E", dummy: true },
+  { src: "", name: "Contoh Perusahaan F", dummy: true },
+] as { src: string; name: string; dummy?: boolean }[];
 
 /* ------------------------------------------------------------------ */
 /* Section Galeri                                                      */

@@ -29,7 +29,7 @@ export function WhySection() {
           key={r.id}
           onViewportEnter={() => setActive(i)}
           viewport={{ margin: "-45% 0px -45% 0px" }}
-          className={`border-t py-9 first:border-t-0 transition-opacity duration-500 relative lg:flex lg:min-h-[38vh] lg:flex-col lg:justify-center lg:py-10 ${
+          className={`border-t py-9 first:border-t-0 transition-opacity duration-500 relative lg:flex lg:h-[42vh] lg:min-h-[17rem] lg:flex-col lg:justify-center lg:py-10 ${
             kids ? "border-cobalt-900/10" : "border-ink/10"
           } ${active === i ? "" : "lg:opacity-35"}`}
         >

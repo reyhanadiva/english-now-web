@@ -294,13 +294,14 @@ function AdultFeatured({ p, reduce }: { p: Program; reduce: boolean }) {
         </div>
         <p className="mt-1 text-sm text-white/60">{p.unit}</p>
         <ul className="mt-6 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
-          <li className="flex gap-2.5 text-[15px] font-medium text-sun">
+          <li className="flex gap-2.5 text-[15px] font-semibold text-sun sm:col-span-2">
             <Check className="text-sun [&_path]:stroke-cobalt-900" />
             {programContent.free.adult}
+            <span className="rounded-full bg-sun/15 px-2 py-0.5 text-[11px] font-semibold text-sun">Gratis</span>
           </li>
           {p.points.map((pt) => (
-            <li key={pt} className="flex gap-2.5 text-[15px] text-white/85">
-              <Check className="text-white/25" />
+            <li key={pt} className="flex gap-2.5 text-[15px] text-white/90">
+              <Check className="text-sky [&_path]:stroke-white" />
               {pt}
             </li>
           ))}
@@ -334,13 +335,14 @@ function AdultCard({ p, i, reduce }: { p: Program; i: number; reduce: boolean })
         </div>
         <p className="mt-1 text-sm text-ink/55">{p.unit}</p>
         <ul className="mt-5 space-y-2.5">
-          <li className="flex gap-2.5 text-[15px] font-medium text-cobalt-900">
-            <Check className="text-cobalt" />
+          <li className="-mx-3 flex items-center gap-2.5 rounded-xl bg-sun/40 px-3 py-2 text-[15px] font-semibold text-cobalt-900">
+            <Check className="text-cobalt-900" />
             {programContent.free.adult}
+            <span className="ml-auto rounded-full bg-cobalt-900 px-2 py-0.5 text-[11px] font-semibold text-sun">Gratis</span>
           </li>
           {p.points.map((pt) => (
-            <li key={pt} className="flex gap-2.5 text-[15px] text-ink/75">
-              <Check className="text-ink/20" />
+            <li key={pt} className="flex gap-2.5 text-[15px] text-ink/80">
+              <Check className="text-cobalt" />
               {pt}
             </li>
           ))}

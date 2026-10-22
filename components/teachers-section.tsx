@@ -200,8 +200,8 @@ function FloatingChips() {
   const reduce = useReducedMotion() ?? false;
   const chips = [
     { t: "CELTA", c: "bg-cobalt text-white", pos: "left-[8%] top-2" },
-    { t: "Cambridge C2", c: "bg-white text-cobalt-900 ring-1 ring-ink/10", pos: "left-[38%] -top-3 hidden sm:block" },
-    { t: "IELTS 8.0+", c: "bg-sun text-cobalt-900", pos: "right-[10%] top-4" },
+    { t: "Cambridge C1", c: "bg-white text-cobalt-900 ring-1 ring-ink/10", pos: "left-[38%] -top-3 hidden sm:block" },
+    { t: "IELTS 7.5+", c: "bg-sun text-cobalt-900", pos: "right-[10%] top-4" },
     { t: "TKT", c: "bg-sky text-white", pos: "right-[30%] -bottom-2 hidden sm:block" },
     { t: "DELTA", c: "bg-cobalt-900 text-white", pos: "left-[22%] -bottom-1 hidden sm:block" },
   ];

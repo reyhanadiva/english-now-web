@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { CONTACT, CTA, TAGLINE, footerContent } from "@/lib/content";
@@ -39,11 +40,7 @@ export function Footer() {
         {/* identitas */}
         <div>
           <Link href="/" className="flex items-center gap-2" aria-label="English Now, beranda">
-            {/* TODO: ganti dengan logo asli */}
-            <span className="grid size-9 place-items-center rounded-lg bg-cobalt font-display text-lg text-sun">E</span>
-            <span className="font-display text-2xl text-cobalt-900">
-              English <span className="text-cobalt">Now</span>
-            </span>
+            <Image src="/brand/logo-full.png" alt="English Now" width={955} height={412} className="h-14 w-auto" />
           </Link>
           <p className="mt-2 font-hand text-lg text-cobalt">{TAGLINE}</p>
           <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-ink/70">{footerContent.blurb}</p>

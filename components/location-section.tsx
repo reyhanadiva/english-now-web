@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CONTACT, CTA } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
@@ -127,7 +128,7 @@ export function LocationSection() {
                 kids ? "bg-white" : "bg-white/95 backdrop-blur"
               }`}
             >
-              <span className="grid size-9 place-items-center rounded-xl bg-cobalt font-display text-lg text-sun">E</span>
+              <Image src="/brand/logo-mark.png" alt="" width={419} height={512} className="h-9 w-auto" />
               <span>
                 <span className={kids ? "block font-display text-base leading-tight text-cobalt-900" : "block text-sm leading-tight font-semibold text-cobalt-900"}>English Now</span>
                 <span className="block text-xs text-ink/60">{CONTACT.addressShort} · Buka di Maps ↗</span>
