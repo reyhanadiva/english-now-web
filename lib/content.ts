@@ -393,6 +393,24 @@ export const PROGRAMS: Record<Program["id"], Program> = {
   },
 };
 
+/**
+ * Business Class: harga tidak ditonjolkan di depan. Alurnya: ngobrol dulu, penawaran, baru estimasi biaya.
+ * TODO: isi diskon & syarat/periode yang sebenarnya. Selama "XX%" masih ada, itu hanya penanda slot.
+ */
+export const BUSINESS_OFFER = {
+  tag: "Penawaran untuk tim",
+  title: "Mulai dari obrolan tentang kebutuhan tim Anda.",
+  sub: "Ceritakan tantangan komunikasi tim, kami susun silabusnya. Soal biaya, kita bahas setelah Anda melihat rencananya.",
+  perks: [
+    { label: "Konsultasi kebutuhan", badge: "Gratis" },
+    { label: "Free trial class untuk tim", badge: "Gratis" },
+    // TODO: ganti dengan diskon sungguhan (persen, periode, syarat)
+    { label: "Diskon pendaftaran periode ini", badge: "XX%" },
+  ],
+  priceLink: "Lihat estimasi biaya",
+  priceNote: "Estimasi saja. Biaya final mengikuti kebutuhan, jumlah peserta, dan diskon yang berlaku.",
+};
+
 export const programContent = {
   kids: {
     title: "Pilih kelas sesuai usia anak.",

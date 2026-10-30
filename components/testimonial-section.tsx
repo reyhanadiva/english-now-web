@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { testimonialContent, type Testimonial } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { LogoOrbit } from "./logo-orbit";
+import { LogoWall } from "./logo-wall";
 import { Petals, Stars as Twinkles } from "./ornaments";
 import { SafeImage as Image } from "./ui/safe-image";
 
@@ -39,7 +39,7 @@ export function TestimonialSection() {
         >
           {!kids && (
             <div className="mb-20 px-5 sm:mb-24">
-              <LogoOrbit />
+              <LogoWall />
             </div>
           )}
 

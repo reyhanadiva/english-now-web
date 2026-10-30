@@ -11,8 +11,8 @@ import { ChatWindow } from "./chat-bubbles";
 
 /**
  * Section 3: simulasi level.
- *  - Anak: "peta petualangan" jenjang Cambridge (Starters → First).
- *  - Dewasa: bar level CEFR A1 → C2.
+ *  - Anak: jalur mendaki jenjang Cambridge (Starters → First).
+ *  - Dewasa: tangga level CEFR A1 → C2 (makin ke kanan makin tinggi).
  */
 export function LevelSection() {
   const { audience, instant } = useAudience();
@@ -105,11 +105,11 @@ function AdventureMap({ reduce, cta }: { reduce: boolean; cta: string }) {
   const { ref, sel, pick, auto, replay } = useAutoStep(KIDS_LEVELS.length, reduce, 1);
   const setSel = pick;
   const lv = KIDS_LEVELS[sel];
-  const ys = [62, 30, 58, 26, 54, 22]; // tinggi tiap pos (persen), naik turun seperti jalan
+  const ys = [80, 68, 56, 44, 32, 22]; // tinggi tiap pos (persen): jalur terus menanjak, tanda naik level
 
   return (
     <div ref={ref}>
-      <div className="relative mt-6 h-56 sm:h-56">
+      <div className="relative mt-6 h-64 sm:h-64">
         <svg viewBox="0 0 600 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
           <path
             d={ys.reduce((d, y, i) => (i === 0 ? `M 50 ${y}` : `${d} C ${i * 100} ${ys[i - 1]}, ${i * 100} ${y}, ${50 + i * 100} ${y}`), "")}
@@ -228,7 +228,7 @@ function Star() {
   );
 }
 
-/* ---------- Dewasa: bar CEFR ---------- */
+/* ---------- Dewasa: tangga CEFR ---------- */
 
 function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
   const { ref, sel, pick, auto, replay } = useAutoStep(LEVELS.length, reduce, 3);
@@ -236,37 +236,61 @@ function CefrBar({ reduce, cta }: { reduce: boolean; cta: string }) {
   const lv = LEVELS[sel];
   return (
     <div ref={ref}>
-      {/* tiap level = tombol yang jelas bisa diklik */}
-      <div role="radiogroup" aria-label="Level CEFR" className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6">
-        {LEVELS.map((l, i) => {
-          const on = i === sel;
-          return (
-            <motion.button
-              key={l.code}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              aria-label={`${l.code} ${l.name}`}
-              onClick={() => pick(i)}
-              whileHover={reduce ? undefined : { y: -3 }}
-              whileTap={reduce ? undefined : { scale: 0.97 }}
-              className={`group flex cursor-pointer flex-col gap-2.5 rounded-2xl p-3 text-left ring-1 transition-colors ${
-                on ? "bg-cobalt-900 text-white ring-cobalt-900" : "bg-white text-cobalt-900 ring-ink/10 hover:ring-cobalt/40"
-              }`}
-            >
-              <span className={`relative h-2 overflow-hidden rounded-full ${on ? "bg-white/20" : "bg-ink/10"}`}>
-                <motion.span
-                  initial={false}
-                  animate={{ scaleX: i <= sel ? 1 : 0 }}
-                  transition={{ duration: reduce ? 0 : 0.35, delay: reduce ? 0 : i * 0.04 }}
-                  className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-cobalt to-sky"
-                />
-              </span>
-              <span className="text-lg font-semibold">{l.code}</span>
-              <span className={`text-xs ${on ? "text-white/70" : "text-ink/50"}`}>{l.name}</span>
-            </motion.button>
-          );
-        })}
+      {/* tangga level: makin ke kanan makin tinggi. Tiap anak tangga = tombol yang bisa diklik */}
+      <div className="relative mt-8">
+        <p aria-hidden className="absolute top-0 left-0 hidden items-center gap-1.5 text-xs font-semibold tracking-wide text-ink/40 uppercase sm:flex">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M5 9l5-5 5 5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          Makin tinggi, makin mahir
+        </p>
+        <div role="radiogroup" aria-label="Level CEFR" className="flex h-64 items-end gap-1.5 sm:h-72 sm:gap-3">
+          {LEVELS.map((l, i) => {
+            const on = i === sel;
+            const reached = i <= sel;
+            const h = 34 + i * 13; // persen, makin tinggi
+            return (
+              <motion.button
+                key={l.code}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                aria-label={`${l.code} ${l.name}`}
+                onClick={() => pick(i)}
+                whileHover={reduce ? undefined : { y: -4 }}
+                whileTap={reduce ? undefined : { scale: 0.98 }}
+                style={{ height: `${h}%` }}
+                className="group relative flex min-w-0 flex-1 cursor-pointer flex-col justify-end"
+              >
+                {/* penanda "posisi Anda" melompat ke anak tangga terpilih */}
+                {on && (
+                  <motion.span
+                    layoutId="cefr-you"
+                    aria-hidden
+                    className="absolute -top-9 left-1/2 grid size-7 -translate-x-1/2 place-items-center rounded-full bg-sun text-cobalt-900 shadow-[0_6px_14px_-4px_rgba(244,199,123,0.9)]"
+                    transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 220, damping: 20 }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M5 9l5-5 5 5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </motion.span>
+                )}
+                <span className={`relative flex h-full w-full flex-col justify-end overflow-hidden rounded-t-2xl p-2 text-left ring-1 transition-colors sm:p-3 ${on ? "ring-cobalt-900" : "ring-ink/10 group-hover:ring-cobalt/40"}`}>
+                  <span className="absolute inset-0 bg-[#EEF2FF]" />
+                  <motion.span
+                    initial={false}
+                    animate={{ scaleY: reached ? 1 : 0 }}
+                    transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : i * 0.04 }}
+                    className={`absolute inset-0 origin-bottom ${on ? "bg-cobalt-900" : "bg-gradient-to-t from-cobalt to-sky"}`}
+                  />
+                  <span className="relative text-base font-semibold sm:text-xl" style={{ color: reached ? "#fff" : "var(--color-cobalt-900)" }}>
+                    {l.code}
+                  </span>
+                  <span className="relative text-[10px] sm:text-xs" style={{ color: reached ? "rgba(255,255,255,0.75)" : "rgba(54,54,54,0.5)" }}>
+                    {l.name}
+                  </span>
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+        <div aria-hidden className="h-1.5 rounded-full bg-cobalt-900/15" />
       </div>
       {!touched && (
         <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-cobalt">

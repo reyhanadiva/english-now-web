@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CTA, HI, PROGRAMS, consultHref, programContent, registerFor, wa, type Program } from "@/lib/content";
+import { BUSINESS_OFFER, CTA, HI, PROGRAMS, consultHref, programContent, registerFor, wa, type Program } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { Butterfly, KidsClouds } from "./ornaments";
 import { useAudience } from "./audience-provider";
@@ -275,6 +275,8 @@ function KidsCard({ p, i, reduce }: { p: Program; i: number; reduce: boolean }) 
 /* ---------- Dewasa ---------- */
 
 function AdultFeatured({ p, reduce }: { p: Program; reduce: boolean }) {
+  const o = BUSINESS_OFFER;
+  const [showPrice, setShowPrice] = useState(false);
   return (
     <motion.article
       {...rise(reduce, 0)}
@@ -282,35 +284,59 @@ function AdultFeatured({ p, reduce }: { p: Program; reduce: boolean }) {
     >
       <div className="relative aspect-[4/3] md:aspect-auto">
         <Image src={p.photo} alt="" fill sizes="(min-width: 768px) 45vw, 100vw" className="object-cover object-top" />
+        <span className="absolute top-4 left-4 rounded-full bg-sun px-3 py-1 text-xs font-semibold text-cobalt-900">{p.name}</span>
       </div>
       <div className="flex flex-col p-7 sm:p-10">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-sun px-3 py-1 text-xs font-semibold text-cobalt-900">{p.who}</span>
-        </div>
-        <h3 className="mt-4 text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">{p.name}</h3>
-        <div className="mt-5 flex items-baseline gap-3">
-          <span className="text-sm text-white/60">{programContent.from}</span>
-          <span className="text-5xl font-semibold tracking-tight">{p.price}</span>
-        </div>
-        <p className="mt-1 text-sm text-white/60">{p.unit}</p>
-        <ul className="mt-6 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
-          <li className="flex gap-2.5 text-[15px] font-semibold text-sun sm:col-span-2">
-            <Check className="text-sun [&_path]:stroke-cobalt-900" />
-            {programContent.free.adult}
-            <span className="rounded-full bg-sun/15 px-2 py-0.5 text-[11px] font-semibold text-sun">Gratis</span>
-          </li>
-          {p.points.map((pt) => (
-            <li key={pt} className="flex gap-2.5 text-[15px] text-white/90">
-              <Check className="text-sky [&_path]:stroke-white" />
-              {pt}
+        <span className="self-start rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide text-sun ring-1 ring-sun/40">{o.tag}</span>
+        <h3 className="mt-4 text-3xl leading-[1.1] font-semibold tracking-[-0.02em] text-balance sm:text-4xl">{o.title}</h3>
+        <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/70">{o.sub}</p>
+
+        <ul className="mt-6 space-y-2.5">
+          {o.perks.map((pk) => (
+            <li key={pk.label} className="flex items-center gap-3 rounded-xl bg-white/[0.07] px-3.5 py-2.5 text-[15px] font-semibold text-white">
+              <Check className="text-sun [&_path]:stroke-cobalt-900" />
+              {pk.label}
+              <span className="ml-auto rounded-full bg-sun px-2.5 py-0.5 text-xs font-bold text-cobalt-900">{pk.badge}</span>
             </li>
           ))}
         </ul>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/60">
+          {p.points.slice(0, 3).map((pt) => (
+            <li key={pt}>· {pt}</li>
+          ))}
+        </ul>
+
+        <div className="mt-7 flex flex-wrap items-center gap-4">
           <Button href={wa(`${HI} saya ingin berdiskusi mengenai ${p.name} untuk tim/perusahaan kami.`)} variant="sunPill" size="md" className="text-base">
             Diskusikan kebutuhan tim
           </Button>
-          <span className="text-sm text-white/55">Harga final mengikuti kebutuhan & jumlah peserta.</span>
+        </div>
+
+        {/* harga sengaja kecil & belakangan: dibuka hanya kalau pengunjung memintanya */}
+        <div className="mt-6 border-t border-white/10 pt-4">
+          <button
+            type="button"
+            onClick={() => setShowPrice((v) => !v)}
+            aria-expanded={showPrice}
+            className="text-xs font-medium text-white/50 underline-offset-4 transition hover:text-white/80 hover:underline"
+          >
+            {o.priceLink} {showPrice ? "▴" : "▾"}
+          </button>
+          <AnimatePresence initial={false}>
+            {showPrice && (
+              <motion.p
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: reduce ? 0 : 0.25 }}
+                className="overflow-hidden text-xs leading-relaxed text-white/45"
+              >
+                <span className="mt-2 block">
+                  {programContent.from} {p.price} · {p.unit}. {o.priceNote}
+                </span>
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.article>
