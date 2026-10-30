@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { AUDIENCE_OPTIONS, type Audience } from "@/lib/content";
-import { useAudience } from "./audience-provider";
+import { useAudience, type Choice } from "./audience-provider";
 
 /**
  * Toggle "Anak & Remaja / Dewasa & Bisnis".
@@ -12,10 +12,25 @@ import { useAudience } from "./audience-provider";
  */
 
 /** Label tiap pilihan selalu memakai font dunianya sendiri, jadi sudah jadi "preview". */
-const OPTION_FONT: Record<Audience, string> = {
+const OPTION_FONT: Record<Choice, string> = {
   kids: "font-display tracking-wide",
   adult: "font-sans font-bold tracking-tight",
+  corporate: "font-sans font-bold tracking-tight",
 };
+
+/** Pilihan ke-3 (percobaan): hero jendela pesawat. Isi section di bawahnya sama dengan Dewasa. */
+const OPTIONS: { id: Choice; label: string; short: string }[] = [
+  ...AUDIENCE_OPTIONS,
+  { id: "corporate", label: "Corporate", short: "Corporate" },
+];
+
+function PlaneIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M21 15.5v-1.7l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.3l-8 5v1.7l8-2.5v4.6l-2 1.5V22l3.5-1 3.5 1v-1.4l-2-1.5V13z" />
+    </svg>
+  );
+}
 
 function KiteIcon() {
   return (
@@ -58,7 +73,7 @@ export function AudienceToggle({
   size?: "lg" | "sm";
   tone?: Tone;
 }) {
-  const { audience, setAudience } = useAudience();
+  const { audience, choice, setChoice } = useAudience();
   const groupId = useId();
   const reduce = useReducedMotion();
   const isLg = size === "lg";
@@ -67,10 +82,10 @@ export function AudienceToggle({
     <div
       role="radiogroup"
       aria-label="Pilih kelas untuk siapa"
-      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone)} ${isLg ? "w-full max-w-[24rem]" : ""}`}
+      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone)} ${isLg ? "w-full max-w-[36rem]" : ""}`}
     >
-      {AUDIENCE_OPTIONS.map((option) => {
-        const active = audience === option.id;
+      {OPTIONS.map((option) => {
+        const active = choice === option.id;
         const activeText = audience === "kids" ? "text-ink" : "text-white";
         return (
           <button
@@ -79,10 +94,10 @@ export function AudienceToggle({
             role="radio"
             aria-checked={active}
             aria-label={option.label}
-            onClick={() => setAudience(option.id)}
+            onClick={() => setChoice(option.id)}
             className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full whitespace-nowrap transition-colors duration-200 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-sky ${
               OPTION_FONT[option.id]
-            } ${isLg ? "px-3 py-2.5 text-[15px] sm:px-5 sm:text-base" : "px-3 py-1.5 text-sm"} ${
+            } ${isLg ? "px-2.5 py-2.5 text-[14px] sm:px-5 sm:text-base" : "px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"} ${
               active ? activeText : "text-ink/55 hover:text-ink"
             }`}
           >
@@ -94,8 +109,17 @@ export function AudienceToggle({
                 transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }}
               />
             )}
-            {option.id === "kids" ? <KiteIcon /> : <BriefcaseIcon />}
-            {isLg ? option.label : option.short}
+            {option.id === "kids" ? <KiteIcon /> : option.id === "adult" ? <BriefcaseIcon /> : <PlaneIcon />}
+            {isLg ? (
+              <>
+                <span className="sm:hidden">{option.short}</span>
+                <span className="hidden sm:inline">{option.label}</span>
+              </>
+            ) : option.id === "corporate" ? (
+              "Corp."
+            ) : (
+              option.short
+            )}
           </button>
         );
       })}

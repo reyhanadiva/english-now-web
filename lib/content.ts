@@ -86,6 +86,13 @@ export const heroContent: Record<Audience, { title: string; sub: string; authori
   },
 };
 
+/** Hero percobaan "Corporate" (jendela pesawat). Bagian bawah halaman memakai konten Dewasa. */
+export const heroCorporate: { title: string; sub: string; authority: string[] } = {
+  title: "Tim Anda, siap berbicara dengan dunia.",
+  sub: "Rapat, presentasi, atau negosiasi dengan mitra luar negeri terasa kaku? Kami paham. Business class disusun dari pekerjaan nyata tim Anda.",
+  authority: ["Pengajar bersertifikat CELTA & DELTA", "Silabus sesuai kebutuhan perusahaan", "Standar CEFR A1–C2"],
+};
+
 /* ------------------------------------------------------------------ */
 /* Section 2: Kenapa English Now                                       */
 /* ------------------------------------------------------------------ */

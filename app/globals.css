@@ -112,3 +112,16 @@ body {
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* hero Corporate (jendela pesawat): bintang berkelip & lampu sayap berkedip */
+@keyframes en-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@keyframes en-blink {
+  0%, 82%, 100% { opacity: 0.2; }
+  88%, 94% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .en-twinkle, .en-blink { animation: none !important; }
+}

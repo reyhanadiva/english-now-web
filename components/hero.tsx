@@ -2,10 +2,11 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
-import { CTA, TAGLINE, heroContent } from "@/lib/content";
+import { CTA, TAGLINE, heroContent, heroCorporate } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
 import { HeroBackdrop } from "./hero/hero-backdrop";
+import { FlightScene } from "./hero/flight-scene";
 import { TrialButton } from "./trial-modal";
 
 /* Deteksi layar sentuh: swipe kiri/kanan hanya aktif di HP/tablet */
@@ -26,19 +27,22 @@ const PLACEHOLDER = {
 };
 
 export function Hero() {
-  const { audience, setAudience } = useAudience();
+  const { audience, choice, setChoice } = useAudience();
   const reduce = useReducedMotion();
   const coarse = useSyncExternalStore(subscribeCoarse, getCoarse, getCoarseServer);
   const toggleRef = useRef<HTMLDivElement>(null);
 
   const isKids = audience === "kids";
-  const content = heroContent[audience];
+  const corporate = choice === "corporate";
+  const content = corporate ? heroCorporate : heroContent[audience];
+  const order = ["kids", "adult", "corporate"] as const;
 
   const handlePanEnd = (_: unknown, info: PanInfo) => {
     const { x, y } = info.offset;
     if (Math.abs(x) < SWIPE_DISTANCE || Math.abs(x) < Math.abs(y) * 1.5) return;
-    if (x < 0 && audience === "kids") setAudience("adult");
-    if (x > 0 && audience === "adult") setAudience("kids");
+    const i = order.indexOf(choice);
+    if (x < 0 && i < order.length - 1) setChoice(order[i + 1]);
+    if (x > 0 && i > 0) setChoice(order[i - 1]);
   };
 
   return (
@@ -49,6 +53,7 @@ export function Hero() {
       className="relative isolate h-svh min-h-[660px] overflow-hidden"
     >
       <HeroBackdrop audience={audience} originRef={toggleRef} />
+      <AnimatePresence>{corporate && <FlightScene key="flight" />}</AnimatePresence>
 
       <div className="relative z-10 flex h-full flex-col items-center px-5 pt-[max(7rem,14vh)] text-center">
         <div className="flex w-full max-w-3xl flex-col items-center">
@@ -59,7 +64,7 @@ export function Hero() {
 
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={audience}
+              key={choice}
               initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -8, filter: "blur(6px)", transition: { duration: reduce ? 0 : 0.2 } }}

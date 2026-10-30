@@ -14,27 +14,34 @@ import type { Audience } from "@/lib/content";
 
 const STORAGE_KEY = "en-audience";
 
-function isAudience(value: string | null): value is Audience {
-  return value === "kids" || value === "adult";
+/**
+ * "corporate" = percobaan hero ke-3 (jendela pesawat). Isi section di bawahnya memakai konten Dewasa,
+ * jadi untuk semua section `audience` tetap "kids" atau "adult"; hanya hero yang membedakan `choice`.
+ */
+export type Choice = Audience | "corporate";
+
+function isChoice(value: string | null): value is Choice {
+  return value === "kids" || value === "adult" || value === "corporate";
 }
+const audienceOf = (c: Choice): Audience => (c === "kids" ? "kids" : "adult");
 
 /* ------------------------------------------------------------------
    Store kecil di luar React: menyimpan pilihan audiens.
    Server selalu "kids"; di browser, nilai awal dibaca dari ?for= di URL
    (untuk link iklan), lalu dari localStorage, lalu default "kids".
 ------------------------------------------------------------------- */
-let current: Audience | null = null;
+let current: Choice | null = null;
 const listeners = new Set<() => void>();
 let lastPoint: { x: number; y: number } | null = null;
 
-function readAudience(): Audience {
+function readChoice(): Choice {
   if (current === null) {
-    let initial: Audience = "kids";
+    let initial: Choice = "kids";
     try {
       const fromUrl = new URLSearchParams(window.location.search).get("for");
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (isAudience(fromUrl)) initial = fromUrl;
-      else if (isAudience(saved)) initial = saved;
+      if (isChoice(fromUrl)) initial = fromUrl;
+      else if (isChoice(saved)) initial = saved;
     } catch {
       /* localStorage bisa diblokir, abaikan */
     }
@@ -50,23 +57,29 @@ function subscribe(onChange: () => void) {
   };
 }
 
-const getServerSnapshot = (): Audience => "kids";
+const getServerSnapshot = (): Choice => "kids";
 
 /* ------------------------------------------------------------------ */
 
 type AudienceContextValue = {
   audience: Audience;
+  /** pilihan toggle hero: "kids" | "adult" | "corporate" (corporate memakai konten Dewasa) */
+  choice: Choice;
   /** 1 = pindah ke kanan (kids -> adult), -1 = ke kiri. Dipakai untuk arah animasi. */
   direction: 1 | -1;
   /** true sesaat saat transisi seluruh halaman berjalan: section melewati animasi fade-nya sendiri */
   instant: boolean;
+  /** dipakai komponen lain (mis. asisten): tidak menurunkan "corporate" ke "adult" */
   setAudience: (next: Audience) => void;
+  /** dipakai toggle hero/navbar */
+  setChoice: (next: Choice) => void;
 };
 
 const AudienceContext = createContext<AudienceContextValue | null>(null);
 
 export function AudienceProvider({ children }: { children: React.ReactNode }) {
-  const audience = useSyncExternalStore(subscribe, readAudience, getServerSnapshot);
+  const choice = useSyncExternalStore(subscribe, readChoice, getServerSnapshot);
+  const audience = audienceOf(choice);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [instant, setInstant] = useState(false);
 
@@ -84,10 +97,12 @@ export function AudienceProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.dataset.audience = audience;
   }, [audience]);
 
-  const setAudience = useCallback((next: Audience) => {
-    if (readAudience() === next) return;
+  const setChoice = useCallback((next: Choice) => {
+    const before = readChoice();
+    if (before === next) return;
+    const sameAudience = audienceOf(before) === audienceOf(next);
     const apply = () => {
-      setDirection(next === "adult" ? 1 : -1);
+      setDirection(next === "kids" ? -1 : 1);
       current = next;
       listeners.forEach((listener) => listener());
     };
@@ -100,7 +115,7 @@ export function AudienceProvider({ children }: { children: React.ReactNode }) {
     const doc = document as Document & { startViewTransition?: (cb: () => Promise<void>) => { ready: Promise<void>; finished: Promise<void> } };
     const inHero = window.scrollY < window.innerHeight * 0.6;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!inHero && !reduced && doc.startViewTransition) {
+    if (!sameAudience && !inHero && !reduced && doc.startViewTransition) {
       const { x, y } = lastPoint ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 };
       const r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
       const vt = doc.startViewTransition(async () => {
@@ -134,9 +149,17 @@ export function AudienceProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const setAudience = useCallback(
+    (next: Audience) => {
+      if (next === "adult" && readChoice() === "corporate") return;
+      setChoice(next);
+    },
+    [setChoice],
+  );
+
   const value = useMemo(
-    () => ({ audience, direction, instant, setAudience }),
-    [audience, direction, instant, setAudience],
+    () => ({ audience, choice, direction, instant, setAudience, setChoice }),
+    [audience, choice, direction, instant, setAudience, setChoice],
   );
 
   return <AudienceContext.Provider value={value}>{children}</AudienceContext.Provider>;
