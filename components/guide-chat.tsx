@@ -97,6 +97,32 @@ function subscribeScroll(cb: () => void) {
 }
 const getPast = () => window.scrollY > window.innerHeight * 0.6;
 
+const NUDGES = ["Bingung pilih kelas?", "Cari kelas yang pas, yuk!", "Tanya aku, gratis!"];
+
+/** cincin berdenyut + lencana "1" di pojok launcher, supaya terlihat ada yang bisa diklik */
+function LauncherFx({ on, reduce }: { on: boolean; reduce: boolean }) {
+  if (!on) return null;
+  return (
+    <>
+      {!reduce && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-full bg-sun"
+          initial={{ scale: 1, opacity: 0.7 }}
+          animate={{ scale: 1.75, opacity: 0 }}
+          transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 2.2, ease: "easeOut" }}
+        />
+      )}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-1 -right-1 z-10 grid size-5 place-items-center rounded-full bg-[#F0524D] text-[11px] font-bold text-white ring-2 ring-white"
+      >
+        1
+      </span>
+    </>
+  );
+}
+
 export function GuideChat() {
   const { audience, setAudience } = useAudience();
   const { open: openTrial } = useTrial();
@@ -108,6 +134,8 @@ export function GuideChat() {
   const [result, setResult] = useState<ResultId | null>(null);
   const [typing, setTyping] = useState(false);
   const [nudge, setNudge] = useState(false);
+  const [nudgeIdx, setNudgeIdx] = useState(0);
+  const [everOpened, setEverOpened] = useState(false);
   const [nearEnd, setNearEnd] = useState(false);
   const keyRef = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
@@ -115,16 +143,25 @@ export function GuideChat() {
 
   const kids = audience === "kids";
 
-  // ajakan kecil "Bingung pilih kelas?" muncul sekali setelah melewati hero
+  // ajakan kecil muncul setelah melewati hero, lalu muncul lagi dengan kalimat lain tiap ±22 detik
+  // sampai pengunjung pernah membuka asisten
   useEffect(() => {
-    if (!past || open) return;
-    const t = window.setTimeout(() => setNudge(true), 1200);
-    const h = window.setTimeout(() => setNudge(false), 8000);
-    return () => {
-      window.clearTimeout(t);
-      window.clearTimeout(h);
+    if (!past || open || everOpened) return;
+    const ts: number[] = [];
+    let cycle = 0;
+    const show = () => {
+      setNudgeIdx(cycle++ % NUDGES.length);
+      setNudge(true);
+      ts.push(window.setTimeout(() => setNudge(false), 7000));
     };
-  }, [past, open]);
+    ts.push(window.setTimeout(show, 1200));
+    const iv = window.setInterval(show, 22000);
+    return () => {
+      ts.forEach((t) => window.clearTimeout(t));
+      window.clearInterval(iv);
+      setNudge(false);
+    };
+  }, [past, open, everOpened]);
 
   useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
 
@@ -173,6 +210,7 @@ export function GuideChat() {
   const toggle = () => {
     setNudge(false);
     if (!open && msgs.length === 0) start();
+    if (!open) setEverOpened(true);
     setOpen(!open);
   };
 
@@ -182,6 +220,7 @@ export function GuideChat() {
     openRef.current = () => {
       setNudge(false);
       if (msgs.length === 0) start();
+      setEverOpened(true);
       setOpen(true);
     };
   });
@@ -378,15 +417,19 @@ export function GuideChat() {
               exit={{ opacity: 0, x: 10 }}
               className={`rounded-full px-4 py-2 text-sm font-semibold shadow-[0_10px_30px_-10px_rgba(30,47,120,0.45)] ${kids ? "bg-white text-cobalt-900 ring-2 ring-mist" : "bg-white text-cobalt-900 ring-1 ring-ink/10"}`}
             >
-              Bingung pilih kelas?
+              {NUDGES[nudgeIdx]}
             </motion.button>
           )}
         </AnimatePresence>
+        <span className="relative">
+        <LauncherFx on={!open && !everOpened && past} reduce={reduce} />
         <motion.button
           type="button"
           onClick={toggle}
           aria-expanded={open}
           aria-label={open ? "Tutup asisten" : "Buka asisten pilih kelas"}
+          animate={!open && !everOpened && !reduce ? { rotate: [0, -8, 8, -6, 6, 0] } : { rotate: 0 }}
+          transition={!open && !everOpened && !reduce ? { duration: 0.7, repeat: Infinity, repeatDelay: 4 } : undefined}
           whileHover={reduce ? undefined : { scale: 1.06 }}
           whileTap={reduce ? undefined : { scale: 0.95 }}
           className={`grid size-14 place-items-center rounded-full shadow-[0_14px_30px_-10px_rgba(30,47,120,0.6)] ${
@@ -401,6 +444,7 @@ export function GuideChat() {
             <Avatar kids={kids} plain />
           )}
         </motion.button>
+        </span>
       </div>
     </div>
 
@@ -426,16 +470,17 @@ export function GuideChat() {
                   exit={{ opacity: 0, y: 6 }}
                   className="pointer-events-none absolute bottom-full left-0 mb-3 rounded-2xl rounded-bl-md bg-cobalt-900 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-white shadow-lg"
                 >
-                  Bingung pilih kelas?
+                  {NUDGES[nudgeIdx]}
                 </motion.span>
               )}
             </AnimatePresence>
+            <LauncherFx on={!open && !everOpened} reduce={reduce} />
             <button
               type="button"
               onClick={toggle}
               aria-expanded={open}
               aria-label={open ? "Tutup asisten" : "Buka asisten pilih kelas"}
-              className={`grid size-12 place-items-center rounded-full ${kids ? "bg-cobalt" : "bg-cobalt-900"}`}
+              className={`relative grid size-12 place-items-center rounded-full ${kids ? "bg-cobalt" : "bg-cobalt-900"}`}
             >
               {open ? (
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-white" aria-hidden>

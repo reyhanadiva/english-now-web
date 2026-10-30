@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { testimonialContent, type Testimonial } from "@/lib/content";
+import { ASPECTS, testimonialContent, type Aspect, type Testimonial } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
 import { LogoWall } from "./logo-wall";
@@ -24,6 +24,9 @@ export function TestimonialSection() {
   const reduce = (useReducedMotion() ?? false) || instant;
   const kids = audience === "kids";
   const c = testimonialContent[audience];
+  const [aspect, setAspect] = useState<Aspect | null>(null);
+  const present = ASPECTS.filter((a) => c.list.some((t) => t.aspect === a));
+  const shown = aspect && present.includes(aspect) ? c.list.filter((t) => t.aspect === aspect) : c.list;
 
   return (
     <section id="testimoni" className="relative overflow-hidden" style={{ background: SECTION_BG[audience] }}>
@@ -55,10 +58,33 @@ export function TestimonialSection() {
               {c.title}
             </h2>
             <p className="mt-4 text-base text-ink/70">{c.sub}</p>
+            {/* saring menurut hal yang dipuji, supaya pengunjung langsung ke yang ia cari */}
+            <div className={`mt-6 flex flex-wrap gap-2 ${kids ? "justify-center" : ""}`} role="group" aria-label="Saring testimoni">
+              {[null, ...present].map((a) => {
+                const on = (aspect && present.includes(aspect) ? aspect : null) === a;
+                return (
+                  <button
+                    key={a ?? "all"}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setAspect(a)}
+                    className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                      on
+                        ? kids
+                          ? "bg-cobalt text-white shadow-[0_3px_0_0_var(--color-cobalt-900)]"
+                          : "bg-cobalt-900 text-white"
+                        : "bg-white text-cobalt-900 ring-1 ring-ink/10 hover:ring-cobalt/40"
+                    }`}
+                  >
+                    {a ?? "Semua"}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <Stage list={c.list} kids={kids} reduce={reduce} />
-          <Swipe list={c.list} kids={kids} />
+          <Stage key={`s-${aspect}`} list={shown} kids={kids} reduce={reduce} />
+          <Swipe key={`w-${aspect}`} list={shown} kids={kids} />
         </motion.div>
       </AnimatePresence>
     </section>
@@ -119,7 +145,7 @@ function Stage({ list, kids, reduce }: { list: Testimonial[]; kids: boolean; red
               <div className="absolute inset-x-0 bottom-0 p-4 text-white">
                 <Stars small />
                 <p className="mt-1.5 text-sm leading-tight font-semibold">{t.name}</p>
-                <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/70">{t.program}</p>
+                <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/70">{t.org ?? t.role}</p>
               </div>
             )}
             <SampleBadge t={t} />
@@ -134,7 +160,10 @@ function Stage({ list, kids, reduce }: { list: Testimonial[]; kids: boolean; red
                   transition={{ duration: reduce ? 0 : 0.35, delay: open ? 0 : 0.2 }}
                   className="absolute inset-x-0 bottom-0 p-8 text-white lg:p-10"
                 >
-                  <Stars />
+                  <div className="flex items-center gap-3">
+                    <Stars />
+                    <span className="rounded-full bg-sun px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-cobalt-900 uppercase">{t.aspect}</span>
+                  </div>
                   {open ? (
                     <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/90">{t.full}</p>
                   ) : (
@@ -153,7 +182,10 @@ function Stage({ list, kids, reduce }: { list: Testimonial[]; kids: boolean; red
                   <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
                     <div>
                       <p className="text-base font-semibold">{t.name}</p>
-                      <p className="text-sm text-white/70">{t.role}</p>
+                      <p className="text-sm text-white/70">
+                        {t.role}
+                        {t.org ? ` · ${t.org}` : ""}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold ring-1 ring-white/25 backdrop-blur">{t.program}</span>
@@ -205,7 +237,10 @@ function Swipe({ list, kids }: { list: Testimonial[]; kids: boolean }) {
           <div className="absolute inset-0 bg-gradient-to-t from-cobalt-900/95 via-cobalt-900/25 to-transparent" />
           <SampleBadge t={t} />
           <figcaption className="absolute inset-x-0 bottom-0 p-5 text-white">
-            <Stars small />
+            <div className="flex items-center gap-2">
+              <Stars small />
+              <span className="rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold tracking-wide text-cobalt-900 uppercase">{t.aspect}</span>
+            </div>
             {open === t.id ? (
               <p className="mt-3 text-sm leading-relaxed text-white/90">{t.full}</p>
             ) : (
@@ -217,7 +252,8 @@ function Swipe({ list, kids }: { list: Testimonial[]; kids: boolean }) {
             )}
             <p className="mt-4 text-sm font-semibold">{t.name}</p>
             <p className="text-xs text-white/70">
-              {t.role} · {t.program}
+              {t.role}
+              {t.org ? ` · ${t.org}` : ""} · {t.program}
             </p>
             <button
               type="button"

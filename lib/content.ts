@@ -69,14 +69,20 @@ export const TAGLINE = "Unleash your English Potential Now!";
  * Headline bertema "bahasa Inggris membuka jalan/peluang di depan",
  * sejalan dengan visual jalan/sungai yang menuju cahaya di cakrawala.
  */
-export const heroContent: Record<Audience, { title: string; sub: string }> = {
+/**
+ * Hero mengikuti StoryBrand: janji (title), EMPATI (sub: kami paham masalahnya), dan
+ * OTORITAS (authority: bukti kompetensi di bidang bahasa Inggris).
+ */
+export const heroContent: Record<Audience, { title: string; sub: string; authority: string[] }> = {
   kids: {
     title: "Bekal anak untuk dunia yang lebih luas.",
-    sub: "Kelas bahasa Inggris yang membuat anak berani berbicara, bukan sekadar menghafal kosakata.",
+    sub: "Anak hafal kosakata, tapi diam saat diajak bicara? Kami paham. Di sini anak dilatih berbicara sedikit demi sedikit, sampai berani.",
+    authority: ["Pengajar bersertifikat CELTA & DELTA", "Native speaker", "Kurikulum Cambridge"],
   },
   adult: {
     title: "Satu bahasa, lebih banyak peluang.",
-    sub: "Business class untuk tim perusahaan, juga kelas privat dan persiapan IELTS untuk kerja atau studi ke luar negeri.",
+    sub: "Paham bacaannya, tapi kaku saat rapat, presentasi, atau wawancara? Kami paham. Kelas disusun dari situasi kerja yang Anda hadapi.",
+    authority: ["Pengajar bersertifikat CELTA & DELTA", "Standar CEFR A1–C2", "Persiapan IELTS · TOEFL · Cambridge"],
   },
 };
 
@@ -474,10 +480,23 @@ export const trialContent: Record<
 /* Section Testimoni                                                   */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Standar testimoni (semua kartu memakai format yang sama, supaya cepat dibaca & bisa disaring):
+ *  1. aspect  = hal yang dipuji (pilih salah satu dari ASPECTS), jadi kelihatan bagian mana yang bagus
+ *  2. quote   = satu kalimat langsung ke inti (±15 kata)
+ *  3. name, role, org = siapa & dari perusahaan/instansi/sekolah mana
+ *  4. program = kelas yang diikuti
+ */
+export const ASPECTS = ["Pengajar", "Materi", "Suasana kelas", "Hasil"] as const;
+export type Aspect = (typeof ASPECTS)[number];
+
 export interface Testimonial {
   id: string;
   name: string;
   role: string;
+  /** perusahaan / instansi / sekolah */
+  org?: string;
+  aspect: Aspect;
   program: string;
   /** kutipan pendek yang ditonjolkan (diambil dari testimoni aslinya) */
   quote: string;
@@ -495,6 +514,7 @@ const T: Record<string, Testimonial> = {
     id: "bunda",
     name: "Bunda Faqih & Filia",
     role: "Orang tua siswa",
+    aspect: "Pengajar",
     program: "Kids & Teens Class",
     quote: "Belajar bahasa Inggris jadi seru!",
     full: "English Now menjadi solusi terbaik bagi anak-anak saya, Faqih (10) dan Filia (15). Pengajarnya kompeten, memahami metode yang efektif untuk anak dan remaja, serta mampu menyesuaikan pembelajaran dengan kebutuhan siswa. Kelasnya nyaman, interaktif, dan menyenangkan. Terima kasih English Now, belajar bahasa Inggris jadi seru!",
@@ -503,7 +523,9 @@ const T: Record<string, Testimonial> = {
   mikayla: {
     id: "mikayla",
     name: "Mikayla Khairansaafia",
-    role: "Siswa SMPN 44 Bandung",
+    role: "Siswa",
+    org: "SMPN 44 Bandung",
+    aspect: "Suasana kelas",
     program: "Teens Class",
     quote: "We get to play many games while learning.",
     full: "I would like to share my experience studying at English Now. When the teacher explains in class, it's very easy to understand. For me, the class is so much fun because we get to play many games while learning. That's why I feel very happy and excited to study at English Now every Thursday. That's all from me, thank you 🤍",
@@ -512,7 +534,9 @@ const T: Record<string, Testimonial> = {
   faheem: {
     id: "faheem",
     name: "Faheem Ahmad",
-    role: "Siswa SMA Alfa Centauri",
+    role: "Siswa",
+    org: "SMA Alfa Centauri",
+    aspect: "Hasil",
     program: "IELTS Preparation",
     quote: "I can see a positive result in my IELTS test.",
     full: "Joining English Now has really helped me improve my English. I've gained a lot of new knowledge about how to make my writing well received, how to examine texts, and how to make my grammar and vocabulary range even wider. The lessons are very clear and enjoyable, which makes learning easier. I'm truly grateful for the guidance from the teacher, and I can see a positive result through my IELTS test.",
@@ -521,7 +545,9 @@ const T: Record<string, Testimonial> = {
   fikri: {
     id: "fikri",
     name: "Fikri M. R.",
-    role: "Dosen Telkom University",
+    role: "Dosen",
+    org: "Telkom University",
+    aspect: "Suasana kelas",
     program: "Business English Workshop",
     quote: "I thought it would be very serious. It turned out to be so much fun.",
     full: "Thank you English Now! At first, I thought the workshop would be very serious, but it turned out to be so much fun and engaging. We connected well with each other, and I learned many new things about teaching and pedagogy that I hadn't learned before. It was an excellent and valuable experience.",
@@ -539,6 +565,7 @@ const SAMPLE: Record<string, Testimonial> = {
     id: "parent2",
     name: "Ayah Rafa",
     role: "Orang tua siswa",
+    aspect: "Hasil",
     program: "Kids Class",
     quote: "Sekarang Rafa berani menyapa dalam bahasa Inggris.",
     full: "CONTOH TESTIMONI. Ganti dengan testimoni asli dari orang tua siswa.",
@@ -548,7 +575,9 @@ const SAMPLE: Record<string, Testimonial> = {
   student2: {
     id: "student2",
     name: "Nayla",
-    role: "Siswa SD",
+    role: "Siswa",
+    org: "SD Contoh Bandung",
+    aspect: "Pengajar",
     program: "Kids Class",
     quote: "My teacher is so kind and funny!",
     full: "CONTOH TESTIMONI. Ganti dengan testimoni asli dari siswa.",
@@ -559,10 +588,36 @@ const SAMPLE: Record<string, Testimonial> = {
     id: "hr",
     name: "Rina S.",
     role: "HR Manager",
+    org: "PT Contoh Manufaktur",
+    aspect: "Materi",
     program: "Business Class",
-    quote: "Materinya benar-benar disesuaikan dengan pekerjaan tim kami.",
+    quote: "Materinya disesuaikan dengan pekerjaan tim kami.",
     full: "CONTOH TESTIMONI. Ganti dengan testimoni asli dari peserta business class.",
     photo: stock("photo-1573496359142-b8d87734a5a2"),
+    sample: true,
+  },
+  logistik: {
+    id: "logistik",
+    name: "Dimas P.",
+    role: "Manajer Operasional",
+    org: "PT Contoh Logistik",
+    aspect: "Materi",
+    program: "Business Class",
+    quote: "Langsung terpakai untuk rapat dan email dengan mitra luar negeri.",
+    full: "CONTOH TESTIMONI. Ganti dengan testimoni asli dari peserta business class.",
+    photo: stock("photo-1560250097-0b93528c311a"),
+    sample: true,
+  },
+  energi: {
+    id: "energi",
+    name: "Budi A.",
+    role: "Engineer",
+    org: "PT Contoh Energi",
+    aspect: "Hasil",
+    program: "Exam Class (IELTS)",
+    quote: "Strategi tiap bagian tes jelas, jadi latihan saya terarah.",
+    full: "CONTOH TESTIMONI. Ganti dengan testimoni asli dari peserta exam class.",
+    photo: stock("photo-1519085360753-af0119f7cbe7"),
     sample: true,
   },
 };
@@ -575,8 +630,8 @@ export const testimonialContent: Record<Audience, { title: string; sub: string; 
   },
   adult: {
     title: "Kata mereka tentang English Now.",
-    sub: "Dari dosen, profesional, hingga peserta persiapan IELTS.",
-    list: [T.fikri, SAMPLE.hr, T.faheem],
+    sub: "Dari dosen dan profesional perusahaan hingga peserta persiapan IELTS.",
+    list: [T.fikri, SAMPLE.hr, SAMPLE.logistik, T.faheem, SAMPLE.energi],
   },
 };
 

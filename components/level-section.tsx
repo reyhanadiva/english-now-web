@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { SECTION_BG } from "@/lib/theme";
 import { Butterfly } from "./ornaments";
 import { ChatWindow } from "./chat-bubbles";
+import { GraphicSlot } from "./graphic-slot";
 
 /**
  * Section 3: simulasi level.
@@ -38,10 +39,11 @@ export function LevelSection() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className={
               kids
-                ? "rounded-[2rem] bg-cobalt p-6 text-white shadow-[0_6px_0_0_var(--color-cobalt-900)] sm:p-10"
-                : "rounded-3xl bg-white p-6 shadow-[0_24px_60px_-36px_rgba(54,54,54,0.35)] ring-1 ring-ink/10 sm:p-10"
+                ? "relative rounded-[2rem] bg-cobalt p-6 text-white shadow-[0_6px_0_0_var(--color-cobalt-900)] sm:p-10"
+                : "relative rounded-3xl bg-white p-6 shadow-[0_24px_60px_-36px_rgba(54,54,54,0.35)] ring-1 ring-ink/10 sm:p-10"
             }
           >
+            <GraphicSlot kids={kids} className="absolute top-8 right-8 hidden h-36 w-64 lg:grid" />
             <h2
               className={
                 kids
