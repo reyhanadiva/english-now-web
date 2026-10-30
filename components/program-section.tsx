@@ -287,8 +287,7 @@ function AdultFeatured({ p, reduce }: { p: Program; reduce: boolean }) {
         <span className="absolute top-4 left-4 rounded-full bg-sun px-3 py-1 text-xs font-semibold text-cobalt-900">{p.name}</span>
       </div>
       <div className="flex flex-col p-7 sm:p-10">
-        <span className="self-start rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide text-sun ring-1 ring-sun/40">{o.tag}</span>
-        <h3 className="mt-4 text-3xl leading-[1.1] font-semibold tracking-[-0.02em] text-balance sm:text-4xl">{o.title}</h3>
+        <h3 className="text-3xl leading-[1.1] font-semibold tracking-[-0.02em] text-balance sm:text-4xl">{o.title}</h3>
         <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-white/70">{o.sub}</p>
 
         <ul className="mt-6 space-y-2.5">

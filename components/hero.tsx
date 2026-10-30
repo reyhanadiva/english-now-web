@@ -103,20 +103,6 @@ export function Hero() {
             <ArrowIcon />
           </TrialButton>
         </div>
-
-        {/* OTORITAS: bukti kompetensi bahasa Inggris. Disembunyikan di layar pendek agar tidak menumpuk. */}
-        <ul className="absolute inset-x-4 bottom-5 hidden flex-wrap justify-center gap-2 [@media(min-height:740px)]:flex">
-          {content.authority.map((a) => (
-            <li
-              key={a}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold backdrop-blur-md sm:text-[13px] ${
-                isKids ? "bg-white/80 text-cobalt-900 ring-1 ring-white" : "bg-[#14162A]/70 text-white ring-1 ring-white/20"
-              }`}
-            >
-              {a}
-            </li>
-          ))}
-        </ul>
       </div>
     </motion.section>
   );
