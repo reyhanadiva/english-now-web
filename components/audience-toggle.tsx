@@ -18,19 +18,11 @@ const OPTION_FONT: Record<Choice, string> = {
   corporate: "font-sans font-bold tracking-tight",
 };
 
-/** Pilihan ke-3 (percobaan): hero jendela pesawat. Isi section di bawahnya sama dengan Dewasa. */
+/** Pilihan ke-3 (percobaan): hero ruang rapat lantai atas. Isi section di bawahnya sama dengan Dewasa. */
 const OPTIONS: { id: Choice; label: string; short: string }[] = [
   ...AUDIENCE_OPTIONS,
   { id: "corporate", label: "Corporate", short: "Corporate" },
 ];
-
-function PlaneIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M21 15.5v-1.7l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.3l-8 5v1.7l8-2.5v4.6l-2 1.5V22l3.5-1 3.5 1v-1.4l-2-1.5V13z" />
-    </svg>
-  );
-}
 
 function KiteIcon() {
   return (
@@ -46,6 +38,14 @@ function BriefcaseIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
       <rect x="3" y="7" width="18" height="13" rx="3" fill="currentColor" />
       <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M4 21V6.5A1.5 1.5 0 0 1 5.5 5H12a1.5 1.5 0 0 1 1.5 1.5V21h-9Zm10.5 0V10H18a2 2 0 0 1 2 2v9h-5.5ZM6.5 8v2h2V8h-2Zm0 4v2h2v-2h-2Zm0 4v2h2v-2h-2Zm4-8v2h1V8h-1Zm0 4v2h1v-2h-1Zm0 4v2h1v-2h-1Z" />
     </svg>
   );
 }
@@ -109,7 +109,7 @@ export function AudienceToggle({
                 transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }}
               />
             )}
-            {option.id === "kids" ? <KiteIcon /> : option.id === "adult" ? <BriefcaseIcon /> : <PlaneIcon />}
+            {option.id === "kids" ? <KiteIcon /> : option.id === "adult" ? <BriefcaseIcon /> : <BuildingIcon />}
             {isLg ? (
               <>
                 <span className="sm:hidden">{option.short}</span>

@@ -80,7 +80,7 @@ export const heroContent: Record<Audience, { title: string; sub: string }> = {
   },
 };
 
-/** Hero percobaan "Corporate" (jendela pesawat). Bagian bawah halaman memakai konten Dewasa. */
+/** Hero percobaan "Corporate" (ruang rapat lantai atas). Bagian bawah halaman memakai konten Dewasa. */
 export const heroCorporate: { title: string; sub: string } = {
   title: "Tim Anda, siap berbicara dengan dunia.",
   sub: "Business class dengan silabus yang disusun dari pekerjaan nyata tim Anda.",

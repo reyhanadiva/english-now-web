@@ -125,3 +125,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .en-twinkle, .en-blink { animation: none !important; }
 }
+
+/* hero Corporate (ruang rapat lantai atas) */
+@keyframes en-drift { from { transform: translateX(-35vw); } to { transform: translateX(135vw); } }
+@keyframes en-fly { from { transform: translate(-12vw, 6px); } to { transform: translate(112vw, -18px); } }
+@keyframes en-sweep { 0%, 55% { transform: translateX(-60vw); opacity: 0; } 62% { opacity: 1; } 100% { transform: translateX(120vw); opacity: 0; } }
+@keyframes en-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.012); } }
+@keyframes en-steam { 0% { transform: translateY(6px); opacity: 0; } 25% { opacity: 0.55; } 100% { transform: translateY(-34px); opacity: 0; } }
+@keyframes en-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  [class*="en-m-"] { animation: none !important; }
+}

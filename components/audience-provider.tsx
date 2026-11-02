@@ -15,7 +15,7 @@ import type { Audience } from "@/lib/content";
 const STORAGE_KEY = "en-audience";
 
 /**
- * "corporate" = percobaan hero ke-3 (jendela pesawat). Isi section di bawahnya memakai konten Dewasa,
+ * "corporate" = percobaan hero ke-3 (ruang rapat lantai atas). Isi section di bawahnya memakai konten Dewasa,
  * jadi untuk semua section `audience` tetap "kids" atau "adult"; hanya hero yang membedakan `choice`.
  */
 export type Choice = Audience | "corporate";
