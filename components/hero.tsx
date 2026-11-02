@@ -6,7 +6,7 @@ import { CTA, TAGLINE, heroContent, heroCorporate } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
 import { HeroBackdrop } from "./hero/hero-backdrop";
-import { MeetingScene } from "./hero/meeting-scene";
+import { CityScene } from "./hero/city-scene";
 import { TrialButton } from "./trial-modal";
 
 /* Deteksi layar sentuh: swipe kiri/kanan hanya aktif di HP/tablet */
@@ -53,7 +53,7 @@ export function Hero() {
       className="relative isolate h-svh min-h-[660px] overflow-hidden"
     >
       <HeroBackdrop audience={audience} originRef={toggleRef} />
-      <AnimatePresence>{corporate && <MeetingScene key="meeting" />}</AnimatePresence>
+      <AnimatePresence>{corporate && <CityScene key="city" />}</AnimatePresence>
 
       <div className="relative z-10 flex h-full flex-col items-center px-5 pt-[max(7rem,14vh)] text-center">
         <div className="flex w-full max-w-3xl flex-col items-center">

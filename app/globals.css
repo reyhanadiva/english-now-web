@@ -133,6 +133,10 @@ body {
 @keyframes en-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.012); } }
 @keyframes en-steam { 0% { transform: translateY(6px); opacity: 0; } 25% { opacity: 0.55; } 100% { transform: translateY(-34px); opacity: 0; } }
 @keyframes en-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes en-road-r { from { transform: translateX(-30vw); } to { transform: translateX(130vw); } }
+@keyframes en-road-l { from { transform: translateX(130vw); } to { transform: translateX(-30vw); } }
+/* adegan di luar layar: hentikan semua animasi supaya ringan */
+.en-paused [class*="en-m-"] { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
   [class*="en-m-"] { animation: none !important; }
 }
