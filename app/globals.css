@@ -142,6 +142,24 @@ body {
 @keyframes en-bird { from { transform: translate(-10vw, 0); } to { transform: translate(110vw, -34px); } }
 @keyframes en-flap { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.3); } }
 @keyframes en-shoot { 0%, 90% { opacity: 0; transform: translate(0, 0); } 91% { opacity: 1; } 100% { opacity: 0; transform: translate(-260px, 130px); } }
+
+/* hero Corporate (kota malam hidup) */
+@keyframes en-say {
+  0% { opacity: 0; transform: translate(-50%, 8px) scale(0.82); }
+  3.5% { opacity: 1; transform: translate(-50%, -1px) scale(1.04); }
+  5.5%, 30% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  34%, 100% { opacity: 0; transform: translate(-50%, -6px) scale(0.96); }
+}
+@keyframes en-walk-r { from { transform: translateX(-8vw); } to { transform: translateX(108vw); } }
+@keyframes en-walk-l { from { transform: translateX(108vw); } to { transform: translateX(-8vw); } }
+@keyframes en-leg { from { transform: rotate(-26deg); } to { transform: rotate(26deg); } }
+@keyframes en-arm { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
+@keyframes en-spin { to { transform: rotate(360deg); } }
+@keyframes en-sway { from { transform: rotate(-1.4deg); } to { transform: rotate(1.4deg); } }
+@keyframes en-lamp { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes en-flicker { 0%, 100% { opacity: 0.95; } 7% { opacity: 0.35; } 9% { opacity: 1; } 55% { opacity: 0.95; } 58% { opacity: 0.5; } 60% { opacity: 1; } }
+@keyframes en-train { 0% { transform: translateX(105vw); } 50%, 100% { transform: translateX(calc(-1 * var(--len))); } }
+@keyframes en-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
 /* adegan di luar layar: hentikan semua animasi supaya ringan */
 .en-paused [class*="en-m-"] { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
