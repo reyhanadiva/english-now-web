@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { CTA, TAGLINE, heroContent, heroCorporate } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
 import { HeroBackdrop } from "./hero/hero-backdrop";
-import { CorporateScene } from "./hero/corporate-scene";
+import { CorporateScene, preloadCorporateHero } from "./hero/corporate-scene";
 import { TrialButton } from "./trial-modal";
 
 /* Deteksi layar sentuh: swipe kiri/kanan hanya aktif di HP/tablet */
@@ -31,6 +31,12 @@ export function Hero() {
   const reduce = useReducedMotion();
   const coarse = useSyncExternalStore(subscribeCoarse, getCoarse, getCoarseServer);
   const toggleRef = useRef<HTMLDivElement>(null);
+
+  // siapkan foto hero Corporate di cache saat browser sedang menganggur
+  useEffect(() => {
+    const id = window.setTimeout(preloadCorporateHero, 1800);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const isKids = audience === "kids";
   const corporate = choice === "corporate";
@@ -81,7 +87,7 @@ export function Hero() {
                 {content.title}
               </h1>
               <p
-                className={`mt-4 max-w-md text-[15px] leading-relaxed text-pretty sm:text-base ${isKids ? "text-ink/75" : "text-white/85"}`}
+                className={`mt-4 max-w-md text-[15px] leading-relaxed text-pretty sm:text-base ${isKids ? "text-ink/75" : "text-white/90 [text-shadow:0_1px_14px_rgba(5,10,50,0.6)]"}`}
               >
                 {content.sub}
               </p>
