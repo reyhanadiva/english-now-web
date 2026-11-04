@@ -1,3 +1,4 @@
+import { ArticleSection } from "@/components/article-section";
 import { Hero } from "@/components/hero";
 import { FaqSection } from "@/components/faq-section";
 import { Footer } from "@/components/footer";
@@ -24,6 +25,7 @@ export default function Home() {
         <ProgramSection />
         <TestimonialSection />
         <GallerySection />
+        <ArticleSection />
         <FaqSection />
         <LocationSection />
         <StartSection />

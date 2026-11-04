@@ -110,8 +110,8 @@ const ROOMS: [number, number, number, number][] = [
 /** area langit di luar badan gedung (untuk awan rendah); awan rendah selalu di y >= 170 supaya tidak menyentuh atap */
 const toPoly = (pts: number[][]) => pts.map(([x, y]) => `${((x / IMG_W) * 100).toFixed(2)}% ${((y / IMG_H) * 100).toFixed(2)}%`).join(", ");
 const SKY_POLY = toPoly([
-  [-900, -600], [2572, -600], [2572, 735], [1622, 735], [1622, 157], [1223, 157], [1223, 553],
-  [447, 553], [447, 157], [50, 157], [50, 735], [-900, 735],
+  [-900, -600], [2572, -600], [2572, 735], [1622, 735], [1622, 157], [1223, 157], [1223, 562],
+  [447, 562], [447, 157], [50, 157], [50, 735], [-900, 735],
 ]);
 /** pita langit di atas atap gedung: awan tinggi dan burung/pesawat hanya di sini (tidak pernah memotong parapet) */
 const HIGH_POLY = toPoly([[-900, -600], [2572, -600], [2572, 150], [-900, 150]]);
@@ -193,18 +193,14 @@ function Skyline({ x0, x1, seed, base, hMax, op = 1 }: { x0: number; x1: number;
 /* ---------- kereta layang kecil di kejauhan ---------- */
 function Train() {
   return (
-    <svg viewBox="0 0 140 14" className="block h-full w-full" aria-hidden>
-      {[0, 1, 2, 3, 4].map((i) => (
-        <g key={i} transform={`translate(${i * 28} 0)`}>
-          <rect x="0" y="1" width="27" height="11" rx="2.4" fill="#E8ECFF" />
-          <rect x="0" y="9.4" width="27" height="2.4" fill="#405FDA" />
-          {[0, 1, 2, 3].map((k) => (
-            <rect key={k} x={3 + k * 6} y="3" width="4" height="4" rx="0.8" fill="#FFE59A" />
-          ))}
-        </g>
+    <svg viewBox="0 0 260 14" className="block h-full w-full" aria-hidden>
+      <path d="M2 11.5 V4.5 Q2 2 5 2 H214 Q246 2 258 9 Q259 10.2 257 11.5 Z" fill="#EEF1FF" />
+      <rect x="2" y="9" width="256" height="2.6" fill="#405FDA" />
+      {Array.from({ length: 14 }, (_, k) => (
+        <rect key={k} x={10 + k * 15} y="4" width="9" height="3.2" rx="0.9" fill="#FFE59A" />
       ))}
-      <path d="M136 1 h2 q3 1 3 5 v5.4 h-5 z" fill="#E8ECFF" />
-      <circle cx="139" cy="9" r="1.2" fill="#FFF8C8" />
+      <path d="M222 4 L242 4 Q250 5 254 8.4 L222 8.4 Z" fill="#7C8BE0" />
+      <circle cx="257" cy="9.4" r="1.3" fill="#FFF8C8" />
     </svg>
   );
 }
@@ -414,6 +410,35 @@ export function CorporateScene() {
                     <Sp n={c.n} x={0} y={c.y} w={c.w} />
                   </div>
                 ))}
+
+                {/* lintasan layang panjang: kereta lewat di belakang gedung lalu muncul lagi di sisi lain */}
+                <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox={`0 0 ${IMG_W} ${IMG_H}`} preserveAspectRatio="none" aria-hidden>
+                  <rect x="-900" y="556" width="3472" height="3" fill="#2B3AA0" opacity="0.9" />
+                  <rect x="-900" y="559" width="3472" height="5" fill="#1F2C8A" opacity="0.35" />
+                  {[...Array.from({ length: 5 }, (_, k) => -820 + k * 200), ...Array.from({ length: 5 }, (_, k) => 1700 + k * 200)].map((x) => (
+                    <path key={x} d="M0 0 H12 L10 176 H2 Z" transform={`translate(${x} 564)`} fill="#2F3CA8" opacity="0.8" />
+                  ))}
+                </svg>
+                {[
+                  { dir: "r", delay: 0.3 },
+                  { dir: "l", delay: 8.3 },
+                ].map((t, i) => (
+                  <div
+                    key={i}
+                    className="en-m-train absolute inset-0"
+                    style={{
+                      transform: still ? "translateX(34cqw)" : undefined,
+                      opacity: still ? (i === 0 ? 1 : 0) : 1,
+                      animation: A(`${t.dir === "r" ? "en-s-bullet-r" : "en-s-bullet-l"} 16s cubic-bezier(0.3,0.1,0.5,1) ${t.delay}s infinite both`),
+                    }}
+                  >
+                    <div className="absolute" style={{ left: 0, top: ph(542), width: pw(260), height: ph(14) }}>
+                      <div style={{ height: "100%", transform: t.dir === "r" ? undefined : "scaleX(-1)" }}>
+                        <Train />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* awan kecil di jendela ruang rapat dan ruang negosiasi */}
@@ -434,39 +459,6 @@ export function CorporateScene() {
                   </div>
                 </div>
               ))}
-
-              {/* ================= KERETA LAYANG DI DEPAN SKYLINE KOTA (celah tengah) ================= */}
-              <div className="pointer-events-none absolute overflow-hidden" style={box(452, 500, 1222, 560)}>
-                <svg className="absolute inset-0 h-full w-full" viewBox="452 500 770 60" preserveAspectRatio="none" aria-hidden>
-                  <rect x="452" y="556" width="770" height="2.6" fill="#2B3AA0" opacity="0.9" />
-                </svg>
-                {[
-                  { dir: 1, delay: 1 },
-                  { dir: -1, delay: 13 },
-                ].map((t, i) => (
-                  <div
-                    key={i}
-                    className="en-m-train absolute"
-                    style={
-                      {
-                        left: 0,
-                        top: `${((533 - 500) / 60) * 100}%`,
-                        width: `${(230 / 770) * 100}%`,
-                        height: `${(23 / 60) * 100}%`,
-                        ["--x0" as string]: t.dir === 1 ? "-105%" : "340%",
-                        ["--x1" as string]: t.dir === 1 ? "340%" : "-105%",
-                        transform: still ? (i === 0 ? "translateX(170%)" : "translateX(-300%)") : undefined,
-                        opacity: still ? (i === 0 ? 1 : 0) : 1,
-                        animation: A(`en-s-train 24s linear ${t.delay}s infinite both`),
-                      } as CSSProperties
-                    }
-                  >
-                    <div style={{ transform: t.dir === 1 ? undefined : "scaleX(-1)", height: "100%" }}>
-                      <Train />
-                    </div>
-                  </div>
-                ))}
-              </div>
 
               {/* ================= LAMPU TIAP RUANGAN MENYALA BERURUTAN (0 - 1,1 detik) ================= */}
               {ROOMS.map((r, i) => (
