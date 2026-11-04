@@ -52,7 +52,11 @@ function BuildingIcon() {
 
 type Tone = "stage" | "dark";
 
-function trackClass(tone: Tone) {
+function trackClass(tone: Tone, dark = false) {
+  if (tone === "stage" && dark) {
+    // di atas hero Corporate (biru tua): kaca gelap supaya tetap terbaca
+    return "bg-[#14206B]/45 ring-1 ring-white/25 backdrop-blur-xl shadow-[0_10px_40px_rgba(8,14,70,0.35)]";
+  }
   if (tone === "stage") {
     // kaca buram di atas lukisan
     return "bg-white/60 ring-1 ring-white/90 backdrop-blur-xl shadow-[0_10px_40px_rgba(30,47,120,0.18)]";
@@ -82,7 +86,7 @@ export function AudienceToggle({
     <div
       role="radiogroup"
       aria-label="Pilih kelas untuk siapa"
-      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone)} ${isLg ? "w-full max-w-[36rem]" : ""}`}
+      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone, choice === "corporate")} ${isLg ? "w-full max-w-[36rem]" : ""}`}
     >
       {OPTIONS.map((option) => {
         const active = choice === option.id;
@@ -98,7 +102,7 @@ export function AudienceToggle({
             className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full whitespace-nowrap transition-colors duration-200 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-sky ${
               OPTION_FONT[option.id]
             } ${isLg ? "px-2.5 py-2.5 text-[14px] sm:px-5 sm:text-base" : "px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"} ${
-              active ? activeText : "text-ink/55 hover:text-ink"
+              active ? activeText : tone === "stage" && choice === "corporate" ? "text-white/70 hover:text-white" : "text-ink/55 hover:text-ink"
             }`}
           >
             {active && (
