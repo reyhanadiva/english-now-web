@@ -120,11 +120,11 @@ const HIGH_POLY = [[-900, -600], [2572, -600], [2572, 118], [-900, 118]]
   .join(", ");
 
 /* ---------- gelembung bahasa Inggris + artinya ---------- */
-function Bubble({ x, y, delay, label, text, sub, still, first }: { x: number; y: number; delay: number; label: string; text: string; sub: string; still: boolean; first: boolean }) {
+function Bubble({ x, y, delay, text, sub, still, first }: { x: number; y: number; delay: number; label?: string; text: string; sub: string; still: boolean; first: boolean }) {
   return (
     <div className="pointer-events-none absolute z-20" style={{ left: pw(x), top: ph(y), transform: "translate(-50%, -100%)", width: "max-content" }}>
       <span
-        className="en-m-say relative block rounded-[0.7em] bg-white/96 px-[0.7em] pt-[0.42em] pb-[0.46em] text-left whitespace-nowrap text-[#14206B] shadow-[0_8px_22px_-8px_rgba(5,10,60,0.7)]"
+        className="en-m-say relative block rounded-[0.7em] bg-white/96 px-[0.7em] py-[0.42em] text-left whitespace-nowrap text-[#14206B] shadow-[0_8px_22px_-8px_rgba(5,10,60,0.7)]"
         style={{
           fontSize: `max(11px, ${cq(17)})`,
           opacity: still ? (first ? 1 : 0) : 0,
@@ -132,7 +132,6 @@ function Bubble({ x, y, delay, label, text, sub, still, first }: { x: number; y:
           animation: still ? undefined : `en-s-say ${CYCLE}s ease-out ${delay}s infinite both`,
         }}
       >
-        <span className="mb-[0.3em] inline-block rounded-[0.35em] bg-[#405FDA] px-[0.5em] py-[0.08em] text-[0.5em] font-extrabold tracking-[0.14em] text-white uppercase">{label}</span>
         <span className="block leading-tight font-bold">{text}</span>
         <span className="block text-[0.66em] leading-tight font-medium text-[#14206B]/60">{sub}</span>
         <span className="absolute top-full left-1/2 -mt-[0.28em] size-[0.55em] -translate-x-1/2 rotate-45 bg-white/96" />
@@ -277,12 +276,12 @@ export function CorporateScene() {
 
   /* ---- awan: 6 jenis, dua lapis kedalaman ---- */
   const highClouds = [
-    { n: "cloud-1", w: 250, y: 20, dur: 240, d: -90, dir: "r", o: 0.95 },
-    { n: "cirrus-1", w: 190, y: 52, dur: 170, d: -40, dir: "l", o: 0.85 },
-    { n: "puff-2", w: 86, y: 48, dur: 130, d: -100, dir: "r", o: 0.9 },
-    { n: "strat-2", w: 300, y: 78, dur: 200, d: -150, dir: "l", o: 0.8 },
-    { n: "cloud-2", w: 200, y: 44, dur: 190, d: -60, dir: "l", o: 0.9 },
-    { n: "pair", w: 120, y: 62, dur: 150, d: -20, dir: "r", o: 0.9 },
+    { n: "cloud-1", w: 230, y: 20, dur: 240, d: -62, dir: "r", o: 0.95 },
+    { n: "cirrus-1", w: 105, y: 52, dur: 170, d: -66, dir: "l", o: 0.85 },
+    { n: "puff-2", w: 80, y: 46, dur: 130, d: -68, dir: "r", o: 0.9 },
+    { n: "strat-2", w: 280, y: 80, dur: 200, d: -42, dir: "l", o: 0.8 },
+    { n: "cloud-2", w: 170, y: 40, dur: 190, d: -119, dir: "l", o: 0.9 },
+    { n: "pair", w: 110, y: 64, dur: 150, d: -108, dir: "r", o: 0.9 },
   ];
   const lowClouds = [
     { n: "cloud-2", w: 420, y: 250, dur: 300, d: -120, dir: "r", o: 0.82 },
@@ -369,7 +368,7 @@ export function CorporateScene() {
                   <div
                     key={i}
                     className="en-m-cloud absolute inset-0"
-                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[20, 60, 90, 40, 75, 10][i]}cqw)` : undefined }}
+                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[10, 70, 55, 100, 30, 88][i]}cqw)` : undefined }}
                   >
                     <Sp n={c.n} x={0} y={c.y} w={c.w} />
                   </div>
@@ -449,8 +448,8 @@ export function CorporateScene() {
                 <Skyline x0={556} x1={1119} seed={77} base={602} hMax={64} op={0.6} />
                 {/* kereta A ke kanan, kereta B ke kiri */}
                 {[
-                  { dir: 1, delay: 1.5 },
-                  { dir: -1, delay: 13.5 },
+                  { dir: 1, delay: 1 },
+                  { dir: -1, delay: 13 },
                 ].map((t, i) => (
                   <div
                     key={i}
@@ -458,11 +457,11 @@ export function CorporateScene() {
                     style={
                       {
                         left: 0,
-                        top: `${((584 - 500) / 104) * 100}%`,
-                        width: `${(140 / 579) * 100}%`,
-                        height: `${(14 / 104) * 100}%`,
-                        ["--x0" as string]: t.dir === 1 ? "-110%" : "430%",
-                        ["--x1" as string]: t.dir === 1 ? "430%" : "-110%",
+                        top: `${((578 - 500) / 104) * 100}%`,
+                        width: `${(200 / 579) * 100}%`,
+                        height: `${(20 / 104) * 100}%`,
+                        ["--x0" as string]: t.dir === 1 ? "-105%" : "305%",
+                        ["--x1" as string]: t.dir === 1 ? "305%" : "-105%",
                         transform: still ? (i === 0 ? "translateX(150%)" : "translateX(-300%)") : undefined,
                         opacity: still ? (i === 0 ? 1 : 0) : 1,
                         animation: A(`en-s-train 24s linear ${t.delay}s infinite both`),
@@ -495,28 +494,7 @@ export function CorporateScene() {
                   animation: A("en-s-pulse 3.2s ease-in-out infinite alternate"),
                 }}
               />
-              {/* pemimpin rapat berdiri di balik meja, menghadap jendela */}
-              {(() => {
-                const wd = 42;
-                const hh = (wd * 309) / 122;
-                return (
-                  <div
-                    className="en-m-in absolute"
-                    style={{
-                      left: pw(260 - wd / 2),
-                      top: ph(345 - hh),
-                      width: pw(wd),
-                      clipPath: `inset(0 0 ${(((345 - 327) / hh) * 100).toFixed(1)}% 0)`,
-                      opacity: still ? 1 : 0,
-                      animation: A("en-s-appear 0.5s ease-out 0.4s both"),
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/images/corp/stand-a.webp" alt="" draggable={false} className="block h-auto w-full max-w-none" />
-                  </div>
-                );
-              })()}
-              <Bubble x={262} y={236} delay={0.5} label="Meeting" text="Shall we begin?" sub="Kita mulai sekarang?" still={still} first />
+              <Bubble x={696} y={736} delay={0.5} label="Lobby" text="Nice to meet you." sub="Senang bertemu Anda." still={still} first />
 
               {/* ================= 2. VIDEO CALL ================= */}
               <svg style={box(219, 436, 394, 531)} viewBox="0 0 175 95" preserveAspectRatio="none">

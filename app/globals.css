@@ -222,10 +222,9 @@ body {
   25%, 100% { opacity: 0; transform: translateX(40px); }
 }
 @keyframes en-s-write {
-  0% { clip-path: inset(-3px 100% -3px -2px); opacity: 1; }
-  8%, 26% { clip-path: inset(-3px -2px -3px -2px); opacity: 1; }
-  31%, 99.9% { clip-path: inset(-3px -2px -3px -2px); opacity: 0; }
-  100% { clip-path: inset(-3px 100% -3px -2px); opacity: 1; }
+  0% { opacity: 0; }
+  4%, 31% { opacity: 1; }
+  35%, 100% { opacity: 0; }
 }
 @keyframes en-s-spk { 0%, 100% { opacity: 0; } 4%, 30% { opacity: 1; } 34% { opacity: 0; } }
 @keyframes en-s-kan {
@@ -254,7 +253,7 @@ body {
   66%, 74% { transform: translateY(var(--y1)); }
   88%, 100% { transform: translateY(var(--y0)); }
 }
-@keyframes en-s-train { 0% { transform: translateX(var(--x0)); } 14%, 100% { transform: translateX(var(--x1)); } }
+@keyframes en-s-train { 0% { transform: translateX(var(--x0)); } 38%, 100% { transform: translateX(var(--x1)); } }
 @keyframes en-s-cloud { from { transform: translateX(-34cqw); } to { transform: translateX(136cqw); } }
 @keyframes en-s-cloud-l { from { transform: translateX(136cqw); } to { transform: translateX(-34cqw); } }
 @keyframes en-s-fly-r { 0% { transform: translateX(-12cqw); } 32% { transform: translateX(112cqw); } 100% { transform: translateX(112cqw); } }
