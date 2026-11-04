@@ -29,7 +29,7 @@ const IMG_H = 941;
 const RATIO = IMG_W / IMG_H;
 const SRC = { s: "/images/hero-corp-1280.webp", l: "/images/hero-corp-1672.webp" };
 const EDGE = { l: "/images/hero-corp-edge-l.webp", r: "/images/hero-corp-edge-r.webp", t: "/images/hero-corp-edge-t.webp" };
-const TOP_COLOR = "#3D5FE7";
+const TOP_COLOR = "#4266EF";
 const NEXT_BG = "#FBF6EE"; // warna section di bawah hero (SECTION_BG.adult)
 const CYCLE = 12;
 
@@ -98,26 +98,23 @@ function Sp({ n, x, y, w, style, className = "" }: { n: string; x: number; y: nu
 
 /* ---------- ruangan ---------- */
 const ROOMS: [number, number, number, number][] = [
-  [90, 172, 488, 385], // 0 ruang rapat
-  [1187, 172, 1585, 385], // 1 negosiasi
-  [90, 400, 488, 585], // 2 video call
-  [1187, 400, 1585, 585], // 3 kantor tim
-  [90, 600, 488, 790], // 4 kelas English
-  [1187, 603, 1585, 790], // 5 analitik
-  [548, 605, 1127, 806], // 6 lobi
+  [70, 200, 398, 380], // 0 ruang rapat
+  [1272, 200, 1602, 377], // 1 negosiasi
+  [70, 395, 398, 547], // 2 video call
+  [1272, 395, 1602, 548], // 3 kantor tim
+  [70, 565, 398, 722], // 4 kelas English
+  [1272, 565, 1602, 722], // 5 analitik
+  [452, 590, 1222, 745], // 6 lobi
 ];
 
 /** area langit di luar badan gedung (untuk awan rendah); awan rendah selalu di y >= 170 supaya tidak menyentuh atap */
-const SKY_POLY = [
-  [-900, -600], [2572, -600], [2572, 735], [1607, 735], [1607, 126], [1127, 126], [1127, 566],
-  [548, 566], [548, 126], [65, 126], [65, 735], [-900, 735],
-]
-  .map(([x, y]) => `${((x / IMG_W) * 100).toFixed(2)}% ${((y / IMG_H) * 100).toFixed(2)}%`)
-  .join(", ");
+const toPoly = (pts: number[][]) => pts.map(([x, y]) => `${((x / IMG_W) * 100).toFixed(2)}% ${((y / IMG_H) * 100).toFixed(2)}%`).join(", ");
+const SKY_POLY = toPoly([
+  [-900, -600], [2572, -600], [2572, 735], [1622, 735], [1622, 157], [1223, 157], [1223, 553],
+  [447, 553], [447, 157], [50, 157], [50, 735], [-900, 735],
+]);
 /** pita langit di atas atap gedung: awan tinggi dan burung/pesawat hanya di sini (tidak pernah memotong parapet) */
-const HIGH_POLY = [[-900, -600], [2572, -600], [2572, 118], [-900, 118]]
-  .map(([x, y]) => `${((x / IMG_W) * 100).toFixed(2)}% ${((y / IMG_H) * 100).toFixed(2)}%`)
-  .join(", ");
+const HIGH_POLY = toPoly([[-900, -600], [2572, -600], [2572, 150], [-900, 150]]);
 
 /* ---------- gelembung bahasa Inggris + artinya ---------- */
 function Bubble({ x, y, delay, text, sub, still, first }: { x: number; y: number; delay: number; label?: string; text: string; sub: string; still: boolean; first: boolean }) {
@@ -266,12 +263,12 @@ export function CorporateScene() {
   const pan = portrait ? Math.max(0, (iw - w) / 2) * 0.9 : 0;
 
   const A = (v: string) => (still ? undefined : v);
-  const lampX = [98, 442, 568, 1105, 1267, 1580];
+  const lampX = [76, 366, 553, 1122, 1307, 1596];
 
   /* posisi berhenti lampu lift tepat di lantai: bawah kabin = permukaan lantai (y) */
-  const CAB_H = 46;
-  const SHAFT_TOP = 178;
-  const SHAFT_BOT = 792;
+  const CAB_H = 38;
+  const SHAFT_TOP = 200;
+  const SHAFT_BOT = 725;
   const cabPct = (floorY: number) => `${(((floorY - CAB_H - SHAFT_TOP) / CAB_H) * 100).toFixed(1)}%`;
 
   /* ---- awan: 6 jenis, dua lapis kedalaman ---- */
@@ -287,9 +284,9 @@ export function CorporateScene() {
     { n: "cloud-2", w: 420, y: 250, dur: 300, d: -120, dir: "r", o: 0.82 },
     { n: "strat-1", w: 360, y: 470, dur: 240, d: -50, dir: "l", o: 0.78 },
     { n: "cirrus-2", w: 300, y: 340, dur: 260, d: -200, dir: "r", o: 0.72 },
-    { n: "puff-1", w: 150, y: 210, dur: 200, d: -30, dir: "l", o: 0.88 },
-    { n: "cloud-1", w: 360, y: 430, dur: 330, d: -250, dir: "l", o: 0.78 },
-    { n: "strat-2", w: 260, y: 640, dur: 180, d: -90, dir: "r", o: 0.7 },
+    { n: "puff-1", w: 150, y: 190, dur: 200, d: -30, dir: "l", o: 0.88 },
+    { n: "cloud-1", w: 360, y: 395, dur: 330, d: -250, dir: "l", o: 0.78 },
+    { n: "strat-2", w: 260, y: 560, dur: 180, d: -90, dir: "r", o: 0.7 },
   ];
   const stars = useMemo(() => {
     const r = rng(5);
@@ -406,8 +403,8 @@ export function CorporateScene() {
 
               {/* ================= LANGIT RENDAH (celah tengah dan tepi): awan besar berlapis ================= */}
               <div className="absolute inset-0" style={{ clipPath: `polygon(${SKY_POLY})` }}>
-                <Skyline x0={-900} x1={65} seed={11} base={735} hMax={110} />
-                <Skyline x0={1607} x1={2572} seed={23} base={735} hMax={110} />
+                <Skyline x0={-900} x1={50} seed={11} base={735} hMax={110} />
+                <Skyline x0={1622} x1={2572} seed={23} base={735} hMax={110} />
                 {lowClouds.map((c, i) => (
                   <div
                     key={i}
@@ -421,8 +418,8 @@ export function CorporateScene() {
 
               {/* awan kecil di jendela ruang rapat dan ruang negosiasi */}
               {[
-                { r: [172, 218, 425, 302] as const, y: 236, d: -18 },
-                { r: [1252, 216, 1500, 300] as const, y: 232, d: -52 },
+                { r: [141, 238, 346, 330] as const, y: 262, d: -18 },
+                { r: [1326, 236, 1531, 330] as const, y: 258, d: -52 },
               ].map((wd, i) => (
                 <div key={i} className="pointer-events-none absolute overflow-hidden" style={box(wd.r[0], wd.r[1], wd.r[2], wd.r[3])}>
                   <div className="en-m-wc absolute inset-0" style={{ animation: A(`en-s-wcloud 78s linear ${wd.d}s infinite both`), opacity: 0.6, transform: still ? "translateX(40%)" : undefined }}>
@@ -438,15 +435,11 @@ export function CorporateScene() {
                 </div>
               ))}
 
-              {/* ================= KOTA JAUH DI CELAH TENGAH: skyline berkedip + kereta layang ================= */}
-              <div className="pointer-events-none absolute overflow-hidden" style={box(548, 500, 1127, 604)}>
-                <div className="absolute inset-0" style={{ transform: "none" }}>
-                  <svg className="absolute inset-0 h-full w-full" viewBox="548 500 579 104" preserveAspectRatio="none" aria-hidden>
-                    <rect x="548" y="597.6" width="579" height="2.4" fill="#3B4BB8" opacity="0.85" />
-                  </svg>
-                </div>
-                <Skyline x0={556} x1={1119} seed={77} base={602} hMax={64} op={0.6} />
-                {/* kereta A ke kanan, kereta B ke kiri */}
+              {/* ================= KERETA LAYANG DI DEPAN SKYLINE KOTA (celah tengah) ================= */}
+              <div className="pointer-events-none absolute overflow-hidden" style={box(452, 500, 1222, 560)}>
+                <svg className="absolute inset-0 h-full w-full" viewBox="452 500 770 60" preserveAspectRatio="none" aria-hidden>
+                  <rect x="452" y="556" width="770" height="2.6" fill="#2B3AA0" opacity="0.9" />
+                </svg>
                 {[
                   { dir: 1, delay: 1 },
                   { dir: -1, delay: 13 },
@@ -457,12 +450,12 @@ export function CorporateScene() {
                     style={
                       {
                         left: 0,
-                        top: `${((578 - 500) / 104) * 100}%`,
-                        width: `${(200 / 579) * 100}%`,
-                        height: `${(20 / 104) * 100}%`,
-                        ["--x0" as string]: t.dir === 1 ? "-105%" : "305%",
-                        ["--x1" as string]: t.dir === 1 ? "305%" : "-105%",
-                        transform: still ? (i === 0 ? "translateX(150%)" : "translateX(-300%)") : undefined,
+                        top: `${((533 - 500) / 60) * 100}%`,
+                        width: `${(230 / 770) * 100}%`,
+                        height: `${(23 / 60) * 100}%`,
+                        ["--x0" as string]: t.dir === 1 ? "-105%" : "340%",
+                        ["--x1" as string]: t.dir === 1 ? "340%" : "-105%",
+                        transform: still ? (i === 0 ? "translateX(170%)" : "translateX(-300%)") : undefined,
                         opacity: still ? (i === 0 ? 1 : 0) : 1,
                         animation: A(`en-s-train 24s linear ${t.delay}s infinite both`),
                       } as CSSProperties
@@ -488,26 +481,26 @@ export function CorporateScene() {
               <div
                 className="en-m-pulse pointer-events-none"
                 style={{
-                  ...box(236, 206, 366, 260),
+                  ...box(195, 226, 290, 264),
                   background: "radial-gradient(closest-side, rgba(255,214,120,0.85), rgba(255,214,120,0))",
                   opacity: still ? 0.7 : 0.5,
                   animation: A("en-s-pulse 3.2s ease-in-out infinite alternate"),
                 }}
               />
-              <Bubble x={696} y={736} delay={0.5} label="Lobby" text="Nice to meet you." sub="Senang bertemu Anda." still={still} first />
+              <Bubble x={734} y={664} delay={0.5} text="Nice to meet you." sub="Senang bertemu Anda." still={still} first />
 
               {/* ================= 2. VIDEO CALL ================= */}
-              <svg style={box(219, 436, 394, 531)} viewBox="0 0 175 95" preserveAspectRatio="none">
+              <svg style={box(184, 430, 316, 478)} viewBox="0 0 132 48" preserveAspectRatio="none">
                 {[
-                  { to: [85, 22], c: [110, 4] },
-                  { to: [36, 26], c: [90, -6] },
-                  { to: [56, 51], c: [105, 34] },
-                  { to: [161, 56], c: [158, 40] },
+                  { to: [66, 10], c: [88, 2] },
+                  { to: [31, 7], c: [66, -6] },
+                  { to: [43, 35], c: [72, 38] },
+                  { to: [108, 40], c: [112, 30] },
                 ].map((p, i) => (
                   <g key={i}>
                     <path
                       className="en-m-draw"
-                      d={`M143 51 Q ${p.c[0]} ${p.c[1]} ${p.to[0]} ${p.to[1]}`}
+                      d={`M101 32 Q ${p.c[0]} ${p.c[1]} ${p.to[0]} ${p.to[1]}`}
                       fill="none"
                       stroke="#FFF275"
                       strokeWidth="1.5"
@@ -521,18 +514,18 @@ export function CorporateScene() {
                       className="en-m-draw"
                       cx={p.to[0]}
                       cy={p.to[1]}
-                      r="2.3"
+                      r="2"
                       fill="#FFF275"
                       style={{ transformBox: "fill-box", transformOrigin: "center", opacity: still ? 1 : 0, animation: A(`en-s-pop ${CYCLE}s ease-out ${3.2 + i * 0.35}s infinite both`) }}
                     />
                   </g>
                 ))}
-                <circle cx="143" cy="51" r="3" fill="#FFF275" />
+                <circle cx="101" cy="32" r="2.6" fill="#FFF275" />
               </svg>
               {[
-                [237, 500, 280, 524],
-                [286, 500, 330, 524],
-                [335, 500, 376, 524],
+                [192, 478, 227, 498],
+                [233, 478, 267, 498],
+                [273, 478, 307, 498],
               ].map((t, i) => (
                 <div
                   key={i}
@@ -549,16 +542,16 @@ export function CorporateScene() {
               <div
                 className="en-m-pulse pointer-events-none"
                 style={{
-                  ...box(94, 458, 162, 526),
+                  ...box(80, 450, 124, 494),
                   background: "radial-gradient(closest-side, rgba(255,226,130,0.9), rgba(255,226,130,0))",
                   opacity: still ? 0.8 : 0.45,
                   animation: A("en-s-pulse 2.4s ease-in-out infinite alternate"),
                 }}
               />
-              <Bubble x={290} y={438} delay={3.5} label="Video call" text="Can everyone hear me?" sub="Apakah suara saya terdengar?" still={still} first={false} />
+              <Bubble x={250} y={426} delay={3.5} text="Can everyone hear me?" sub="Apakah suara saya terdengar?" still={still} first={false} />
 
               {/* ================= 3. KELAS ENGLISH: frasa + artinya ditulis cepat ================= */}
-              <div className="pointer-events-none absolute" style={box(194, 648, 382, 714)}>
+              <div className="pointer-events-none absolute" style={box(158, 603, 309, 658)}>
                 {[
                   { t: "Good morning!", s: "Selamat pagi!" },
                   { t: "Could you clarify?", s: "Bisa tolong jelaskan?" },
@@ -573,10 +566,10 @@ export function CorporateScene() {
                       animation: A(`en-s-write ${CYCLE}s linear ${i * 4}s infinite both`),
                     }}
                   >
-                    <span className="font-sans font-extrabold" style={{ fontSize: cq(17.5), lineHeight: 1.15, boxShadow: "inset 0 -0.34em 0 rgba(255,235,90,0.85)", padding: "0 0.12em" }}>
+                    <span className="font-sans font-extrabold" style={{ fontSize: cq(14.5), lineHeight: 1.15, boxShadow: "inset 0 -0.34em 0 rgba(255,235,90,0.85)", padding: "0 0.12em" }}>
                       {l.t}
                     </span>
-                    <span className="font-sans font-medium" style={{ fontSize: cq(10.5), marginTop: cq(5), color: "#4B58B0" }}>
+                    <span className="font-sans font-medium" style={{ fontSize: cq(9.5), marginTop: cq(3), color: "#4B58B0" }}>
                       {l.s}
                     </span>
                   </div>
@@ -584,27 +577,27 @@ export function CorporateScene() {
               </div>
 
               {/* ================= 4. NEGOSIASI: dua dokumen bertemu, centang Deal ================= */}
-              <svg style={box(1300, 250, 1470, 360)} viewBox="0 0 170 110" preserveAspectRatio="none">
+              <svg style={box(1360, 260, 1540, 360)} viewBox="0 0 180 100" preserveAspectRatio="none">
                 <g className="en-m-card" style={{ opacity: still ? 1 : 0, animation: A(`en-s-cardl ${CYCLE}s ease-out 6.4s infinite both`) }}>
-                  <polygon points="30,95 58,95 64,86 36,86" fill="#F6F7FF" stroke="#BFC6EE" strokeWidth="0.8" />
-                  <line x1="38" y1="90" x2="55" y2="90" stroke="#9AA4DD" strokeWidth="1" />
+                  <polygon points="30,84 56,84 62,76 36,76" fill="#F6F7FF" stroke="#BFC6EE" strokeWidth="0.8" />
+                  <line x1="38" y1="80" x2="54" y2="80" stroke="#9AA4DD" strokeWidth="1" />
                 </g>
                 <g className="en-m-card" style={{ opacity: still ? 1 : 0, animation: A(`en-s-cardr ${CYCLE}s ease-out 6.4s infinite both`) }}>
-                  <polygon points="108,95 136,95 142,86 114,86" fill="#F6F7FF" stroke="#BFC6EE" strokeWidth="0.8" />
-                  <line x1="116" y1="90" x2="133" y2="90" stroke="#9AA4DD" strokeWidth="1" />
+                  <polygon points="104,84 130,84 136,76 110,76" fill="#F6F7FF" stroke="#BFC6EE" strokeWidth="0.8" />
+                  <line x1="112" y1="80" x2="128" y2="80" stroke="#9AA4DD" strokeWidth="1" />
                 </g>
                 <g className="en-m-pop" style={{ transformBox: "fill-box", transformOrigin: "center", opacity: still ? 1 : 0, animation: A(`en-s-pop ${CYCLE}s ease-out 6.4s infinite both`) }}>
-                  <circle cx="83" cy="22" r="11" fill="#FFF275" stroke="#405FDA" strokeWidth="1.8" />
-                  <path d="M77 22.5 l4.4 4.4 l8 -9" fill="none" stroke="#405FDA" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="90" cy="22" r="11" fill="#FFF275" stroke="#405FDA" strokeWidth="1.8" />
+                  <path d="M84 22.5 l4.4 4.4 l8 -9" fill="none" stroke="#405FDA" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
                 </g>
               </svg>
-              <Bubble x={1385} y={238} delay={6.5} label="Negotiation" text="We have a deal." sub="Kita sepakat." still={still} first={false} />
+              <Bubble x={1437} y={262} delay={6.5} text="We have a deal." sub="Kita sepakat." still={still} first={false} />
 
               {/* ================= 5. KANTOR TIM: kanban To do / Doing / Done ================= */}
-              <svg style={box(1285, 451, 1485, 511)} viewBox="0 0 200 60" preserveAspectRatio="none">
+              <svg style={box(1362, 439, 1514, 485)} viewBox="0 0 200 60" preserveAspectRatio="none">
                 {[0, 1, 2].map((c) => (
                   <g key={c}>
-                    <text x={8 + c * 64} y="9" fontSize="7.6" fontWeight="800" fill={c === 2 ? "#1B8A5A" : "#2B3FA8"} style={{ fontFamily: "var(--font-sans), sans-serif" }}>
+                    <text x={8 + c * 64} y="9" fontSize="9.4" fontWeight="800" fill={c === 2 ? "#1B8A5A" : "#2B3FA8"} style={{ fontFamily: "var(--font-sans), sans-serif" }}>
                       {["To do", "Doing", "Done"][c]}
                     </text>
                     <line x1={8 + c * 64} y1="12.5" x2={64 + c * 64} y2="12.5" stroke="#C9CEF0" strokeWidth="0.8" />
@@ -626,12 +619,12 @@ export function CorporateScene() {
                   </g>
                 ))}
               </svg>
-              {[1229, 1309, 1426, 1500].map((x, i) => (
+              {[1308, 1375, 1471, 1532].map((x, i) => (
                 <div
                   key={x}
                   className="en-m-pulse pointer-events-none"
                   style={{
-                    ...box(x + 2, 507, x + 40, 527),
+                    ...box(x + 3, 484, x + 33, 501),
                     background: "rgba(140,185,255,0.5)",
                     opacity: still ? 0.5 : 0.3,
                     animation: A(`en-s-pulse ${2.4 + i * 0.4}s ease-in-out ${-i * 0.7}s infinite alternate`),
@@ -639,27 +632,27 @@ export function CorporateScene() {
                 />
               ))}
               {[
-                { n: "sit-a", cx: 1246 },
-                { n: "sit-b", cx: 1327 },
-                { n: "sit-c", cx: 1449 },
-                { n: "sit-d", cx: 1524 },
+                { n: "sit-a", cx: 1322 },
+                { n: "sit-b", cx: 1388 },
+                { n: "sit-c", cx: 1490 },
+                { n: "sit-d", cx: 1555 },
               ].map((p, i) => {
-                const wd = 52;
+                const wd = 44;
                 return (
                   <div
                     key={p.n}
                     className="en-m-in absolute"
-                    style={{ left: pw(p.cx - wd / 2), top: ph(584 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${0.7 + i * 0.28}s both`) }}
+                    style={{ left: pw(p.cx - wd / 2), top: ph(545 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${0.7 + i * 0.28}s both`) }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" />
                   </div>
                 );
               })}
-              <Bubble x={1385} y={449} delay={9.5} label="Teamwork" text="Let's schedule a call." sub="Mari jadwalkan panggilan." still={still} first={false} />
+              <Bubble x={1437} y={448} delay={9.5} text="Let's schedule a call." sub="Mari jadwalkan panggilan." still={still} first={false} />
 
               {/* ================= 6. ANALITIK: dashboard terang bergaya hero ================= */}
-              <svg style={box(1269, 634, 1502, 715)} viewBox="0 0 233 81" preserveAspectRatio="none">
+              <svg style={box(1339, 592, 1534, 659)} viewBox="0 0 233 81" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="dash-bg" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor="#F7F8FF" />
@@ -739,15 +732,15 @@ export function CorporateScene() {
                 ))}
               </svg>
               {[
-                { n: "sit-b", cx: 1273 },
-                { n: "sit-d", cx: 1503 },
+                { n: "sit-b", cx: 1342 },
+                { n: "sit-d", cx: 1537 },
               ].map((p, i) => {
-                const wd = 52;
+                const wd = 44;
                 return (
                   <div
                     key={p.cx}
                     className="en-m-in absolute"
-                    style={{ left: pw(p.cx - wd / 2), top: ph(789 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${1.1 + i * 0.3}s both`) }}
+                    style={{ left: pw(p.cx - wd / 2), top: ph(722 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${1.1 + i * 0.3}s both`) }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" />
@@ -757,8 +750,8 @@ export function CorporateScene() {
 
               {/* ================= LAMPU LIFT: naik-turun, berhenti tepat di tiap lantai ================= */}
               {[
-                { x0: 503, x1: 543, dur: 20, d: -2 },
-                { x0: 1132, x1: 1172, dur: 26, d: -13 },
+                { x0: 410, x1: 440, dur: 20, d: -2 },
+                { x0: 1229, x1: 1259, dur: 26, d: -13 },
               ].map((l, i) => (
                 <div key={i} className="pointer-events-none absolute overflow-hidden" style={box(l.x0, SHAFT_TOP, l.x1, SHAFT_BOT)}>
                   <div
@@ -772,10 +765,10 @@ export function CorporateScene() {
                         borderRadius: 3,
                         background: "linear-gradient(#FFF8D8, #FFD36B)",
                         boxShadow: "0 0 10px 2px rgba(255,214,120,0.75), inset 0 0 0 1px rgba(255,255,255,0.7)",
-                        ["--y0" as string]: cabPct(788),
-                        ["--y1" as string]: cabPct(583),
-                        ["--y2" as string]: cabPct(383),
-                        transform: still ? `translateY(${cabPct(583)})` : undefined,
+                        ["--y0" as string]: cabPct(722),
+                        ["--y1" as string]: cabPct(547),
+                        ["--y2" as string]: cabPct(380),
+                        transform: still ? `translateY(${cabPct(547)})` : undefined,
                         animation: A(`en-s-lift ${l.dur}s cubic-bezier(0.45,0,0.25,1) ${l.d}s infinite both`),
                       } as CSSProperties
                     }
@@ -789,13 +782,13 @@ export function CorporateScene() {
               <div
                 className="en-m-pulse pointer-events-none"
                 style={{
-                  ...box(690, 640, 985, 815),
+                  ...box(700, 615, 972, 765),
                   background: "radial-gradient(closest-side, rgba(255,214,130,0.55), rgba(255,214,130,0))",
                   opacity: still ? 0.7 : 0.4,
                   animation: A("en-s-pulse 4.2s ease-in-out infinite alternate"),
                 }}
               />
-              <div className="pointer-events-none overflow-hidden" style={box(548, 632, 1127, 804)}>
+              <div className="pointer-events-none overflow-hidden" style={box(452, 600, 1222, 742)}>
                 <div
                   className="en-m-glint absolute top-0 h-full"
                   style={{
@@ -808,8 +801,8 @@ export function CorporateScene() {
                 />
               </div>
               {/* dua profesional menunggu di depan pintu, dilihat dari belakang */}
-              <Sp n="stand-a" x={676} y={838 - hOf("stand-a", 40)} w={40} />
-              <Sp n="stand-b" x={958} y={838 - hOf("stand-b", 38)} w={38} />
+              <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} />
+              <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} />
 
               {/* ================= LAMPU TAMAN ================= */}
               {lampX.map((x, i) => (
@@ -817,7 +810,7 @@ export function CorporateScene() {
                   key={x}
                   className="en-m-pulse pointer-events-none"
                   style={{
-                    ...box(x - 34, 770, x + 34, 826),
+                    ...box(x - 30, 712, x + 30, 768),
                     background: "radial-gradient(closest-side, rgba(255,214,120,0.8), rgba(255,214,120,0))",
                     opacity: still ? 0.8 : 0.5,
                     animation: A(`en-s-pulse ${3 + (i % 3) * 0.6}s ease-in-out ${-i * 0.8}s infinite alternate`),
