@@ -393,8 +393,6 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
     return () => io.disconnect();
   }, [kids, toc]);
 
-  const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(`${doc.title} ${window.location.href}`)}`, "_blank", "noopener");
-
   return (
     <div className="min-h-screen" style={{ background: SECTION_BG[doc.audience] }}>
       {/* penanda baca */}
@@ -434,43 +432,64 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden text-sm text-ink/55 tabular-nums sm:block" aria-live="off">{progress > 0.97 ? "Selesai dibaca" : `${Math.max(1, Math.ceil(doc.readMin * (1 - progress)))} menit lagi`}</span>
-            <button type="button" onClick={() => setFs((v) => (v + 1) % 3)} aria-label="Ubah ukuran teks" title="Ubah ukuran teks" className="grid size-9 place-items-center rounded-full bg-white text-cobalt-900 ring-1 ring-cobalt-900/10 hover:bg-mist-50">
-              <span className="font-bold leading-none">A<span className="text-[0.7em]">{["", "+", "++"][fs]}</span></span>
-            </button>
+            <div role="group" aria-label="Ukuran teks" className="flex items-center gap-1 rounded-full bg-white p-1 ring-1 ring-cobalt-900/10">
+              <span className="hidden pl-2.5 text-xs font-semibold text-ink/55 md:block">Ukuran teks</span>
+              {[13, 16, 20].map((px, k) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => setFs(k)}
+                  aria-pressed={fs === k}
+                  aria-label={["Teks kecil", "Teks sedang", "Teks besar"][k]}
+                  title={["Teks kecil", "Teks sedang", "Teks besar"][k]}
+                  className={`grid size-8 place-items-center rounded-full font-bold leading-none transition ${fs === k ? (kids ? "bg-cobalt text-white" : "bg-cobalt-900 text-white") : "text-cobalt-900 hover:bg-mist-50"}`}
+                  style={{ fontSize: px }}
+                >
+                  A
+                </button>
+              ))}
+            </div>
             <Link href={`/?for=${doc.audience}#artikel`} className="hidden text-sm font-semibold text-cobalt-900 hover:text-cobalt sm:block">← Semua artikel</Link>
-            <button type="button" onClick={() => open()} className="rounded-full bg-cobalt-900 px-4 py-2 text-sm font-bold text-white transition hover:-translate-y-0.5">Free Trial Class</button>
+            <button type="button" onClick={() => open()} className="rounded-full bg-cobalt-900 px-4 py-2 text-sm font-bold whitespace-nowrap text-white transition hover:-translate-y-0.5"><span className="sm:hidden">Coba gratis</span><span className="hidden sm:inline">Free Trial Class</span></button>
           </div>
         </div>
       </header>
 
       <main className="relative">
         <article>
-        {/* kepala artikel */}
-        <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className={`mx-auto px-5 pt-10 sm:pt-14 ${kids ? "max-w-3xl text-center" : "max-w-6xl"}`}>
-          <span className={kids ? "inline-block -rotate-2 rounded-full bg-sky px-4 py-1 font-display text-base tracking-wide text-white shadow-[0_3px_0_0_rgba(0,0,0,0.15)]" : "inline-block rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-wide text-cobalt ring-1 ring-cobalt-900/10"}>{doc.category}</span>
-          <h1 className={kids ? "mt-5 font-display text-[2.6rem] leading-[1.05] text-balance text-cobalt-900 sm:text-6xl" : "mt-5 max-w-4xl text-[2.4rem] leading-[1.05] font-semibold tracking-[-0.04em] text-balance text-cobalt-900 sm:text-[3.6rem]"}>{doc.title}</h1>
-          <p className={`mt-4 text-lg text-ink/70 ${kids ? "mx-auto max-w-xl" : "max-w-2xl"}`}>{doc.deck}</p>
-          <div className={`mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-ink/65 ${kids ? "justify-center" : ""}`}>
-            <span className="flex items-center gap-2.5">
-              <span className={`grid size-9 place-items-center rounded-full text-sm font-extrabold text-white ${kids ? "bg-cobalt" : "bg-cobalt-900"}`}>{doc.author.name[0]}</span>
-              <span className="leading-tight"><b className="block text-ink">{doc.author.name}</b>{doc.author.role}</span>
-            </span>
-            <span aria-hidden>·</span>
-            <time dateTime={doc.date}>{fmtDate(doc.date)}</time>
-            <span aria-hidden>·</span>
-            <span>{doc.readMin} menit baca</span>
+        {/* kepala artikel: di HP foto penuh dengan judul di atasnya (gaya majalah), di layar lebar judul lalu foto */}
+        <div className="relative">
+          <div className="absolute inset-0 md:hidden">
+            <Image src={doc.cover} alt="" fill priority sizes="100vw" className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1140] via-[#0A1140]/55 to-[#0A1140]/10" />
           </div>
-        </motion.div>
+          <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className={`relative mx-auto flex min-h-[calc(78svh-4rem)] flex-col justify-end px-5 pb-9 text-white md:block md:min-h-0 md:pt-14 md:pb-0 md:text-inherit ${kids ? "max-w-3xl md:text-center" : "max-w-6xl"}`}>
+            <span className={`w-fit ${kids ? "-rotate-2 rounded-full bg-sun px-4 py-1 font-display text-base tracking-wide text-ink shadow-[0_3px_0_0_var(--color-sun-600)] md:bg-sky md:text-white md:shadow-[0_3px_0_0_rgba(0,0,0,0.15)]" : "rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-wide text-cobalt ring-1 ring-cobalt-900/10"}`}>{doc.category}</span>
+            <h1 className={kids ? "mt-4 font-display text-[2.5rem] leading-[1.04] text-balance [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] md:mt-5 md:text-6xl md:text-cobalt-900 md:[text-shadow:none]" : "mt-4 max-w-4xl text-[2.3rem] leading-[1.05] font-semibold tracking-[-0.04em] text-balance [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] md:mt-5 md:text-[3.6rem] md:text-cobalt-900 md:[text-shadow:none]"}>{doc.title}</h1>
+            <p className={`mt-3 text-[1.05rem] text-white/85 md:mt-4 md:text-lg md:text-ink/70 ${kids ? "md:mx-auto md:max-w-xl" : "md:max-w-2xl"}`}>{doc.deck}</p>
+            <div className={`mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-white/80 md:mt-6 md:text-ink/65 ${kids ? "md:justify-center" : ""}`}>
+              <span className="flex items-center gap-2.5">
+                <span className={`grid size-9 place-items-center rounded-full bg-white/95 text-sm font-extrabold text-cobalt-900 md:text-white ${kids ? "md:bg-cobalt" : "md:bg-cobalt-900"}`}>{doc.author.name[0]}</span>
+                <span className="leading-tight"><b className="block text-white md:text-ink">{doc.author.name}</b>{doc.author.role}</span>
+              </span>
+              <span aria-hidden>·</span>
+              <time dateTime={doc.date}>{fmtDate(doc.date)}</time>
+              <span aria-hidden>·</span>
+              <span>{doc.readMin} menit baca</span>
+            </div>
+          </motion.div>
+        </div>
 
-        {/* gambar utama */}
-        <div className={`mx-auto mt-9 px-5 ${kids ? "max-w-3xl" : "max-w-6xl"}`}>
+        {/* gambar utama (layar lebar) */}
+        <div className={`mx-auto mt-9 hidden px-5 md:block ${kids ? "max-w-3xl" : "max-w-6xl"}`}>
           <div className={`relative overflow-hidden bg-mist ${kids ? "aspect-[4/3] rotate-[-1.2deg] rounded-[2rem] border-[6px] border-white shadow-[0_10px_0_0_var(--color-mist),0_30px_50px_-30px_rgba(30,47,120,0.5)]" : "aspect-[21/9] rounded-2xl"}`}>
-            <Image src={doc.cover} alt={doc.title} fill priority sizes="(min-width:1024px) 1100px, 100vw" className="object-cover" />
+            <Image src={doc.cover} alt={doc.title} fill sizes="(min-width:1024px) 1100px, 100vw" className="object-cover" />
           </div>
           {doc.coverCaption && <p className={`mt-2 text-sm text-ink/55 ${kids ? "text-center" : ""}`}>{doc.coverCaption}</p>}
         </div>
 
         {/* isi */}
+        <div className="relative -mt-6 rounded-t-[2rem] md:mt-0 md:rounded-none" style={{ background: SECTION_BG[doc.audience] }}>
         <div className={`mx-auto px-5 pb-20 ${kids ? "max-w-2xl" : "grid max-w-6xl gap-12 lg:grid-cols-[13rem_minmax(0,42rem)] lg:justify-center"}`}>
           {!kids && (
             <aside className="hidden lg:block">
@@ -515,11 +534,8 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
               {doc.sample && "Artikel contoh untuk melihat tata letak. "}
               Ditulis oleh {doc.author.name}. Konten ini bersifat umum dan tidak menggantikan arahan pengajar.
             </p>
-            <button type="button" onClick={wa} className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:brightness-95">
-              <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2Zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.08-1.17.11-1.9-.12a16 16 0 0 1-1.73-.64c-3.05-1.32-5.04-4.4-5.2-4.6-.15-.2-1.25-1.66-1.25-3.16s.79-2.25 1.07-2.55c.28-.3.6-.38.8-.38h.58c.19 0 .43-.07.67.5l.9 2.2c.07.15.12.32.02.5l-.3.47-.45.5c-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.3 2.36 1.45.3.15.47.12.64-.07.18-.2.75-.87.95-1.17.2-.3.4-.25.67-.15l2.1 1c.28.14.46.2.53.33.07.12.07.7-.18 1.4Z" /></svg>
-              Bagikan lewat WhatsApp
-            </button>
           </div>
+        </div>
         </div>
 
         </article>

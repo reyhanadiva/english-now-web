@@ -819,12 +819,12 @@ export function CorporateScene() {
               <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} style={{ filter: WARM }} />
               <Shadow cx={955} y={751} w={28} still={still} />
               <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} style={{ filter: WARM }} />
-              {/* papan nama English Now di atas pintu lobi */}
+              {/* papan nama English Now di kaca lobi (di bawah area teks supaya tidak tertutup tombol di layar pendek) */}
               <div
                 className="en-m-in pointer-events-none absolute grid place-items-center"
                 style={{
-                  ...box(799, 568, 873, 585),
-                  borderRadius: 3,
+                  ...box(548, 640, 648, 683),
+                  borderRadius: 6,
                   background: "linear-gradient(#27399A, #1B2A80)",
                   boxShadow: "0 0 8px rgba(255,255,255,0.22), inset 0 0 0 1px rgba(255,255,255,0.35)",
                   opacity: still ? 1 : 0,
@@ -832,7 +832,7 @@ export function CorporateScene() {
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/brand/logo-full-white.png" alt="" draggable={false} style={{ height: "74%", width: "auto" }} />
+                <img src="/brand/logo-full-white.png" alt="" draggable={false} style={{ height: "72%", width: "auto" }} />
               </div>
 
               {/* ================= LAMPU TAMAN ================= */}

@@ -263,3 +263,5 @@ body {
 @keyframes en-s-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes en-s-wcloud { from { transform: translateX(-40%); } to { transform: translateX(105%); } }
 @keyframes en-s-pan { from { transform: translateX(var(--pan)); } to { transform: translateX(calc(var(--pan) * -1)); } }
+
+@keyframes en-kb { from { transform: scale(1) translate3d(0,0,0); } to { transform: scale(1.09) translate3d(-1.5%, -1%, 0); } }

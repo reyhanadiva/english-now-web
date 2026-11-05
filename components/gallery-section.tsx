@@ -38,7 +38,7 @@ export function GallerySection() {
   const mid = (cols - 1) / 2;
 
   return (
-    <section id="galeri" className="relative overflow-hidden pt-4 pb-24 sm:pb-32" style={{ background: SECTION_BG[audience] }}>
+    <section id="galeri" className="relative overflow-hidden pt-4 pb-10 sm:pb-12" style={{ background: SECTION_BG[audience] }}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={audience} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.3 }}>
           <div
