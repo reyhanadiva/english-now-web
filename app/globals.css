@@ -291,3 +291,8 @@ body {
   figure, blockquote, aside, details, table, .print-tpl { break-inside: avoid; }
   a { color: inherit !important; text-decoration: none !important; }
 }
+
+@keyframes en-drift {
+  from { transform: translateX(-30cqw); }
+  to { transform: translateX(110cqw); }
+}

@@ -6,7 +6,6 @@ import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, u
 import { articleContent, type Article } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { KidsClouds } from "./ornaments";
 import { SafeImage } from "./ui/safe-image";
 
 /**
@@ -116,6 +115,58 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
   );
 }
 
+/** awan yang melintas terus dari kiri ke kanan dengan kecepatan berbeda (CSS, otomatis berhenti di luar layar) */
+const DRIFT = [
+  { top: "30%", w: 150, o: 0.95, dur: 30, at: 0.1 },
+  { top: "44%", w: 96, o: 0.7, dur: 44, at: 0.55 },
+  { top: "52%", w: 120, o: 0.6, dur: 38, at: 0.8 },
+  { top: "74%", w: 170, o: 0.8, dur: 34, at: 0.35 },
+  { top: "88%", w: 100, o: 0.55, dur: 50, at: 0.9 },
+];
+function DriftClouds({ reduce }: { reduce: boolean }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {DRIFT.map((c, i) => (
+        <svg
+          key={i}
+          viewBox="0 0 120 50"
+          className="en-m-drift absolute left-0 drop-shadow-[0_6px_10px_rgba(8,14,70,0.12)]"
+          style={{ top: c.top, width: c.w, opacity: c.o, animation: reduce ? undefined : `en-drift ${c.dur}s linear ${-(c.dur * c.at).toFixed(1)}s infinite` }}
+        >
+          <path d="M15 40 a14 14 0 0 1 10-22 a18 18 0 0 1 33-6 a16 16 0 0 1 30 4 a12 12 0 0 1 17 24 z" fill="#fff" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+/** layang-layang (ikon merek) yang melayang naik-turun dengan ekor bergoyang */
+function FlyingKite({ reduce }: { reduce: boolean }) {
+  return (
+    <motion.div
+      aria-hidden
+      className="pointer-events-none absolute top-[8%] right-[7%] hidden w-16 origin-bottom md:block lg:w-20"
+      animate={reduce ? undefined : { y: [0, -22, 0], x: [0, 12, 0], rotate: [-9, 9, -9] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <svg viewBox="0 0 40 70" className="w-full overflow-visible drop-shadow-[0_8px_10px_rgba(8,14,70,0.35)]">
+        <path d="M20 2 L36 18 L20 38 L4 18 Z" fill="#FFF275" stroke="#1E2F78" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M20 2 V38 M4 18 H36" stroke="#1E2F78" strokeWidth="1.4" />
+        <motion.path
+          d="M20 38 q-7 7 0 13 t0 13"
+          fill="none"
+          stroke="#07A9F8"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          style={{ originX: "20px", originY: "38px" }}
+          animate={reduce ? undefined : { rotate: [10, -10, 10] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </svg>
+    </motion.div>
+  );
+}
+
 /** Batas tampilan: yang tampil selalu artikel TERBARU (urut tanggal), tidak peduli berapa banyak artikel yang ada. */
 const KIDS_MAX = 5;
 const ADULT_MAX = 4;
@@ -142,8 +193,9 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
   const off = (i: number) => ((i - active + n + half) % n) - half;
 
   return (
-    <div className="relative mx-3 max-w-6xl overflow-hidden rounded-[2.2rem] bg-gradient-to-b from-[#3552D0] to-[#1E2F78] py-10 sm:mx-6 md:py-[clamp(1.5rem,4.5vh,3.2rem)] lg:mx-auto">
-      <KidsClouds className="inset-0 opacity-90" />
+    <div className="relative mx-3 max-w-6xl overflow-hidden rounded-[2.2rem] bg-gradient-to-b from-[#3552D0] to-[#1E2F78] [container-type:inline-size] py-10 sm:mx-6 md:py-[clamp(1.5rem,4.5vh,3.2rem)] lg:mx-auto">
+      <DriftClouds reduce={reduce} />
+      <FlyingKite reduce={reduce} />
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <h2 className="font-display text-[2.4rem] leading-[1.03] text-balance md:text-[clamp(2rem,5.6vh,3.7rem)]">
           <span className="text-sun">{c.titleSoft}</span>
@@ -155,18 +207,6 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
 
       {/* desktop: kartu berputar, yang di tengah paling besar. Klik kartu samping untuk memajukannya. */}
       <div className="relative mt-8 hidden md:mt-[3.5vh] md:block" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
-        {/* sinar matahari yang berputar pelan di belakang panggung kartu */}
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute top-1/2 left-1/2 size-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            background: "repeating-conic-gradient(rgba(255,255,255,0.13) 0deg 6deg, transparent 6deg 16deg)",
-            WebkitMaskImage: "radial-gradient(circle, #000 12%, transparent 62%)",
-            maskImage: "radial-gradient(circle, #000 12%, transparent 62%)",
-          }}
-          animate={reduce ? undefined : { rotate: 360 }}
-          transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
-        />
         {/* cahaya lembut di belakang kartu fokus */}
         <motion.span aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sun/25 blur-3xl" animate={reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
         <div className="relative mx-auto h-[clamp(17rem,45vh,26rem)] max-w-4xl">
@@ -195,8 +235,8 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
               >
                 <motion.div
                   className="h-full"
-                  animate={reduce ? undefined : { y: [0, -9, 0] }}
-                  transition={{ duration: 3.6 + (i % 3) * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.45 }}
+                  animate={reduce ? undefined : { y: [0, -13, 0], rotate: [-0.9, 0.9, -0.9] }}
+                  transition={{ duration: 3 + (i % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.45 }}
                 >
                   <KidCard a={a} active={d === 0} reduce={reduce} onPick={() => setActive(i)} />
                 </motion.div>
