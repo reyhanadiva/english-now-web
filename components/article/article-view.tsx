@@ -492,9 +492,6 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => window.print()} aria-label="Cetak artikel" title="Cetak artikel" className={`hidden size-9 place-items-center rounded-full transition md:grid ${scrolled ? "text-cobalt-900 hover:bg-white" : "text-white hover:bg-white/15"}`}>
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z" /></svg>
-            </button>
             <Link href={`/?for=${doc.audience}#artikel`} className={`hidden text-sm font-semibold sm:block ${scrolled ? "text-cobalt-900 hover:text-cobalt" : "text-white hover:text-sun"}`}>← Semua artikel</Link>
             <button type="button" onClick={() => open()} className={`rounded-full px-4 py-2 text-sm font-bold whitespace-nowrap transition hover:-translate-y-0.5 ${scrolled ? "bg-cobalt-900 text-white" : "bg-sun text-ink"}`}><span className="sm:hidden">Coba gratis</span><span className="hidden sm:inline">Free Trial Class</span></button>
           </div>

@@ -66,9 +66,6 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
   const py = useMotionValue(0);
   const rx = useSpring(useTransform(py, (v) => v * -7), { stiffness: 140, damping: 16 });
   const ry = useSpring(useTransform(px, (v) => v * 9), { stiffness: 140, damping: 16 });
-  const bx = useSpring(useMotionValue(0), { stiffness: 380, damping: 30 });
-  const by = useSpring(useMotionValue(0), { stiffness: 380, damping: 30 });
-  const [hover, setHover] = useState(false);
   return (
     <motion.div
       ref={ref}
@@ -80,14 +77,10 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
         if (!r) return;
         px.set((e.clientX - r.left) / r.width - 0.5);
         py.set((e.clientY - r.top) / r.height - 0.5);
-        bx.set(e.clientX - r.left - 36);
-        by.set(e.clientY - r.top - 36);
       }}
-      onPointerEnter={(e) => e.pointerType === "mouse" && setHover(true)}
       onPointerLeave={() => {
         px.set(0);
         py.set(0);
-        setHover(false);
       }}
     >
       <Link
@@ -118,50 +111,25 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
             </motion.span>
           </div>
         </div>
-        {/* gelembung yang mengikuti kursor */}
-        <motion.span
-          aria-hidden
-          className="pointer-events-none absolute top-0 left-0 z-20 grid size-[72px] place-items-center rounded-full bg-sun font-display text-[15px] text-ink shadow-[0_8px_20px_-6px_rgba(8,14,70,0.6)]"
-          style={{ x: bx, y: by }}
-          animate={{ scale: hover && active ? 1 : 0, opacity: hover && active ? 1 : 0 }}
-          transition={{ type: "spring", stiffness: 320, damping: 22 }}
-        >
-          <span className="flex items-center gap-1">Baca <Arrow className="size-3.5" /></span>
-        </motion.span>
       </Link>
     </motion.div>
   );
 }
 
-const TONES = ["linear-gradient(135deg,#FFF275,#F5B83A)", "linear-gradient(135deg,#07A9F8,#405FDA)", "linear-gradient(135deg,#07A9F8,#7FD6A8)", "linear-gradient(135deg,#405FDA,#B9AAF2)"];
-
-/** deretan kapsul kategori yang berjalan di belakang kartu (gaya yang sama dengan section Coba Gratis) */
-function CapsuleBand({ words, reduce }: { words: string[]; reduce: boolean }) {
-  const base = words.length ? words : ["Artikel"];
-  const list = [...base, ...base, ...base, ...base];
-  const row = (rev: boolean, off: number) => (
-    <div className="flex w-max gap-3" style={{ animation: reduce ? undefined : `wall-${rev ? "right" : "left"} ${rev ? 70 : 56}s linear infinite` }}>
-      {[...list, ...list].map((w, i) => (
-        <span key={i} className={`flex h-11 shrink-0 items-center rounded-full px-6 font-display text-xl sm:h-14 sm:px-8 sm:text-2xl ${(i + off) % 4 === 0 ? "text-cobalt-900" : (i + off) % 4 === 2 ? "text-cobalt-900" : "text-white"}`} style={{ background: TONES[(i + off) % TONES.length] }}>
-          {w}
-        </span>
-      ))}
-    </div>
-  );
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-[40%] -rotate-3 flex-col gap-3 opacity-80">
-      {row(false, 0)}
-      {row(true, 2)}
-    </div>
-  );
+/** Batas tampilan: yang tampil selalu artikel TERBARU (urut tanggal), tidak peduli berapa banyak artikel yang ada. */
+const KIDS_MAX = 5;
+const ADULT_MAX = 4;
+function newest(list: Article[], max: number) {
+  return [...list].sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, max);
 }
 
-function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
+function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
+  const c = { ...full, list: newest(full.list, KIDS_MAX) };
   const n = c.list.length;
   const start = Math.max(0, c.list.findIndex((a) => a.featured));
   const [active, setActive] = useState(start);
   const [paused, setPaused] = useState(false);
-  const cats = Array.from(new Set(c.list.map((a) => a.category)));
+  const [mob, setMob] = useState(0);
 
   // putar otomatis tiap 5 detik; berhenti saat kursor di atas kartu atau gerak dikurangi
   useEffect(() => {
@@ -187,8 +155,34 @@ function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
 
       {/* desktop: kartu berputar, yang di tengah paling besar. Klik kartu samping untuk memajukannya. */}
       <div className="relative mt-8 hidden md:mt-[3.5vh] md:block" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
-        <CapsuleBand words={cats} reduce={reduce} />
+        {/* kata kategori raksasa di belakang kartu: berganti mengikuti kartu yang fokus */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-[58%] text-center">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={c.list[active].category}
+              className="block font-display text-[clamp(4rem,12vw,9rem)] leading-none whitespace-nowrap text-white/[0.13]"
+              initial={reduce ? false : { opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? undefined : { opacity: 0, y: -24 }}
+              transition={{ duration: 0.35 }}
+            >
+              {c.list[active].category}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+        {/* cahaya lembut di belakang kartu fokus */}
+        <motion.span aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sun/25 blur-3xl" animate={reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
         <div className="relative mx-auto h-[clamp(17rem,45vh,26rem)] max-w-4xl">
+          {n > 1 && (
+            <>
+              <button type="button" onClick={() => setActive((v) => (v - 1 + n) % n)} aria-label="Artikel sebelumnya" className="absolute top-1/2 left-1 z-10 grid size-12 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white text-cobalt-900 shadow-[0_8px_20px_-6px_rgba(8,14,70,0.6)] transition hover:scale-110 lg:-left-4">
+                <Arrow className="size-5 rotate-180" />
+              </button>
+              <button type="button" onClick={() => setActive((v) => (v + 1) % n)} aria-label="Artikel berikutnya" className="absolute top-1/2 right-1 z-10 grid size-12 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white text-cobalt-900 shadow-[0_8px_20px_-6px_rgba(8,14,70,0.6)] transition hover:scale-110 lg:-right-4">
+                <Arrow className="size-5" />
+              </button>
+            </>
+          )}
           {c.list.map((a, i) => {
             const d = off(i);
             const vis = Math.abs(d) <= 1;
@@ -217,13 +211,26 @@ function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
       </div>
 
       {/* HP: kartu bisa digeser */}
-      <ul className="relative mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pt-3 pb-6 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden">
+      <ul
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          const w = (el.firstElementChild as HTMLElement | null)?.offsetWidth ?? 1;
+          setMob(Math.round(el.scrollLeft / (w + 16)));
+        }}
+        className="relative mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[14vw] pt-3 pb-4 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
+      >
         {c.list.map((a) => (
-          <li key={a.id} className="h-[22rem] w-[72vw] max-w-[18rem] shrink-0 snap-center">
+          <li key={a.id} className="h-[22rem] w-[72vw] max-w-[17rem] shrink-0 snap-center">
             <KidCard a={a} active reduce={reduce} onPick={() => undefined} />
           </li>
         ))}
       </ul>
+
+      <div className="relative flex justify-center gap-2 pb-3 md:hidden" aria-hidden>
+        {c.list.map((a, i) => (
+          <span key={a.id} className={`h-2.5 rounded-full transition-all duration-300 ${i === mob ? "w-7 bg-sun" : "w-2.5 bg-white/40"}`} />
+        ))}
+      </div>
 
       <div className="relative mt-2 text-center md:mt-[2.6vh]">
         <Link href={c.all.href} className="inline-flex rounded-full bg-sun px-7 py-3 font-display text-lg tracking-wide text-ink shadow-[0_5px_0_0_var(--color-sun-600)] transition-transform hover:-translate-y-0.5">
@@ -261,8 +268,9 @@ const Spot = () => (
 );
 
 function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
-  const lead = c.list.find((a) => a.featured) ?? c.list[0];
-  const rest = c.list.filter((a) => a !== lead).slice(0, 3);
+  const list = newest(c.list, ADULT_MAX);
+  const lead = list.find((a) => a.featured) ?? list[0];
+  const rest = list.filter((a) => a !== lead).slice(0, ADULT_MAX - 1);
   const leadMeta = [lead.author && `Oleh ${lead.author}`, fmtDate(lead.date), lead.readMin ? `${lead.readMin} menit baca` : ""].filter(Boolean).join(" · ");
   return (
     <div className="relative mx-auto max-w-6xl px-5">

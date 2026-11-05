@@ -266,6 +266,11 @@ body {
 
 @keyframes en-kb { from { transform: scale(1) translate3d(0,0,0); } to { transform: scale(1.09) translate3d(-1.5%, -1%, 0); } }
 
+@keyframes en-s-wave2 {
+  0%, 100% { transform: translateY(-1px) skewY(-2.6deg); }
+  50% { transform: translateY(1px) skewY(2.6deg); }
+}
+
 @keyframes en-s-wave {
   0%, 100% { transform: translateY(-1.4px) skewY(-5deg); }
   50% { transform: translateY(1.4px) skewY(5deg); }

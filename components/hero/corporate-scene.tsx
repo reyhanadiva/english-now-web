@@ -819,29 +819,30 @@ export function CorporateScene() {
               <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} style={{ filter: WARM }} />
               <Shadow cx={955} y={751} w={28} still={still} />
               <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} style={{ filter: WARM }} />
-              {/* bendera English Now berkibar di atap kedua menara (tiang + kain 5 potong yang bergelombang bergantian) */}
-              {[120, 1480].map((px, fi) => (
+              {/* bendera English Now berkibar di atap menara kanan: kain 16 potong tipis yang bergelombang berurutan supaya mulus */}
+              {[1480].map((px) => (
                 <div key={px} className="pointer-events-none">
                   <div style={{ ...box(px - 1.5, 90, px + 1.5, 160), background: "linear-gradient(90deg,#E8E4EE,#9A96A8)", borderRadius: 2 }} />
                   <div style={{ ...box(px - 3.5, 86, px + 3.5, 93), background: "#FFF275", borderRadius: 999 }} />
-                  <div style={{ ...box(px + 1.5, 96, px + 85.5, 142), filter: still ? undefined : "drop-shadow(0 2px 2px rgba(8,14,70,0.35))" }}>
-                    {[0, 1, 2, 3, 4].map((i) => (
+                  <div style={{ ...box(px + 1.5, 96, px + 85.5, 142), filter: still ? undefined : "drop-shadow(0 2px 2px rgba(8,14,70,0.3))" }}>
+                    {Array.from({ length: 16 }, (_, i) => (
                       <div
                         key={i}
                         className="en-m-flag absolute"
                         style={{
-                          left: `${i * 20}%`,
+                          left: `${(i * 100) / 16}%`,
                           top: 0,
-                          width: "20.4%",
+                          width: "6.9%",
                           height: "100%",
                           backgroundColor: "#2B3FA8",
-                          backgroundImage: "url(/brand/logo-full-white.png)",
+                          backgroundImage: "url(/brand/logo-full-white.png), linear-gradient(90deg, rgba(8,14,70,0.0), rgba(8,14,70,0.0))",
                           backgroundRepeat: "no-repeat",
-                          backgroundSize: "500% 62%",
-                          backgroundPosition: `${i * 25}% 50%`,
-                          filter: i % 2 ? "brightness(0.9)" : undefined,
+                          backgroundSize: "1138% 62%, 100% 100%",
+                          backgroundPosition: `${(((i * 5.25 - 9) / 60.2) * 100).toFixed(2)}% 50%, 0 0`,
+                          filter: `brightness(${(0.88 + 0.12 * Math.cos((i / 16) * Math.PI * 3)).toFixed(3)})`,
                           transformOrigin: "left center",
-                          animation: A(`en-s-wave 2.4s ease-in-out ${(-i * 0.25 - fi * 0.7).toFixed(2)}s infinite`),
+                          willChange: "transform",
+                          animation: A(`en-s-wave2 2.8s ease-in-out ${(-i * 0.16).toFixed(2)}s infinite`),
                         }}
                       />
                     ))}
