@@ -197,7 +197,7 @@ function Train() {
       <path d="M2 11.5 V4.5 Q2 2 5 2 H214 Q246 2 258 9 Q259 10.2 257 11.5 Z" fill="#EEF1FF" />
       <rect x="2" y="9" width="256" height="2.6" fill="#405FDA" />
       {Array.from({ length: 14 }, (_, k) => (
-        <rect key={k} x={10 + k * 15} y="4" width="9" height="3.2" rx="0.9" fill="#FFE59A" />
+        <rect key={k} x={10 + k * 15} y="4" width="9" height="3.2" rx="0.9" fill="#FFF3B8" />
       ))}
       <path d="M222 4 L242 4 Q250 5 254 8.4 L222 8.4 Z" fill="#7C8BE0" />
       <circle cx="257" cy="9.4" r="1.3" fill="#FFF8C8" />
@@ -270,19 +270,15 @@ export function CorporateScene() {
   /* ---- awan: 6 jenis, dua lapis kedalaman ---- */
   const highClouds = [
     { n: "cloud-1", w: 230, y: 20, dur: 240, d: -62, dir: "r", o: 0.95 },
-    { n: "cirrus-1", w: 105, y: 52, dur: 170, d: -66, dir: "l", o: 0.85 },
     { n: "puff-2", w: 80, y: 46, dur: 130, d: -68, dir: "r", o: 0.9 },
     { n: "strat-2", w: 280, y: 80, dur: 200, d: -42, dir: "l", o: 0.8 },
     { n: "cloud-2", w: 170, y: 40, dur: 190, d: -119, dir: "l", o: 0.9 },
-    { n: "pair", w: 110, y: 64, dur: 150, d: -108, dir: "r", o: 0.9 },
   ];
   const lowClouds = [
-    { n: "cloud-2", w: 420, y: 250, dur: 300, d: -120, dir: "r", o: 0.82 },
-    { n: "strat-1", w: 360, y: 470, dur: 240, d: -50, dir: "l", o: 0.78 },
-    { n: "cirrus-2", w: 300, y: 340, dur: 260, d: -200, dir: "r", o: 0.72 },
-    { n: "puff-1", w: 150, y: 190, dur: 200, d: -30, dir: "l", o: 0.88 },
-    { n: "cloud-1", w: 360, y: 395, dur: 330, d: -250, dir: "l", o: 0.78 },
-    { n: "strat-2", w: 260, y: 560, dur: 180, d: -90, dir: "r", o: 0.7 },
+    { n: "cloud-2", w: 420, y: 250, dur: 300, d: -120, dir: "r", o: 0.8 },
+    { n: "strat-1", w: 360, y: 470, dur: 240, d: -50, dir: "l", o: 0.75 },
+    { n: "cirrus-2", w: 300, y: 340, dur: 260, d: -200, dir: "r", o: 0.7 },
+    { n: "cloud-1", w: 360, y: 395, dur: 330, d: -250, dir: "l", o: 0.75 },
   ];
   const stars = useMemo(() => {
     const r = rng(5);
@@ -361,7 +357,7 @@ export function CorporateScene() {
                   <div
                     key={i}
                     className="en-m-cloud absolute inset-0"
-                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[10, 70, 55, 100, 30, 88][i]}cqw)` : undefined }}
+                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[10, 55, 100, 30][i]}cqw)` : undefined }}
                   >
                     <Sp n={c.n} x={0} y={c.y} w={c.w} />
                   </div>
@@ -405,7 +401,7 @@ export function CorporateScene() {
                   <div
                     key={i}
                     className="en-m-cloud absolute inset-0"
-                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[40, 70, 20, 55, 85, 30][i]}cqw)` : undefined }}
+                    style={{ animation: A(`${c.dir === "r" ? "en-s-cloud" : "en-s-cloud-l"} ${c.dur}s linear ${c.d}s infinite both`), opacity: c.o, transform: still ? `translateX(${[40, 70, 20, 85][i]}cqw)` : undefined }}
                   >
                     <Sp n={c.n} x={0} y={c.y} w={c.w} />
                   </div>
@@ -421,7 +417,7 @@ export function CorporateScene() {
                 </svg>
                 {[
                   { dir: "r", delay: 0.3 },
-                  { dir: "l", delay: 8.3 },
+                  { dir: "l", delay: 12.3 },
                 ].map((t, i) => (
                   <div
                     key={i}
@@ -429,11 +425,15 @@ export function CorporateScene() {
                     style={{
                       transform: still ? "translateX(34cqw)" : undefined,
                       opacity: still ? (i === 0 ? 1 : 0) : 1,
-                      animation: A(`${t.dir === "r" ? "en-s-bullet-r" : "en-s-bullet-l"} 16s cubic-bezier(0.3,0.1,0.5,1) ${t.delay}s infinite both`),
+                      animation: A(`${t.dir === "r" ? "en-s-bullet-r" : "en-s-bullet-l"} 24s cubic-bezier(0.3,0.1,0.5,1) ${t.delay}s infinite both`),
                     }}
                   >
                     <div className="absolute" style={{ left: 0, top: ph(542), width: pw(260), height: ph(14) }}>
-                      <div style={{ height: "100%", transform: t.dir === "r" ? undefined : "scaleX(-1)" }}>
+                      <div style={{ position: "relative", height: "100%", transform: t.dir === "r" ? undefined : "scaleX(-1)" }}>
+                        {/* cahaya: pendar di sekitar kereta, sorot lampu depan, pantulan di rel */}
+                        <div className="absolute" style={{ left: "-6%", right: "-6%", top: "-190%", bottom: "-190%", background: "radial-gradient(closest-side, rgba(255,228,140,0.55), rgba(255,228,140,0))" }} />
+                        <div className="absolute" style={{ left: "97%", width: "70%", top: "-70%", height: "240%", background: "linear-gradient(90deg, rgba(255,246,205,0.8), rgba(255,246,205,0))", clipPath: "polygon(0 42%, 100% 0, 100% 100%, 0 62%)" }} />
+                        <div className="absolute" style={{ left: "4%", right: "4%", top: "100%", height: "70%", background: "linear-gradient(rgba(255,226,140,0.5), rgba(255,226,140,0))" }} />
                         <Train />
                       </div>
                     </div>

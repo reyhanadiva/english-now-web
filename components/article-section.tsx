@@ -1,26 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { articleContent, type Article } from "@/lib/content";
 import { SECTION_BG } from "@/lib/theme";
 import { useAudience } from "./audience-provider";
-import { Butterfly, Stars } from "./ornaments";
 import { SafeImage } from "./ui/safe-image";
 
 /**
- * Section Artikel (showcase). Isi dan tata letaknya berbeda untuk tiap dunia:
- *  - Anak: "rak cerita", kartu bergambar yang bisa digeser, sedikit miring, stiker kategori.
- *  - Dewasa: editorial, satu artikel utama besar di kiri dan daftar ringkas bergaris di kanan.
- * Data dari `articleContent` (nanti dari admin); kolom opsional yang kosong tidak ditampilkan.
+ * Section Artikel (showcase). Tata letak berbeda untuk tiap dunia:
+ *  - Anak: tiga kartu foto berjajar, kartu tengah lebih besar; panel putih di bawah foto memuat judul.
+ *  - Dewasa: artikel utama lebar (foto + teks) dan tiga kartu foto di bawahnya.
+ * Data dari `articleContent` (nanti dari admin). Kolom opsional yang kosong tidak ditampilkan.
  */
-
 const fmtDate = (iso?: string) => {
   if (!iso) return "";
   const d = new Date(iso + "T00:00:00");
   return Number.isNaN(+d) ? "" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(d);
 };
-
-const meta = (a: Article) => [a.author, fmtDate(a.date), a.readMin ? `${a.readMin} menit baca` : ""].filter(Boolean).join(" · ");
 
 function SampleTag({ className = "" }: { className?: string }) {
   return <span className={`rounded-full bg-ink/80 px-2 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase ${className}`}>Contoh</span>;
@@ -44,7 +41,7 @@ export function ArticleSection() {
           transition={{ duration: reduce ? 0 : 0.3 }}
           className="relative py-20 sm:py-28"
         >
-          {kids ? <KidsShelf c={c} reduce={reduce} /> : <Editorial c={c} reduce={reduce} />}
+          {kids ? <KidsTrio c={c} reduce={reduce} /> : <Editorial c={c} reduce={reduce} />}
         </motion.div>
       </AnimatePresence>
     </section>
@@ -53,127 +50,163 @@ export function ArticleSection() {
 
 type C = (typeof articleContent)["kids"];
 
-/* ---------------- ANAK: rak cerita ---------------- */
-const TILTS = [-2.2, 1.6, -1.2, 2.2, -1.8, 1.2];
-const STICKERS = ["bg-sun text-ink", "bg-sky text-white", "bg-cobalt text-white", "bg-[#FFB48F] text-ink", "bg-[#9BE3A0] text-ink", "bg-[#C9B8FF] text-ink"];
+/* ---------------- ANAK: tiga kartu foto, tengah lebih besar ---------------- */
+function KidCard({ a, big, reduce, delay }: { a: Article; big?: boolean; reduce: boolean; delay: number }) {
+  return (
+    <motion.div
+      initial={reduce ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.55, delay }}
+      className="h-full"
+    >
+      <Link
+        href={a.href}
+        className="group relative block h-full overflow-hidden rounded-[1.6rem] bg-mist shadow-[0_22px_40px_-22px_rgba(30,47,120,0.6)] ring-4 ring-white transition-transform duration-300 hover:-translate-y-1.5 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-sky"
+      >
+        <SafeImage src={a.cover} alt="" fill sizes="(min-width:768px) 360px, 80vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+        <div className="absolute inset-x-3 bottom-3 rounded-2xl bg-white/96 p-4 shadow-[0_10px_24px_-12px_rgba(30,47,120,0.5)] backdrop-blur">
+          <p className="flex items-center gap-2 text-[11px] font-extrabold tracking-wider text-cobalt uppercase">
+            <span className="size-2 rounded-full bg-sun ring-2 ring-sun-600/40" />
+            {a.category}
+            {a.sample && <SampleTag className="ml-auto" />}
+          </p>
+          <h3 className={`mt-1.5 font-display leading-[1.12] text-cobalt-900 ${big ? "text-[1.45rem]" : "text-[1.2rem]"}`}>{a.title}</h3>
+          <p className="mt-1.5 line-clamp-2 text-[13px] leading-snug text-ink/60">{a.excerpt}</p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
-function KidsShelf({ c, reduce }: { c: C; reduce: boolean }) {
+function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
+  const list = c.list;
+  const center = list.find((a) => a.featured) ?? list[Math.min(1, list.length - 1)];
+  const others = list.filter((a) => a !== center);
+  const trio = [others[0], center, others[1]].filter(Boolean) as Article[];
   return (
     <>
-      <Butterfly tone={1} reduce={reduce} className="absolute top-12 right-[10%] hidden w-14 md:block" delay={0.4} />
       <div className="mx-auto max-w-6xl px-5 text-center">
-        <p className="inline-block -rotate-2 rounded-full bg-sun px-4 py-1 font-display text-sm tracking-wide text-ink shadow-[0_3px_0_0_var(--color-sun-600)]">{c.eyebrow}</p>
-        <h2 className="mt-4 font-display text-4xl leading-[1.05] text-balance text-cobalt-900 sm:text-[3.25rem]">{c.title}</h2>
-        <p className="mx-auto mt-3 max-w-xl text-base text-ink/70">{c.sub}</p>
+        <h2 className="font-display text-4xl leading-[1.05] text-balance sm:text-[3.4rem]">
+          <span className="text-cobalt-900/35">{c.titleSoft}</span>
+          <br />
+          <span className="text-cobalt-900">{c.title}</span>
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-base text-ink/65">{c.sub}</p>
       </div>
 
-      <div className="mt-10 [mask-image:linear-gradient(90deg,transparent,#000_3%,#000_97%,transparent)]">
-        <ul className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-[max(1.25rem,calc((100vw-72rem)/2))] pt-6 pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {c.list.map((a, i) => (
-            <motion.li
-              key={a.id}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: Math.min(i, 4) * 0.07 }}
-              className="w-[17rem] shrink-0 snap-start sm:w-[18.5rem]"
-            >
-              <a
-                href={a.href}
-                className="group block rounded-[1.75rem] bg-white p-3 ring-4 ring-white shadow-[0_18px_34px_-18px_rgba(30,47,120,0.55)] transition-transform duration-300 hover:-translate-y-2 hover:!rotate-0 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-sky"
-                style={{ transform: `rotate(${TILTS[i % TILTS.length]}deg)` }}
-              >
-                <div className="relative aspect-[4/3.1] overflow-hidden rounded-[1.25rem] bg-mist">
-                  <SafeImage src={a.cover} alt="" fill sizes="300px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <span className={`absolute top-3 left-3 -rotate-3 rounded-full px-3 py-1 font-display text-[13px] tracking-wide shadow-[0_3px_0_0_rgba(0,0,0,0.12)] ${STICKERS[i % STICKERS.length]}`}>{a.category}</span>
-                  {a.sample && <SampleTag className="absolute right-3 bottom-3" />}
-                </div>
-                <div className="px-2 pt-4 pb-2">
-                  <h3 className="font-display text-[1.35rem] leading-[1.12] text-cobalt-900">{a.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-ink/65">{a.excerpt}</p>
-                  <p className="mt-3 flex items-center justify-between text-[13px] font-semibold text-cobalt">
-                    <span>{a.readMin ? `${a.readMin} menit baca` : "Baca"}</span>
-                    <span aria-hidden className="grid size-8 place-items-center rounded-full bg-sun text-ink transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </p>
-                </div>
-              </a>
-            </motion.li>
-          ))}
-        </ul>
+      {/* desktop: tiga kartu, tengah lebih besar */}
+      <div className="mx-auto mt-12 hidden max-w-5xl grid-cols-[1fr_1.18fr_1fr] items-center gap-5 px-5 md:grid">
+        {trio.map((a, i) => {
+          const mid = a === center && trio.length === 3;
+          return (
+            <div key={a.id} className={mid ? "h-[27rem]" : "h-[22rem]"}>
+              <KidCard a={a} big={mid} reduce={reduce} delay={i * 0.08} />
+            </div>
+          );
+        })}
       </div>
-      <div className="text-center">
-        <a href={c.all.href} className="inline-flex rounded-full bg-cobalt px-6 py-3 font-display text-base tracking-wide text-white shadow-[0_4px_0_0_var(--color-cobalt-900)] transition-transform hover:-translate-y-0.5">
+
+      {/* HP: semua kartu bisa digeser */}
+      <ul className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pt-2 pb-6 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden">
+        {list.map((a, i) => (
+          <li key={a.id} className="h-[23rem] w-[78vw] max-w-[20rem] shrink-0 snap-center">
+            <KidCard a={a} reduce={reduce} delay={Math.min(i, 3) * 0.06} />
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-8 text-center">
+        <Link href={c.all.href} className="inline-flex rounded-full bg-cobalt px-6 py-3 font-display text-base tracking-wide text-white shadow-[0_4px_0_0_var(--color-cobalt-900)] transition-transform hover:-translate-y-0.5">
           {c.all.label}
-        </a>
+        </Link>
       </div>
     </>
   );
 }
 
-/* ---------------- DEWASA: editorial ---------------- */
+/* ---------------- DEWASA: artikel utama lebar + tiga kartu ---------------- */
+const PILLS = ["bg-cobalt text-white", "bg-sky text-white", "bg-sun text-ink"];
+
+/** pojok tanda bidik tipis di foto, bergaya editorial */
+function Corners() {
+  const k = "absolute size-3.5 border-white/80";
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-3">
+      <span className={`${k} top-0 left-0 border-t-2 border-l-2`} />
+      <span className={`${k} top-0 right-0 border-t-2 border-r-2`} />
+      <span className={`${k} bottom-0 left-0 border-b-2 border-l-2`} />
+      <span className={`${k} right-0 bottom-0 border-r-2 border-b-2`} />
+    </span>
+  );
+}
+
 function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
   const lead = c.list.find((a) => a.featured) ?? c.list[0];
   const rest = c.list.filter((a) => a !== lead).slice(0, 3);
+  const leadMeta = [lead.author && `Oleh ${lead.author}`, fmtDate(lead.date), lead.readMin ? `${lead.readMin} menit baca` : ""].filter(Boolean).join(" · ");
   return (
-    <div className="relative mx-auto max-w-6xl px-5">
-      <Stars reduce={reduce} count={8} className="absolute -top-8 right-0 h-28 w-1/3" />
-      <div className="relative flex flex-wrap items-end justify-between gap-4">
+    <div className="mx-auto max-w-6xl px-5">
+      <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="text-xs font-bold tracking-[0.2em] text-cobalt uppercase">{c.eyebrow}</p>
-          <h2 className="mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.035em] text-balance text-cobalt-900 sm:text-5xl">{c.title}</h2>
-          <p className="mt-3 max-w-xl text-base text-ink/70">{c.sub}</p>
+          <h2 className="text-4xl leading-[1.05] font-semibold tracking-[-0.04em] text-balance sm:text-[3.4rem]">
+            <span className="text-cobalt-900/35">{c.titleSoft}</span> <span className="text-cobalt-900">{c.title}</span>
+          </h2>
+          <p className="mt-3 max-w-xl text-base text-ink/65">{c.sub}</p>
         </div>
-        <a href={c.all.href} className="group text-sm font-bold text-cobalt">
-          {c.all.label} <span aria-hidden className="inline-block transition-transform group-hover:translate-x-1">→</span>
-        </a>
+        <Link href={c.all.href} className="rounded-full bg-[#14206B] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+          {c.all.label}
+        </Link>
       </div>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-12">
-        <motion.a
-          href={lead.href}
-          initial={reduce ? false : { opacity: 0, y: 22 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.55 }}
-          className="group block lg:col-span-7"
-        >
-          <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-mist">
-            <SafeImage src={lead.cover} alt="" fill sizes="(min-width:1024px) 640px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#14206B]/45 via-transparent to-transparent" />
-            <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold tracking-wide text-cobalt-900">{lead.category}</span>
-            {lead.sample && <SampleTag className="absolute right-4 bottom-4" />}
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.55 }}
+        className="mt-10"
+      >
+        <Link href={lead.href} className="group grid overflow-hidden rounded-2xl bg-white shadow-[0_24px_50px_-30px_rgba(20,32,107,0.45)] ring-1 ring-cobalt-900/8 md:grid-cols-[1.05fr_1fr]">
+          <div className="relative aspect-[4/3] bg-mist md:aspect-auto md:min-h-[22rem]">
+            <SafeImage src={lead.cover} alt="" fill sizes="(min-width:768px) 560px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+            <Corners />
+            {lead.sample && <SampleTag className="absolute bottom-4 left-4" />}
           </div>
-          <h3 className="mt-5 text-2xl leading-[1.15] font-semibold tracking-[-0.025em] text-cobalt-900 transition-colors group-hover:text-cobalt sm:text-[1.9rem]">{lead.title}</h3>
-          {lead.excerpt && <p className="mt-3 max-w-xl text-base text-ink/70">{lead.excerpt}</p>}
-          <p className="mt-3 text-[13px] text-ink/55">{meta(lead)}</p>
-        </motion.a>
+          <div className="flex flex-col p-6 sm:p-9">
+            <span className="w-fit rounded-full bg-[#14206B] px-3 py-1 text-[11px] font-bold tracking-wide text-white">Pilihan</span>
+            <h3 className="mt-4 text-[1.75rem] leading-[1.12] font-semibold tracking-[-0.03em] text-cobalt-900 sm:text-[2.2rem]">{lead.title}</h3>
+            {lead.excerpt && <p className="mt-4 text-base leading-relaxed text-ink/65">{lead.excerpt}</p>}
+            <div className="mt-auto flex items-end justify-between gap-3 pt-8">
+              <p className="text-[13px] text-ink/55">{leadMeta}</p>
+              <span className="shrink-0 rounded-full bg-cobalt px-3 py-1 text-xs font-bold text-white">{lead.category}</span>
+            </div>
+          </div>
+        </Link>
+      </motion.div>
 
-        <ul className="flex flex-col divide-y divide-cobalt-900/10 border-y border-cobalt-900/10 lg:col-span-5 lg:self-start">
-          {rest.map((a, i) => (
-            <motion.li
-              key={a.id}
-              initial={reduce ? false : { opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.5, delay: 0.08 + i * 0.08 }}
-            >
-              <a href={a.href} className="group flex gap-4 py-5">
-                <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-lg bg-mist sm:w-32">
-                  <SafeImage src={a.cover} alt="" fill sizes="140px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[11px] font-bold tracking-[0.14em] text-cobalt uppercase">
-                    {a.category}
-                    {a.sample && <span className="ml-2 rounded bg-ink/10 px-1.5 py-0.5 text-[9px] text-ink/60">Contoh</span>}
-                  </p>
-                  <h3 className="mt-1.5 text-[1.05rem] leading-snug font-semibold tracking-[-0.01em] text-cobalt-900 transition-colors group-hover:text-cobalt">{a.title}</h3>
-                  <p className="mt-1.5 text-[13px] text-ink/55">{meta(a)}</p>
-                </div>
-              </a>
-            </motion.li>
-          ))}
-        </ul>
-      </div>
+      <ul className="mt-8 grid gap-6 sm:grid-cols-3">
+        {rest.map((a, i) => (
+          <motion.li
+            key={a.id}
+            initial={reduce ? false : { opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.5, delay: 0.06 + i * 0.08 }}
+          >
+            <Link href={a.href} className="group block">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-mist">
+                <SafeImage src={a.cover} alt="" fill sizes="(min-width:640px) 360px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <Corners />
+                {a.sample && <SampleTag className="absolute right-3 bottom-3" />}
+              </div>
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <h3 className="text-[1.02rem] leading-snug font-semibold tracking-[-0.01em] text-cobalt-900 transition-colors group-hover:text-cobalt">{a.title}</h3>
+                <span className={`mt-0.5 shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${PILLS[i % PILLS.length]}`}>{a.category}</span>
+              </div>
+            </Link>
+          </motion.li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -707,27 +707,27 @@ export interface Article {
  * TODO: ganti dengan artikel asli dari admin; href "#artikel" belum menuju halaman apa pun.
  * Anak: 3-6 artikel (kartu geser). Dewasa: 4 artikel (1 utama + 3 daftar).
  */
-export const articleContent: Record<Audience, { eyebrow: string; title: string; sub: string; all: { label: string; href: string }; list: Article[] }> = {
+export const articleContent: Record<Audience, { title: string; titleSoft: string; sub: string; all: { label: string; href: string }; list: Article[] }> = {
   kids: {
-    eyebrow: "Rak cerita",
-    title: "Baca-baca seru, yuk!",
-    sub: "Tips, cerita kelas, dan permainan kecil untuk belajar English di rumah.",
-    all: { label: "Lihat semua cerita", href: "#artikel" },
+    titleSoft: "Artikel seru",
+    title: "untuk dibaca bareng.",
+    sub: "Kabar dan bacaan terbaru dari English Now.",
+    all: { label: "Lihat semua artikel", href: "#artikel" },
     list: [
       { id: "k1", title: "5 cara seru mengajak anak berani bicara English", excerpt: "Mulai dari obrolan singkat sehari-hari, tanpa takut salah.", cover: "/programs/kids.jpg", category: "Tips Orang Tua", readMin: 4, href: "#artikel", sample: true },
-      { id: "k2", title: "Lagu dan permainan untuk belajar kosakata", excerpt: "Belajar sambil bergerak, supaya kata baru lebih mudah diingat.", cover: "/why/practice.jpg", category: "Main Sambil Belajar", readMin: 3, href: "#artikel", sample: true },
+      { id: "k2", title: "Lagu dan permainan untuk belajar kosakata", excerpt: "Belajar sambil bergerak, supaya kata baru lebih mudah diingat.", cover: "/why/practice.jpg", category: "Main Sambil Belajar", readMin: 3, href: "/artikel/lagu-dan-permainan-kosakata", featured: true, sample: true },
       { id: "k3", title: "Cerita kelas: hari pertama berani ngomong English", excerpt: "Kisah singkat dari kelas, dan apa yang membuat suasananya nyaman.", cover: "/why/native.jpg", category: "Cerita Kelas", readMin: 5, href: "#artikel", sample: true },
       { id: "k4", title: "Persiapan remaja menuju tes bahasa Inggris", excerpt: "Urutan belajar yang tidak membuat kewalahan.", cover: "/programs/teens.jpg", category: "Remaja", readMin: 6, href: "#artikel", sample: true },
       { id: "k5", title: "Kapan waktu terbaik anak mulai les?", excerpt: "Tanda-tanda anak sudah siap, dan cara memulainya pelan-pelan.", cover: "/programs/private.jpg", category: "Tips Orang Tua", readMin: 4, href: "#artikel", sample: true },
     ],
   },
   adult: {
-    eyebrow: "Artikel",
-    title: "Wawasan untuk karier Anda.",
-    sub: "Panduan singkat English untuk pekerjaan, ujian, dan tim.",
+    titleSoft: "Artikel",
+    title: "dari English Now.",
+    sub: "Kabar dan bacaan terbaru dari kami.",
     all: { label: "Lihat semua artikel", href: "#artikel" },
     list: [
-      { id: "a1", title: "Menulis email bisnis dalam English yang jelas dan sopan", excerpt: "Struktur sederhana yang bisa dipakai untuk email permintaan, tindak lanjut, dan balasan ke klien luar negeri.", cover: "/programs/business.jpg", category: "Business English", author: "Tim English Now", date: "2026-10-20", readMin: 6, href: "#artikel", featured: true, sample: true },
+      { id: "a1", title: "Menulis email bisnis dalam English yang jelas dan sopan", excerpt: "Struktur sederhana yang bisa dipakai untuk email permintaan, tindak lanjut, dan balasan ke klien luar negeri.", cover: "/programs/business.jpg", category: "Business English", author: "Tim English Now", date: "2026-10-20", readMin: 6, href: "/artikel/email-bisnis-english-jelas-sopan", featured: true, sample: true },
       { id: "a2", title: "Tiga kebiasaan untuk rapat berbahasa Inggris yang lebih lancar", excerpt: "", cover: "/why/teachers.jpg", category: "Meeting", author: "Tim English Now", date: "2026-10-12", readMin: 5, href: "#artikel", sample: true },
       { id: "a3", title: "Mulai belajar IELTS: urutan yang masuk akal", excerpt: "", cover: "/programs/exam.jpg", category: "Persiapan Tes", author: "Tim English Now", date: "2026-10-05", readMin: 7, href: "#artikel", sample: true },
       { id: "a4", title: "Menyusun silabus English dari pekerjaan nyata tim", excerpt: "", cover: "/programs/private.jpg", category: "Untuk HR", author: "Tim English Now", date: "2026-09-28", readMin: 5, href: "#artikel", sample: true },

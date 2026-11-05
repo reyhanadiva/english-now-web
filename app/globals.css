@@ -254,8 +254,8 @@ body {
   88%, 100% { transform: translateY(var(--y0)); }
 }
 @keyframes en-s-train { 0% { transform: translateX(var(--x0)); } 38%, 100% { transform: translateX(var(--x1)); } }
-@keyframes en-s-bullet-r { 0% { transform: translateX(-30cqw); } 40%, 100% { transform: translateX(135cqw); } }
-@keyframes en-s-bullet-l { 0% { transform: translateX(135cqw); } 40%, 100% { transform: translateX(-30cqw); } }
+@keyframes en-s-bullet-r { 0% { transform: translateX(-30cqw); } 46%, 100% { transform: translateX(135cqw); } }
+@keyframes en-s-bullet-l { 0% { transform: translateX(135cqw); } 46%, 100% { transform: translateX(-30cqw); } }
 @keyframes en-s-cloud { from { transform: translateX(-34cqw); } to { transform: translateX(136cqw); } }
 @keyframes en-s-cloud-l { from { transform: translateX(136cqw); } to { transform: translateX(-34cqw); } }
 @keyframes en-s-fly-r { 0% { transform: translateX(-12cqw); } 32% { transform: translateX(112cqw); } 100% { transform: translateX(112cqw); } }
