@@ -42,11 +42,11 @@ export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   const doc = getArticle(slug);
   if (!doc) notFound();
-  // bacaan lain: artikel dari daftar audiens yang sama (selain yang sedang dibuka)
-  const related = articleContent[doc.audience].list
-    .filter((a) => !a.href.endsWith(doc.slug))
+  // bacaan lain: kategori yang sama didahulukan, sisanya dari audiens yang sama
+  const others = articleContent[doc.audience].list.filter((a) => !a.href.endsWith(doc.slug));
+  const related = [...others.filter((a) => a.category === doc.category), ...others.filter((a) => a.category !== doc.category)]
     .slice(0, 3)
-    .map((a) => ({ title: a.title, cover: a.cover, category: a.category, href: a.href }));
+    .map((a) => ({ title: a.title, cover: a.cover, category: a.category, href: a.href.startsWith("#") ? `/?for=${doc.audience}${a.href}` : a.href }));
 
   const ld = [
     {

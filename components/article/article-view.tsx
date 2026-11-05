@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ArticleDoc, Block } from "@/lib/articles";
 import { SECTION_BG } from "@/lib/theme";
+import { SITE_URL } from "@/lib/site";
 import { useTrial } from "../trial-modal";
 
 /**
@@ -83,7 +84,7 @@ function Quiz({ b, kids }: { b: Extract<Block, { type: "quiz" }>; kids: boolean 
   const [pick, setPick] = useState<number | null>(null);
   const done = pick !== null;
   return (
-    <div className={`my-10 p-6 sm:p-7 ${kids ? "rounded-[2rem] bg-white shadow-[0_8px_0_0_var(--color-mist)]" : "rounded-2xl bg-white ring-1 ring-cobalt-900/10"}`}>
+    <div className={`no-print my-10 p-6 sm:p-7 ${kids ? "rounded-[2rem] bg-white shadow-[0_8px_0_0_var(--color-mist)]" : "rounded-2xl bg-white ring-1 ring-cobalt-900/10"}`}>
       <p className={`text-xs font-bold tracking-[0.18em] uppercase ${kids ? "text-sky" : "text-cobalt"}`}>{kids ? "Kuis kecil" : "Cek pemahaman"}</p>
       <p className={`mt-2 ${kids ? "font-display text-2xl text-cobalt-900" : "text-lg font-semibold text-cobalt-900"}`}>{b.question}</p>
       <div className="mt-4 grid gap-2.5">
@@ -118,7 +119,7 @@ function Quiz({ b, kids }: { b: Extract<Block, { type: "quiz" }>; kids: boolean 
 function CopyTemplate({ b }: { b: Extract<Block, { type: "template" }> }) {
   const [ok, setOk] = useState(false);
   return (
-    <div className="my-8 overflow-hidden rounded-2xl bg-[#0F1A55] text-white">
+    <div className="print-tpl my-8 overflow-hidden rounded-2xl bg-[#0F1A55] text-white">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-3">
         <p className="text-sm font-bold">{b.title}</p>
         <button
@@ -132,7 +133,7 @@ function CopyTemplate({ b }: { b: Extract<Block, { type: "template" }> }) {
               /* clipboard bisa diblokir, abaikan */
             }
           }}
-          className="rounded-full bg-white/12 px-3.5 py-1.5 text-xs font-bold transition hover:bg-white/20"
+          className="no-print rounded-full bg-white/12 px-3.5 py-1.5 text-xs font-bold transition hover:bg-white/20"
         >
           {ok ? "Tersalin" : "Salin"}
         </button>
@@ -145,7 +146,7 @@ function CopyTemplate({ b }: { b: Extract<Block, { type: "template" }> }) {
 function Embed({ b, kids }: { b: Extract<Block, { type: "embed" }>; kids: boolean }) {
   const [on, setOn] = useState(false);
   return (
-    <figure className="my-8">
+    <figure className="no-print my-8">
       <div className={`relative overflow-hidden bg-mist ${kids ? "rounded-[1.75rem] border-4 border-white shadow-[0_8px_0_0_var(--color-mist)]" : "rounded-xl ring-1 ring-ink/10"}`} style={{ aspectRatio: b.ratio ?? "16/9" }}>
         {on ? (
           <iframe title={b.title} src={b.src} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full border-0" />
@@ -163,7 +164,7 @@ function Embed({ b, kids }: { b: Extract<Block, { type: "embed" }>; kids: boolea
 function Cta({ b, kids }: { b: Extract<Block, { type: "cta" }>; kids: boolean }) {
   const { open } = useTrial();
   return (
-    <div className={`relative my-12 overflow-hidden p-7 sm:p-9 ${kids ? "rounded-[2rem] bg-sun text-ink shadow-[0_8px_0_0_var(--color-sun-600)]" : "rounded-3xl bg-gradient-to-br from-[#2B3FA8] to-[#14206B] text-white"}`}>
+    <div className={`no-print relative my-12 overflow-hidden p-7 sm:p-9 ${kids ? "rounded-[2rem] bg-sun text-ink shadow-[0_8px_0_0_var(--color-sun-600)]" : "rounded-3xl bg-gradient-to-br from-[#2B3FA8] to-[#14206B] text-white"}`}>
       {!kids && <span aria-hidden className="absolute -top-16 -right-10 size-56 rounded-full bg-[#FFF275]/15 blur-2xl" />}
       <h3 className={`relative ${kids ? "font-display text-3xl" : "text-2xl font-semibold tracking-[-0.02em]"}`}>{b.title}</h3>
       <p className={`relative mt-2 max-w-md ${kids ? "text-ink/75" : "text-white/80"}`}>{b.text}</p>
@@ -188,6 +189,7 @@ const CALLOUT: Record<string, { adult: string; kids: string; label: string }> = 
 /* ---------- penyaji blok ---------- */
 function Blocks({ blocks, kids }: { blocks: Block[]; kids: boolean }) {
   const I = (t: string) => <Inline text={t} kids={kids} />;
+  const firstP = blocks.findIndex((x) => x.type === "p");
   const body = kids ? "text-[length:calc(1.125rem*var(--ts,1))] leading-[1.85]" : "text-[length:calc(1.0625rem*var(--ts,1))] leading-[1.85]";
   return (
     <>
@@ -202,7 +204,7 @@ function Blocks({ blocks, kids }: { blocks: Block[]; kids: boolean }) {
           case "h3":
             return <h3 key={i} className={`mt-8 ${kids ? "font-display text-2xl text-cobalt" : "text-lg font-bold text-cobalt-900"}`}>{b.text}</h3>;
           case "p":
-            return <p key={i} className={`mt-5 text-ink/85 ${body}`}>{I(b.text)}</p>;
+            return <p key={i} className={`mt-5 text-ink/85 ${body} ${!kids && i === firstP ? "first-letter:float-left first-letter:mt-1 first-letter:mr-3 first-letter:text-[3.7em] first-letter:leading-[0.8] first-letter:font-semibold first-letter:text-cobalt" : ""}`}>{I(b.text)}</p>;
           case "ul":
             return (
               <ul key={i} className={`mt-5 space-y-2.5 ${body}`}>
@@ -357,6 +359,17 @@ function useProgress() {
   return p;
 }
 
+function useScrolled(at = 200) {
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const on = () => setV(window.scrollY > at);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, [at]);
+  return v;
+}
+
 function Kite({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 40 52" className={className} style={style} aria-hidden>
@@ -371,11 +384,21 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
   const kids = doc.audience === "kids";
   const reduce = useReducedMotion() ?? false;
   const progress = useProgress();
+  const scrolled = useScrolled();
+  const [tocOpen, setTocOpen] = useState(false);
+  const pageUrl = `${SITE_URL}/artikel/${doc.slug}`;
   const { open } = useTrial();
   const toc = useMemo(() => doc.blocks.filter((b): b is Extract<Block, { type: "h2" }> => b.type === "h2").map((b) => ({ id: slug(b.text), text: b.text })), [doc]);
   const [active, setActive] = useState(toc[0]?.id ?? "");
   const [fs, setFs] = useState(0);
   const bodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // saat dicetak, buka semua akordeon supaya isinya ikut tercetak
+    const openAll = () => document.querySelectorAll("details").forEach((d) => d.setAttribute("open", ""));
+    window.addEventListener("beforeprint", openAll);
+    return () => window.removeEventListener("beforeprint", openAll);
+  }, []);
 
   useEffect(() => {
     if (kids || toc.length === 0) return;
@@ -396,7 +419,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
   return (
     <div className="min-h-screen" style={{ background: SECTION_BG[doc.audience] }}>
       {/* penanda baca */}
-      <div className="fixed inset-x-0 top-0 z-50 h-1.5 bg-transparent" aria-hidden>
+      <div className="no-print fixed inset-x-0 top-0 z-50 h-1.5 bg-transparent" aria-hidden>
         <div className={`h-full origin-left ${kids ? "bg-sky" : "bg-cobalt"}`} style={{ transform: `scaleX(${progress})` }} />
         {kids && (
           <Kite className="absolute top-1 h-11 w-9 -translate-x-1/2 drop-shadow" style={{ left: `${progress * 100}%` }} />
@@ -404,7 +427,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
       </div>
 
       {/* tombol melayang: kembali ke atas dan ajakan kelas gratis (muncul saat sudah membaca) */}
-      <div className={`pointer-events-none fixed inset-x-0 bottom-5 z-40 flex items-center justify-center px-5 transition duration-300 ${progress > 0.28 && progress < 0.9 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+      <div className={`no-print pointer-events-none fixed inset-x-0 bottom-5 z-40 flex items-center justify-center px-5 transition duration-300 ${progress > 0.28 && progress < 0.9 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
         <button
           type="button"
           onClick={() => open()}
@@ -419,19 +442,39 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
         onClick={() => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })}
         aria-label="Kembali ke atas"
         tabIndex={progress > 0.15 ? 0 : -1}
-        className={`fixed right-5 bottom-5 z-40 grid size-11 place-items-center rounded-full bg-white text-cobalt-900 shadow-lg ring-1 ring-cobalt-900/10 transition duration-300 hover:-translate-y-0.5 ${progress > 0.15 ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`no-print fixed right-5 bottom-5 z-40 grid size-11 place-items-center rounded-full bg-white text-cobalt-900 shadow-lg ring-1 ring-cobalt-900/10 transition duration-300 hover:-translate-y-0.5 ${progress > 0.15 ? "opacity-100" : "pointer-events-none opacity-0"}`}
       >
         <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 19V5M5 12l7-7 7 7" /></svg>
       </button>
 
+      {/* daftar isi mengambang di HP (Dewasa): kecil, di kiri bawah, muncul setelah mulai membaca */}
+      {!kids && toc.length > 0 && (
+        <div className={`no-print fixed bottom-5 left-4 z-40 lg:hidden transition duration-300 ${progress > 0.08 && progress < 0.97 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
+          {tocOpen && (
+            <nav aria-label="Isi artikel" className="absolute bottom-14 left-0 w-60 rounded-2xl bg-white p-3 shadow-[0_18px_40px_-12px_rgba(20,32,107,0.5)] ring-1 ring-cobalt-900/10">
+              <ul className="space-y-0.5">
+                {toc.map((t) => (
+                  <li key={t.id}>
+                    <a href={`#${t.id}`} onClick={() => setTocOpen(false)} className={`block rounded-lg px-3 py-2 text-[13px] leading-snug ${active === t.id ? "bg-cobalt/10 font-bold text-cobalt-900" : "text-ink/70"}`}>{t.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          <button type="button" onClick={() => setTocOpen((v) => !v)} aria-expanded={tocOpen} aria-label="Isi artikel" tabIndex={progress > 0.08 && progress < 0.97 ? 0 : -1} className="grid size-11 place-items-center rounded-full bg-cobalt-900 text-white shadow-lg">
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden><path d="M4 7h16M4 12h10M4 17h13" /></svg>
+          </button>
+        </div>
+      )}
+
       {/* bilah atas */}
-      <header className="sticky top-0 z-40 border-b border-cobalt-900/8 backdrop-blur-xl" style={{ background: `${SECTION_BG[doc.audience]}E6` }}>
+      <header className={`no-print fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${scrolled ? "border-b border-cobalt-900/8 backdrop-blur-xl" : "border-b border-transparent"}`} style={{ background: scrolled ? `${SECTION_BG[doc.audience]}E6` : "transparent" }}>
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link href="/" className="relative block h-8 w-28" aria-label="English Now, kembali ke beranda">
-            <Image src="/brand/logo-full.png" alt="English Now" fill sizes="112px" className="object-contain object-left" priority />
+            <Image src={scrolled ? "/brand/logo-full.png" : "/brand/logo-full-white.png"} alt="English Now" fill sizes="112px" className="object-contain object-left" priority />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="hidden text-sm text-ink/55 tabular-nums sm:block" aria-live="off">{progress > 0.97 ? "Selesai dibaca" : `${Math.max(1, Math.ceil(doc.readMin * (1 - progress)))} menit lagi`}</span>
+            <span className={`hidden text-sm tabular-nums sm:block ${scrolled ? "text-ink/55" : "text-white/80"}`} aria-live="off">{progress > 0.97 ? "Selesai dibaca" : `${Math.max(1, Math.ceil(doc.readMin * (1 - progress)))} menit lagi`}</span>
             <div role="group" aria-label="Ukuran teks" className="flex items-center gap-1 rounded-full bg-white p-1 ring-1 ring-cobalt-900/10">
               <span className="hidden pl-2.5 text-xs font-semibold text-ink/55 md:block">Ukuran teks</span>
               {[13, 16, 20].map((px, k) => (
@@ -449,47 +492,48 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
                 </button>
               ))}
             </div>
-            <Link href={`/?for=${doc.audience}#artikel`} className="hidden text-sm font-semibold text-cobalt-900 hover:text-cobalt sm:block">← Semua artikel</Link>
-            <button type="button" onClick={() => open()} className="rounded-full bg-cobalt-900 px-4 py-2 text-sm font-bold whitespace-nowrap text-white transition hover:-translate-y-0.5"><span className="sm:hidden">Coba gratis</span><span className="hidden sm:inline">Free Trial Class</span></button>
+            <button type="button" onClick={() => window.print()} aria-label="Cetak artikel" title="Cetak artikel" className={`hidden size-9 place-items-center rounded-full transition md:grid ${scrolled ? "text-cobalt-900 hover:bg-white" : "text-white hover:bg-white/15"}`}>
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z" /></svg>
+            </button>
+            <Link href={`/?for=${doc.audience}#artikel`} className={`hidden text-sm font-semibold sm:block ${scrolled ? "text-cobalt-900 hover:text-cobalt" : "text-white hover:text-sun"}`}>← Semua artikel</Link>
+            <button type="button" onClick={() => open()} className={`rounded-full px-4 py-2 text-sm font-bold whitespace-nowrap transition hover:-translate-y-0.5 ${scrolled ? "bg-cobalt-900 text-white" : "bg-sun text-ink"}`}><span className="sm:hidden">Coba gratis</span><span className="hidden sm:inline">Free Trial Class</span></button>
           </div>
         </div>
       </header>
 
       <main className="relative">
         <article>
-        {/* kepala artikel: di HP foto penuh dengan judul di atasnya (gaya majalah), di layar lebar judul lalu foto */}
-        <div className="relative">
-          <div className="absolute inset-0 md:hidden">
+        {/* kepala artikel: foto penuh dengan judul di atasnya, sama di HP dan layar lebar */}
+        <div className="print-hero relative flex min-h-[78svh] items-end md:min-h-[min(78vh,43rem)]">
+          <div className="hero-media absolute inset-0">
             <Image src={doc.cover} alt="" fill priority sizes="100vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1140] via-[#0A1140]/55 to-[#0A1140]/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1140]/92 via-[#14206B]/45 to-[#405FDA]/15" />
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0A1140]/60 to-transparent" />
           </div>
-          <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className={`relative mx-auto flex min-h-[calc(78svh-4rem)] flex-col justify-end px-5 pb-9 text-white md:block md:min-h-0 md:pt-14 md:pb-0 md:text-inherit ${kids ? "max-w-3xl md:text-center" : "max-w-6xl"}`}>
-            <span className={`w-fit ${kids ? "-rotate-2 rounded-full bg-sun px-4 py-1 font-display text-base tracking-wide text-ink shadow-[0_3px_0_0_var(--color-sun-600)] md:bg-sky md:text-white md:shadow-[0_3px_0_0_rgba(0,0,0,0.15)]" : "rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-wide text-cobalt ring-1 ring-cobalt-900/10"}`}>{doc.category}</span>
-            <h1 className={kids ? "mt-4 font-display text-[2.5rem] leading-[1.04] text-balance [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] md:mt-5 md:text-6xl md:text-cobalt-900 md:[text-shadow:none]" : "mt-4 max-w-4xl text-[2.3rem] leading-[1.05] font-semibold tracking-[-0.04em] text-balance [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] md:mt-5 md:text-[3.6rem] md:text-cobalt-900 md:[text-shadow:none]"}>{doc.title}</h1>
-            <p className={`mt-3 text-[1.05rem] text-white/85 md:mt-4 md:text-lg md:text-ink/70 ${kids ? "md:mx-auto md:max-w-xl" : "md:max-w-2xl"}`}>{doc.deck}</p>
-            <div className={`mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-white/80 md:mt-6 md:text-ink/65 ${kids ? "md:justify-center" : ""}`}>
-              <span className="flex items-center gap-2.5">
-                <span className={`grid size-9 place-items-center rounded-full bg-white/95 text-sm font-extrabold text-cobalt-900 md:text-white ${kids ? "md:bg-cobalt" : "md:bg-cobalt-900"}`}>{doc.author.name[0]}</span>
-                <span className="leading-tight"><b className="block text-white md:text-ink">{doc.author.name}</b>{doc.author.role}</span>
+          <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className={`relative mx-auto w-full px-5 pt-28 pb-14 text-white ${kids ? "max-w-3xl text-center" : "max-w-6xl"}`}>
+            <span className={`inline-block ${kids ? "-rotate-2 rounded-full bg-sun px-4 py-1 font-display text-base tracking-wide text-ink shadow-[0_3px_0_0_var(--color-sun-600)]" : "rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-wide text-cobalt"}`}>{doc.category}</span>
+            <h1 className={kids ? "mt-4 font-display text-[2.5rem] leading-[1.04] text-balance [text-shadow:0_2px_14px_rgba(0,0,0,0.35)] md:text-[4rem]" : "mt-4 max-w-4xl text-[2.3rem] leading-[1.05] font-semibold tracking-[-0.04em] text-balance [text-shadow:0_2px_14px_rgba(0,0,0,0.35)] md:text-[3.8rem]"}>{doc.title}</h1>
+            <p className={`mt-3 text-[1.05rem] text-white/85 md:mt-4 md:text-lg ${kids ? "mx-auto max-w-xl" : "max-w-2xl"}`}>{doc.deck}</p>
+            <div className={`mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-white/80 md:mt-6 ${kids ? "justify-center" : ""}`}>
+              <span className="flex items-center gap-2.5 text-left">
+                <span className="grid size-9 place-items-center rounded-full bg-white/95 text-sm font-extrabold text-cobalt-900">{doc.author.name[0]}</span>
+                <span className="leading-tight"><b className="block text-white">{doc.author.name}</b>{doc.author.role}</span>
               </span>
               <span aria-hidden>·</span>
               <time dateTime={doc.date}>{fmtDate(doc.date)}</time>
               <span aria-hidden>·</span>
               <span>{doc.readMin} menit baca</span>
             </div>
+            <a href="#isi" className="no-print mt-7 inline-flex flex-col items-center gap-1 text-sm font-semibold text-white/90 hover:text-white">
+              Baca ceritanya
+              <motion.span aria-hidden animate={reduce ? undefined : { y: [0, 5, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>↓</motion.span>
+            </a>
+            {doc.coverCaption && <p className="mt-3 text-xs text-white/60">{doc.coverCaption}</p>}
           </motion.div>
         </div>
 
-        {/* gambar utama (layar lebar) */}
-        <div className={`mx-auto mt-9 hidden px-5 md:block ${kids ? "max-w-3xl" : "max-w-6xl"}`}>
-          <div className={`relative overflow-hidden bg-mist ${kids ? "aspect-[4/3] rotate-[-1.2deg] rounded-[2rem] border-[6px] border-white shadow-[0_10px_0_0_var(--color-mist),0_30px_50px_-30px_rgba(30,47,120,0.5)]" : "aspect-[21/9] rounded-2xl"}`}>
-            <Image src={doc.cover} alt={doc.title} fill sizes="(min-width:1024px) 1100px, 100vw" className="object-cover" />
-          </div>
-          {doc.coverCaption && <p className={`mt-2 text-sm text-ink/55 ${kids ? "text-center" : ""}`}>{doc.coverCaption}</p>}
-        </div>
-
         {/* isi */}
-        <div className="relative -mt-6 rounded-t-[2rem] md:mt-0 md:rounded-none" style={{ background: SECTION_BG[doc.audience] }}>
+        <div id="isi" className="relative -mt-6 scroll-mt-0 rounded-t-[2rem]" style={{ background: SECTION_BG[doc.audience] }}>
         <div className={`mx-auto px-5 pb-20 ${kids ? "max-w-2xl" : "grid max-w-6xl gap-12 lg:grid-cols-[13rem_minmax(0,42rem)] lg:justify-center"}`}>
           {!kids && (
             <aside className="hidden lg:block">
@@ -520,20 +564,13 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
               </ul>
             </div>
 
-            {/* daftar isi di HP */}
-            {!kids && (
-              <details className="mt-5 rounded-xl bg-white px-4 py-3 ring-1 ring-cobalt-900/10 lg:hidden">
-                <summary className="cursor-pointer text-sm font-bold text-cobalt-900">Isi artikel</summary>
-                <ul className="mt-2 space-y-1.5 text-sm">{toc.map((t) => <li key={t.id}><a href={`#${t.id}`} className="text-ink/70 hover:text-cobalt">{t.text}</a></li>)}</ul>
-              </details>
-            )}
-
             <Blocks blocks={doc.blocks} kids={kids} />
 
             <p className="mt-10 text-sm text-ink/50">
               {doc.sample && "Artikel contoh untuk melihat tata letak. "}
               Ditulis oleh {doc.author.name}. Konten ini bersifat umum dan tidak menggantikan arahan pengajar.
             </p>
+            {pageUrl && <p className="mt-2 hidden text-sm text-ink/60 print:block">Sumber: {pageUrl}</p>}
           </div>
         </div>
         </div>
@@ -542,7 +579,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
 
         {/* baca berikutnya */}
         {related.length > 0 && (
-          <section className="border-t border-cobalt-900/10 bg-white/50 py-14">
+          <section className="no-print border-t border-cobalt-900/10 bg-white/50 py-14">
             <div className="mx-auto max-w-6xl px-5">
               <h2 className={kids ? "font-display text-3xl text-cobalt-900" : "text-2xl font-semibold tracking-[-0.02em] text-cobalt-900"}>{kids ? "Baca yang lain, yuk!" : "Lanjut membaca"}</h2>
               <ul className="mt-6 grid gap-5 sm:grid-cols-3">

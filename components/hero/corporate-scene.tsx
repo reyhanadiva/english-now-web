@@ -819,21 +819,35 @@ export function CorporateScene() {
               <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} style={{ filter: WARM }} />
               <Shadow cx={955} y={751} w={28} still={still} />
               <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} style={{ filter: WARM }} />
-              {/* papan nama English Now di kaca lobi (di bawah area teks supaya tidak tertutup tombol di layar pendek) */}
-              <div
-                className="en-m-in pointer-events-none absolute grid place-items-center"
-                style={{
-                  ...box(548, 640, 648, 683),
-                  borderRadius: 6,
-                  background: "linear-gradient(#27399A, #1B2A80)",
-                  boxShadow: "0 0 8px rgba(255,255,255,0.22), inset 0 0 0 1px rgba(255,255,255,0.35)",
-                  opacity: still ? 1 : 0,
-                  animation: A("en-s-appear 0.6s ease-out 1.2s both"),
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/brand/logo-full-white.png" alt="" draggable={false} style={{ height: "72%", width: "auto" }} />
-              </div>
+              {/* bendera English Now berkibar di atap kedua menara (tiang + kain 5 potong yang bergelombang bergantian) */}
+              {[120, 1480].map((px, fi) => (
+                <div key={px} className="pointer-events-none">
+                  <div style={{ ...box(px - 1.5, 90, px + 1.5, 160), background: "linear-gradient(90deg,#E8E4EE,#9A96A8)", borderRadius: 2 }} />
+                  <div style={{ ...box(px - 3.5, 86, px + 3.5, 93), background: "#FFF275", borderRadius: 999 }} />
+                  <div style={{ ...box(px + 1.5, 96, px + 85.5, 142), filter: still ? undefined : "drop-shadow(0 2px 2px rgba(8,14,70,0.35))" }}>
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="en-m-flag absolute"
+                        style={{
+                          left: `${i * 20}%`,
+                          top: 0,
+                          width: "20.4%",
+                          height: "100%",
+                          backgroundColor: "#2B3FA8",
+                          backgroundImage: "url(/brand/logo-full-white.png)",
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "500% 62%",
+                          backgroundPosition: `${i * 25}% 50%`,
+                          filter: i % 2 ? "brightness(0.9)" : undefined,
+                          transformOrigin: "left center",
+                          animation: A(`en-s-wave 2.4s ease-in-out ${(-i * 0.25 - fi * 0.7).toFixed(2)}s infinite`),
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
 
               {/* ================= LAMPU TAMAN ================= */}
               {lampX.map((x, i) => (

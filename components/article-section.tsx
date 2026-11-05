@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type CSSProperties, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { articleContent, type Article } from "@/lib/content";
@@ -51,70 +51,84 @@ export function ArticleSection() {
 type C = (typeof articleContent)["kids"];
 
 /* ---------------- ANAK ---------------- */
-const ICON_BG = ["#EBDDFF", "#FFF1C9", "#DDEBFF"];
-function CardIcon({ i }: { i: number }) {
-  const p = { fill: "none", stroke: "#405FDA", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+function Arrow({ className = "size-3.5" }: { className?: string }) {
   return (
-    <span className="grid size-10 shrink-0 place-items-center rounded-full" style={{ background: ICON_BG[i % 3] }}>
-      <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
-        {i % 3 === 0 && <path {...p} d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5v-15Zm16 0A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5v-15Z" />}
-        {i % 3 === 1 && <path {...p} d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z" />}
-        {i % 3 === 2 && <path {...p} d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-7l-4 3.5V16H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />}
-      </svg>
-    </span>
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
   );
 }
 
-function KidCard({ a, i, reduce, delay }: { a: Article; i: number; reduce: boolean; delay: number }) {
+/** kartu artikel: foto penuh, panel kaca kecil di bawah; kursor berubah jadi gelembung "Baca" supaya jelas bisa diklik */
+function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; reduce: boolean; onPick: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const rx = useSpring(useTransform(py, (v) => v * -7), { stiffness: 140, damping: 16 });
   const ry = useSpring(useTransform(px, (v) => v * 9), { stiffness: 140, damping: 16 });
+  const bx = useSpring(useMotionValue(0), { stiffness: 380, damping: 30 });
+  const by = useSpring(useMotionValue(0), { stiffness: 380, damping: 30 });
+  const [hover, setHover] = useState(false);
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, y: 50, rotate: i % 2 ? 4 : -4 }}
-      whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ type: "spring", stiffness: 90, damping: 14, delay }}
+      ref={ref}
       className="h-full"
-      style={{ perspective: 900 }}
+      style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
+      onPointerMove={(e) => {
+        if (reduce || e.pointerType !== "mouse") return;
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        px.set((e.clientX - r.left) / r.width - 0.5);
+        py.set((e.clientY - r.top) / r.height - 0.5);
+        bx.set(e.clientX - r.left - 36);
+        by.set(e.clientY - r.top - 36);
+      }}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHover(true)}
+      onPointerLeave={() => {
+        px.set(0);
+        py.set(0);
+        setHover(false);
+      }}
     >
-      {/* melayang pelan, tiap kartu dengan irama sendiri */}
-      <motion.div className="h-full" animate={reduce ? undefined : { y: [0, -7, 0] }} transition={{ duration: 4.2 + i * 0.7, repeat: Infinity, ease: "easeInOut" }}>
-        <motion.div
-          ref={ref}
-          className="h-full"
-          style={{ rotateX: rx, rotateY: ry }}
-          onPointerMove={(e) => {
-            if (reduce || e.pointerType !== "mouse") return;
-            const r = ref.current?.getBoundingClientRect();
-            if (!r) return;
-            px.set((e.clientX - r.left) / r.width - 0.5);
-            py.set((e.clientY - r.top) / r.height - 0.5);
-          }}
-          onPointerLeave={() => {
-            px.set(0);
-            py.set(0);
-          }}
+      <Link
+        href={a.href}
+        data-sample={a.sample ? "true" : undefined}
+        onClick={(e) => {
+          if (!active) {
+            e.preventDefault();
+            onPick();
+          }
+        }}
+        tabIndex={active ? 0 : -1}
+        aria-label={a.title}
+        className="group relative block h-full cursor-pointer overflow-hidden rounded-[1.5rem] bg-mist shadow-[0_28px_50px_-20px_rgba(8,14,70,0.75)] ring-4 ring-white/90 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-sun"
+      >
+        <SafeImage src={a.cover} alt="" fill sizes="(min-width:768px) 300px, 78vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+        <span className="absolute top-3 left-3 rounded-full bg-white/92 px-3 py-1 text-[11px] font-extrabold tracking-wide text-cobalt-900 shadow-sm">{a.category}</span>
+        <div className="absolute inset-x-3 bottom-3 rounded-2xl bg-white/92 p-3 shadow-[0_12px_24px_-12px_rgba(8,14,70,0.6)] backdrop-blur-md">
+          <h3 className="line-clamp-2 text-[0.95rem] leading-snug font-bold tracking-[-0.01em] text-cobalt-900">{a.title}</h3>
+          <div className="mt-2.5 flex items-center justify-between gap-2">
+            <span className="text-[11px] text-ink/55">{a.readMin ? `${a.readMin} menit baca` : ""}</span>
+            <motion.span
+              className="inline-flex items-center gap-1 rounded-full bg-cobalt px-3 py-1 text-[11px] font-bold text-white transition-colors group-hover:bg-cobalt-900"
+              animate={active && !reduce ? { x: [0, 3, 0] } : undefined}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              Baca <Arrow className="size-3" />
+            </motion.span>
+          </div>
+        </div>
+        {/* gelembung yang mengikuti kursor */}
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute top-0 left-0 z-20 grid size-[72px] place-items-center rounded-full bg-sun font-display text-[15px] text-ink shadow-[0_8px_20px_-6px_rgba(8,14,70,0.6)]"
+          style={{ x: bx, y: by }}
+          animate={{ scale: hover && active ? 1 : 0, opacity: hover && active ? 1 : 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 22 }}
         >
-          <Link
-            href={a.href}
-            data-sample={a.sample ? "true" : undefined}
-            className="group relative block h-full overflow-hidden rounded-[1.5rem] bg-mist shadow-[0_28px_50px_-20px_rgba(8,14,70,0.75)] ring-4 ring-white/90 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-sun"
-          >
-            <SafeImage src={a.cover} alt="" fill sizes="(min-width:768px) 380px, 78vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <span className="absolute top-3 left-3 rounded-full bg-white/92 px-3 py-1 text-[11px] font-extrabold tracking-wide text-cobalt-900 shadow-sm">{a.category}</span>
-            <div className="absolute inset-x-3 bottom-3 flex items-start gap-3 rounded-2xl bg-white p-3.5 shadow-[0_12px_24px_-12px_rgba(8,14,70,0.6)]">
-              <CardIcon i={i} />
-              <div className="min-w-0">
-                <h3 className="font-display text-[1.08rem] leading-[1.1] text-cobalt-900">{a.title}</h3>
-                <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-ink/60">{a.excerpt}</p>
-              </div>
-            </div>
-          </Link>
-        </motion.div>
-      </motion.div>
+          <span className="flex items-center gap-1">Baca <Arrow className="size-3.5" /></span>
+        </motion.span>
+      </Link>
     </motion.div>
   );
 }
@@ -143,11 +157,22 @@ function CapsuleBand({ words, reduce }: { words: string[]; reduce: boolean }) {
 }
 
 function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
-  const center = c.list.find((a) => a.featured) ?? c.list[Math.min(1, c.list.length - 1)];
-  const others = c.list.filter((a) => a !== center).slice(0, 2);
-  const trio = [others[0], center, others[1]].filter(Boolean) as Article[];
-  const mobile = [center, ...others];
+  const n = c.list.length;
+  const start = Math.max(0, c.list.findIndex((a) => a.featured));
+  const [active, setActive] = useState(start);
+  const [paused, setPaused] = useState(false);
   const cats = Array.from(new Set(c.list.map((a) => a.category)));
+
+  // putar otomatis tiap 5 detik; berhenti saat kursor di atas kartu atau gerak dikurangi
+  useEffect(() => {
+    if (reduce || paused || n < 2) return;
+    const id = window.setInterval(() => setActive((v) => (v + 1) % n), 5000);
+    return () => window.clearInterval(id);
+  }, [reduce, paused, n]);
+
+  const half = Math.floor(n / 2);
+  const off = (i: number) => ((i - active + n + half) % n) - half;
+
   return (
     <div className="relative mx-3 max-w-6xl overflow-hidden rounded-[2.2rem] bg-gradient-to-b from-[#3552D0] to-[#1E2F78] py-10 sm:mx-6 md:py-[clamp(1.5rem,4.5vh,3.2rem)] lg:mx-auto">
       <KidsClouds className="inset-0 opacity-90" />
@@ -160,31 +185,47 @@ function KidsTrio({ c, reduce }: { c: C; reduce: boolean }) {
         <p className="mx-auto mt-3 max-w-md text-[15px] text-white/85 md:mt-[1.2vh]">{c.sub}</p>
       </div>
 
-      {/* desktop: tiga kartu, tengah paling besar, kapsul berjalan di belakang */}
-      <div className="relative mt-8 hidden md:mt-[3.5vh] md:block">
+      {/* desktop: kartu berputar, yang di tengah paling besar. Klik kartu samping untuk memajukannya. */}
+      <div className="relative mt-8 hidden md:mt-[3.5vh] md:block" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
         <CapsuleBand words={cats} reduce={reduce} />
-        <div className="relative mx-auto grid h-[clamp(17rem,46vh,27rem)] max-w-4xl grid-cols-[1fr_1.18fr_1fr] items-center gap-6 px-8">
-          {trio.map((a, i) => {
-            const mid = a === center && trio.length === 3;
+        <div className="relative mx-auto h-[clamp(17rem,45vh,26rem)] max-w-4xl">
+          {c.list.map((a, i) => {
+            const d = off(i);
+            const vis = Math.abs(d) <= 1;
             return (
-              <div key={a.id} className={mid ? "h-full" : "h-[84%]"}>
-                <KidCard a={a} i={i} reduce={reduce} delay={i * 0.1} />
-              </div>
+              <motion.div
+                key={a.id}
+                className="absolute top-0 left-1/2 h-full w-[clamp(14.5rem,23vw,17.5rem)]"
+                initial={false}
+                animate={{ x: `${-50 + d * 112}%`, scale: d === 0 ? 1 : 0.84, opacity: vis ? 1 : 0 }}
+                transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 120, damping: 18 }}
+                style={{ zIndex: d === 0 ? 3 : vis ? 2 : 0, pointerEvents: vis ? "auto" : "none" }}
+                aria-hidden={!vis}
+              >
+                <KidCard a={a} active={d === 0} reduce={reduce} onPick={() => setActive(i)} />
+              </motion.div>
             );
           })}
         </div>
+        {n > 1 && (
+          <div className="relative mt-4 flex justify-center gap-2" role="tablist" aria-label="Pilih artikel">
+            {c.list.map((a, i) => (
+              <button key={a.id} type="button" role="tab" aria-selected={i === active} aria-label={a.title} onClick={() => setActive(i)} className={`h-2.5 rounded-full transition-all duration-300 ${i === active ? "w-7 bg-sun" : "w-2.5 bg-white/40 hover:bg-white/70"}`} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* HP: kartu bisa digeser */}
       <ul className="relative mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pt-3 pb-6 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden">
-        {mobile.map((a, i) => (
-          <li key={a.id} className="h-[24rem] w-[76vw] max-w-[19rem] shrink-0 snap-center">
-            <KidCard a={a} i={i} reduce={reduce} delay={Math.min(i, 3) * 0.06} />
+        {c.list.map((a) => (
+          <li key={a.id} className="h-[22rem] w-[72vw] max-w-[18rem] shrink-0 snap-center">
+            <KidCard a={a} active reduce={reduce} onPick={() => undefined} />
           </li>
         ))}
       </ul>
 
-      <div className="relative mt-2 text-center md:mt-[3.5vh]">
+      <div className="relative mt-2 text-center md:mt-[2.6vh]">
         <Link href={c.all.href} className="inline-flex rounded-full bg-sun px-7 py-3 font-display text-lg tracking-wide text-ink shadow-[0_5px_0_0_var(--color-sun-600)] transition-transform hover:-translate-y-0.5">
           {c.all.label}
         </Link>
@@ -249,7 +290,7 @@ function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
         transition={{ duration: 0.6 }}
         className="relative mt-6 md:mt-[2.6vh]"
       >
-        <Link href={lead.href} onPointerMove={trackSpot} className="group relative grid overflow-hidden rounded-2xl bg-white shadow-[0_24px_50px_-30px_rgba(20,32,107,0.45)] ring-1 ring-cobalt-900/8 md:h-[clamp(13rem,35vh,21rem)] md:grid-cols-[1.05fr_1fr]">
+        <Link href={lead.href} onPointerMove={trackSpot} className="group relative grid overflow-hidden rounded-2xl bg-white shadow-[0_24px_50px_-30px_rgba(20,32,107,0.45)] ring-1 ring-cobalt-900/8 transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_60px_-28px_rgba(20,32,107,0.6)] hover:ring-cobalt/40 md:h-[clamp(13rem,35vh,21rem)] md:grid-cols-[1.05fr_1fr]">
           <div className="relative aspect-[4/3] overflow-hidden bg-mist md:aspect-auto">
             <div className="en-m-kb absolute inset-0" style={{ animation: reduce ? undefined : "en-kb 20s ease-in-out infinite alternate" }}>
               <SafeImage src={lead.cover} alt="" fill sizes="(min-width:768px) 560px, 100vw" className="object-cover" />
@@ -258,11 +299,13 @@ function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
             <Corners />
           </div>
           <div className="relative flex flex-col overflow-hidden p-6 md:p-[clamp(1.25rem,3.4vh,2.4rem)]">
-            <span aria-hidden className="pointer-events-none absolute -right-2 -bottom-8 text-[8rem] leading-none font-bold tracking-tighter text-cobalt/[0.07] select-none">01</span>
             <span className="relative flex items-center gap-2.5 text-[11px] font-bold tracking-[0.2em] text-cobalt uppercase"><span aria-hidden className="h-px w-7 bg-cobalt" />Pilihan</span>
             <h3 className="relative mt-3 text-[1.6rem] leading-[1.12] font-semibold tracking-[-0.03em] text-cobalt-900 md:text-[clamp(1.5rem,3.6vh,2.2rem)]">{lead.title}</h3>
             {lead.excerpt && <p className="relative mt-3 line-clamp-3 text-[15px] leading-relaxed text-ink/65">{lead.excerpt}</p>}
-            <div className="relative mt-auto flex items-end justify-between gap-3 pt-5">
+            <span className="relative mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#14206B] px-5 py-2.5 text-sm font-bold text-white transition-colors group-hover:bg-cobalt">
+              Baca artikel <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </span>
+            <div className="relative mt-auto flex items-end justify-between gap-3 pt-4">
               <p className="text-[13px] text-ink/55">{leadMeta}</p>
               <span className="shrink-0 rounded-full bg-cobalt px-3 py-1 text-xs font-bold text-white">{lead.category}</span>
             </div>
