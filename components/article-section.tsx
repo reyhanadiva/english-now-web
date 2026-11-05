@@ -155,21 +155,18 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
 
       {/* desktop: kartu berputar, yang di tengah paling besar. Klik kartu samping untuk memajukannya. */}
       <div className="relative mt-8 hidden md:mt-[3.5vh] md:block" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
-        {/* kata kategori raksasa di belakang kartu: berganti mengikuti kartu yang fokus */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-[58%] text-center">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={c.list[active].category}
-              className="block font-display text-[clamp(4rem,12vw,9rem)] leading-none whitespace-nowrap text-white/[0.13]"
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -24 }}
-              transition={{ duration: 0.35 }}
-            >
-              {c.list[active].category}
-            </motion.span>
-          </AnimatePresence>
-        </div>
+        {/* sinar matahari yang berputar pelan di belakang panggung kartu */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-1/2 size-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            background: "repeating-conic-gradient(rgba(255,255,255,0.13) 0deg 6deg, transparent 6deg 16deg)",
+            WebkitMaskImage: "radial-gradient(circle, #000 12%, transparent 62%)",
+            maskImage: "radial-gradient(circle, #000 12%, transparent 62%)",
+          }}
+          animate={reduce ? undefined : { rotate: 360 }}
+          transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
+        />
         {/* cahaya lembut di belakang kartu fokus */}
         <motion.span aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sun/25 blur-3xl" animate={reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
         <div className="relative mx-auto h-[clamp(17rem,45vh,26rem)] max-w-4xl">
@@ -196,7 +193,13 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
                 style={{ zIndex: d === 0 ? 3 : vis ? 2 : 0, pointerEvents: vis ? "auto" : "none" }}
                 aria-hidden={!vis}
               >
-                <KidCard a={a} active={d === 0} reduce={reduce} onPick={() => setActive(i)} />
+                <motion.div
+                  className="h-full"
+                  animate={reduce ? undefined : { y: [0, -9, 0] }}
+                  transition={{ duration: 3.6 + (i % 3) * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.45 }}
+                >
+                  <KidCard a={a} active={d === 0} reduce={reduce} onPick={() => setActive(i)} />
+                </motion.div>
               </motion.div>
             );
           })}
