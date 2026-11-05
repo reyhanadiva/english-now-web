@@ -188,7 +188,7 @@ const CALLOUT: Record<string, { adult: string; kids: string; label: string }> = 
 /* ---------- penyaji blok ---------- */
 function Blocks({ blocks, kids }: { blocks: Block[]; kids: boolean }) {
   const I = (t: string) => <Inline text={t} kids={kids} />;
-  const body = kids ? "text-[1.125rem] leading-[1.85]" : "text-[1.0625rem] leading-[1.85]";
+  const body = kids ? "text-[length:calc(1.125rem*var(--ts,1))] leading-[1.85]" : "text-[length:calc(1.0625rem*var(--ts,1))] leading-[1.85]";
   return (
     <>
       {blocks.map((b, i) => {
@@ -281,7 +281,7 @@ function Blocks({ blocks, kids }: { blocks: Block[]; kids: boolean }) {
                   <details key={k} className={`group ${kids ? "rounded-2xl bg-white px-5 py-4 shadow-[0_5px_0_0_var(--color-mist)]" : "py-4"}`}>
                     <summary className={`flex cursor-pointer list-none items-center justify-between gap-4 ${kids ? "font-display text-xl text-cobalt-900" : "text-base font-semibold text-cobalt-900"}`}>
                       {it.q}
-                      <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-full bg-cobalt text-white transition-transform duration-300 group-open:rotate-45">+</span>
+                      <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-full bg-cobalt text-white transition-transform duration-300 group-open:rotate-45"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round"><path d="M12 4v16M4 12h16" /></svg></span>
                     </summary>
                     <p className="mt-3 text-[1.02rem] leading-relaxed text-ink/75">{I(it.a)}</p>
                   </details>
@@ -374,7 +374,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
   const { open } = useTrial();
   const toc = useMemo(() => doc.blocks.filter((b): b is Extract<Block, { type: "h2" }> => b.type === "h2").map((b) => ({ id: slug(b.text), text: b.text })), [doc]);
   const [active, setActive] = useState(toc[0]?.id ?? "");
-  const [copied, setCopied] = useState(false);
+  const [fs, setFs] = useState(0);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -393,15 +393,6 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
     return () => io.disconnect();
   }, [kids, toc]);
 
-  const share = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* abaikan */
-    }
-  };
   const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(`${doc.title} ${window.location.href}`)}`, "_blank", "noopener");
 
   return (
@@ -414,6 +405,27 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
         )}
       </div>
 
+      {/* tombol melayang: kembali ke atas dan ajakan kelas gratis (muncul saat sudah membaca) */}
+      <div className={`pointer-events-none fixed inset-x-0 bottom-5 z-40 flex items-center justify-center px-5 transition duration-300 ${progress > 0.28 && progress < 0.9 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+        <button
+          type="button"
+          onClick={() => open()}
+          tabIndex={progress > 0.28 && progress < 0.9 ? 0 : -1}
+          className={`pointer-events-auto rounded-full px-6 py-3 text-sm font-bold shadow-[0_14px_30px_-10px_rgba(20,32,107,0.6)] transition hover:-translate-y-0.5 ${kids ? "bg-sun font-display text-base tracking-wide text-ink" : "bg-cobalt-900 text-white"}`}
+        >
+          Coba kelas gratis →
+        </button>
+      </div>
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })}
+        aria-label="Kembali ke atas"
+        tabIndex={progress > 0.15 ? 0 : -1}
+        className={`fixed right-5 bottom-5 z-40 grid size-11 place-items-center rounded-full bg-white text-cobalt-900 shadow-lg ring-1 ring-cobalt-900/10 transition duration-300 hover:-translate-y-0.5 ${progress > 0.15 ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      >
+        <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+      </button>
+
       {/* bilah atas */}
       <header className="sticky top-0 z-40 border-b border-cobalt-900/8 backdrop-blur-xl" style={{ background: `${SECTION_BG[doc.audience]}E6` }}>
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
@@ -421,6 +433,10 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
             <Image src="/brand/logo-full.png" alt="English Now" fill sizes="112px" className="object-contain object-left" priority />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
+            <span className="hidden text-sm text-ink/55 tabular-nums sm:block" aria-live="off">{progress > 0.97 ? "Selesai dibaca" : `${Math.max(1, Math.ceil(doc.readMin * (1 - progress)))} menit lagi`}</span>
+            <button type="button" onClick={() => setFs((v) => (v + 1) % 3)} aria-label="Ubah ukuran teks" title="Ubah ukuran teks" className="grid size-9 place-items-center rounded-full bg-white text-cobalt-900 ring-1 ring-cobalt-900/10 hover:bg-mist-50">
+              <span className="font-bold leading-none">A<span className="text-[0.7em]">{["", "+", "++"][fs]}</span></span>
+            </button>
             <Link href={`/?for=${doc.audience}#artikel`} className="hidden text-sm font-semibold text-cobalt-900 hover:text-cobalt sm:block">← Semua artikel</Link>
             <button type="button" onClick={() => open()} className="rounded-full bg-cobalt-900 px-4 py-2 text-sm font-bold text-white transition hover:-translate-y-0.5">Free Trial Class</button>
           </div>
@@ -428,6 +444,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
       </header>
 
       <main className="relative">
+        <article>
         {/* kepala artikel */}
         <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className={`mx-auto px-5 pt-10 sm:pt-14 ${kids ? "max-w-3xl text-center" : "max-w-6xl"}`}>
           <span className={kids ? "inline-block -rotate-2 rounded-full bg-sky px-4 py-1 font-display text-base tracking-wide text-white shadow-[0_3px_0_0_rgba(0,0,0,0.15)]" : "inline-block rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-wide text-cobalt ring-1 ring-cobalt-900/10"}>{doc.category}</span>
@@ -439,20 +456,16 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
               <span className="leading-tight"><b className="block text-ink">{doc.author.name}</b>{doc.author.role}</span>
             </span>
             <span aria-hidden>·</span>
-            <span>{fmtDate(doc.date)}</span>
+            <time dateTime={doc.date}>{fmtDate(doc.date)}</time>
             <span aria-hidden>·</span>
             <span>{doc.readMin} menit baca</span>
-            <span className="flex gap-2">
-              <button type="button" onClick={share} className="rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-cobalt-900 ring-1 ring-cobalt-900/10 hover:bg-mist-50">{copied ? "Tautan tersalin" : "Salin tautan"}</button>
-              <button type="button" onClick={wa} className="rounded-full bg-[#25D366] px-3.5 py-1.5 text-xs font-bold text-white hover:brightness-95">WhatsApp</button>
-            </span>
           </div>
         </motion.div>
 
         {/* gambar utama */}
         <div className={`mx-auto mt-9 px-5 ${kids ? "max-w-3xl" : "max-w-6xl"}`}>
           <div className={`relative overflow-hidden bg-mist ${kids ? "aspect-[4/3] rotate-[-1.2deg] rounded-[2rem] border-[6px] border-white shadow-[0_10px_0_0_var(--color-mist),0_30px_50px_-30px_rgba(30,47,120,0.5)]" : "aspect-[21/9] rounded-2xl"}`}>
-            <Image src={doc.cover} alt="" fill priority sizes="(min-width:1024px) 1100px, 100vw" className="object-cover" />
+            <Image src={doc.cover} alt={doc.title} fill priority sizes="(min-width:1024px) 1100px, 100vw" className="object-cover" />
           </div>
           {doc.coverCaption && <p className={`mt-2 text-sm text-ink/55 ${kids ? "text-center" : ""}`}>{doc.coverCaption}</p>}
         </div>
@@ -474,7 +487,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
             </aside>
           )}
 
-          <div ref={bodyRef}>
+          <div ref={bodyRef} style={{ ["--ts" as string]: [1, 1.12, 1.26][fs] }}>
             {/* ringkasan */}
             <div className={`mt-10 p-6 ${kids ? "rounded-[2rem] bg-white shadow-[0_8px_0_0_var(--color-mist)]" : "rounded-2xl bg-white ring-1 ring-cobalt-900/10"}`}>
               <p className={`text-xs font-bold tracking-[0.18em] uppercase ${kids ? "text-sky" : "text-cobalt"}`}>{kids ? "Yang akan kamu dapat" : "Kilas 30 detik"}</p>
@@ -502,8 +515,14 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
               {doc.sample && "Artikel contoh untuk melihat tata letak. "}
               Ditulis oleh {doc.author.name}. Konten ini bersifat umum dan tidak menggantikan arahan pengajar.
             </p>
+            <button type="button" onClick={wa} className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:brightness-95">
+              <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2Zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.08-1.17.11-1.9-.12a16 16 0 0 1-1.73-.64c-3.05-1.32-5.04-4.4-5.2-4.6-.15-.2-1.25-1.66-1.25-3.16s.79-2.25 1.07-2.55c.28-.3.6-.38.8-.38h.58c.19 0 .43-.07.67.5l.9 2.2c.07.15.12.32.02.5l-.3.47-.45.5c-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.3 2.36 1.45.3.15.47.12.64-.07.18-.2.75-.87.95-1.17.2-.3.4-.25.67-.15l2.1 1c.28.14.46.2.53.33.07.12.07.7-.18 1.4Z" /></svg>
+              Bagikan lewat WhatsApp
+            </button>
           </div>
         </div>
+
+        </article>
 
         {/* baca berikutnya */}
         {related.length > 0 && (

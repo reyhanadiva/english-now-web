@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 
 /**
@@ -197,7 +197,7 @@ function Train() {
       <path d="M2 11.5 V4.5 Q2 2 5 2 H214 Q246 2 258 9 Q259 10.2 257 11.5 Z" fill="#EEF1FF" />
       <rect x="2" y="9" width="256" height="2.6" fill="#405FDA" />
       {Array.from({ length: 14 }, (_, k) => (
-        <rect key={k} x={10 + k * 15} y="4" width="9" height="3.2" rx="0.9" fill="#FFF3B8" />
+        <rect key={k} x={10 + k * 15} y="4" width="9" height="3.2" rx="0.9" fill="#F2DC98" />
       ))}
       <path d="M222 4 L242 4 Q250 5 254 8.4 L222 8.4 Z" fill="#7C8BE0" />
       <circle cx="257" cy="9.4" r="1.3" fill="#FFF8C8" />
@@ -217,6 +217,24 @@ function useClocks() {
   }, []);
   return t;
 }
+
+/** bayangan kontak di lantai di bawah sprite supaya tidak terlihat "ditempel" */
+function Shadow({ cx, y, w, delay = 0, still }: { cx: number; y: number; w: number; delay?: number; still: boolean }) {
+  return (
+    <div
+      className="en-m-in pointer-events-none"
+      style={{
+        ...box(cx - w / 2, y - 3.5, cx + w / 2, y + 3.5),
+        background: "radial-gradient(closest-side, rgba(12,18,70,0.5), rgba(12,18,70,0))",
+        opacity: still ? 1 : 0,
+        animation: still ? undefined : `en-s-appear 0.5s ease-out ${delay}s both`,
+      }}
+    />
+  );
+}
+
+const WARM = "sepia(0.16) saturate(1.08) brightness(0.98)";
+const COOL = "saturate(0.92) brightness(0.94) hue-rotate(-6deg)";
 
 /* ---------- adegan ---------- */
 export function CorporateScene() {
@@ -431,9 +449,9 @@ export function CorporateScene() {
                     <div className="absolute" style={{ left: 0, top: ph(542), width: pw(260), height: ph(14) }}>
                       <div style={{ position: "relative", height: "100%", transform: t.dir === "r" ? undefined : "scaleX(-1)" }}>
                         {/* cahaya: pendar di sekitar kereta, sorot lampu depan, pantulan di rel */}
-                        <div className="absolute" style={{ left: "-6%", right: "-6%", top: "-190%", bottom: "-190%", background: "radial-gradient(closest-side, rgba(255,228,140,0.55), rgba(255,228,140,0))" }} />
-                        <div className="absolute" style={{ left: "97%", width: "70%", top: "-70%", height: "240%", background: "linear-gradient(90deg, rgba(255,246,205,0.8), rgba(255,246,205,0))", clipPath: "polygon(0 42%, 100% 0, 100% 100%, 0 62%)" }} />
-                        <div className="absolute" style={{ left: "4%", right: "4%", top: "100%", height: "70%", background: "linear-gradient(rgba(255,226,140,0.5), rgba(255,226,140,0))" }} />
+                        <div className="absolute" style={{ left: "-6%", right: "-6%", top: "-190%", bottom: "-190%", background: "radial-gradient(closest-side, rgba(255,228,140,0.2), rgba(255,228,140,0))" }} />
+                        <div className="absolute" style={{ left: "97%", width: "70%", top: "-70%", height: "240%", background: "linear-gradient(90deg, rgba(255,246,205,0.34), rgba(255,246,205,0))", clipPath: "polygon(0 42%, 100% 0, 100% 100%, 0 62%)" }} />
+                        <div className="absolute" style={{ left: "4%", right: "4%", top: "100%", height: "70%", background: "linear-gradient(rgba(255,226,140,0.18), rgba(255,226,140,0))" }} />
                         <Train />
                       </div>
                     </div>
@@ -527,7 +545,7 @@ export function CorporateScene() {
                     border: "2px solid #FFF275",
                     boxShadow: "0 0 10px rgba(255,242,117,0.8)",
                     opacity: still ? (i === 1 ? 1 : 0) : 0,
-                    animation: A(`en-s-spk 3s linear ${i}s infinite both`),
+                    animation: A(`en-s-spk 4.4s linear ${i * 1.5}s infinite both`),
                   }}
                 />
               ))}
@@ -631,14 +649,16 @@ export function CorporateScene() {
               ].map((p, i) => {
                 const wd = 44;
                 return (
-                  <div
-                    key={p.n}
-                    className="en-m-in absolute"
-                    style={{ left: pw(p.cx - wd / 2), top: ph(545 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${0.7 + i * 0.28}s both`) }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" />
-                  </div>
+                  <Fragment key={p.n}>
+                    <Shadow cx={p.cx} y={544} w={wd * 0.95} delay={0.7 + i * 0.28} still={still} />
+                    <div
+                      className="en-m-in absolute"
+                      style={{ left: pw(p.cx - wd / 2), top: ph(545 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${0.7 + i * 0.28}s both`) }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" style={{ filter: WARM }} />
+                    </div>
+                  </Fragment>
                 );
               })}
               <Bubble x={1437} y={448} delay={9.5} text="Let's schedule a call." sub="Mari jadwalkan panggilan." still={still} first={false} />
@@ -676,7 +696,7 @@ export function CorporateScene() {
                   pathLength={1}
                   strokeDasharray={1}
                   strokeDashoffset={still ? 0 : 1}
-                  style={{ animation: A("en-s-line 5s ease-in-out infinite both") }}
+                  style={{ animation: A("en-s-line 7.4s ease-in-out infinite both") }}
                 />
                 <circle cx="112" cy="18" r="3.4" fill="#FFF275" stroke="#405FDA" strokeWidth="1.6" />
                 {[14, 22, 18, 30, 26, 36].map((bh, i) => (
@@ -706,7 +726,7 @@ export function CorporateScene() {
                   strokeDasharray={1}
                   strokeDashoffset={still ? 0.27 : 1}
                   transform="rotate(-90 206 38)"
-                  style={{ animation: A("en-s-ring 5s ease-in-out infinite both") }}
+                  style={{ animation: A("en-s-ring 6.2s ease-in-out infinite both") }}
                 />
                 <path d="M201 38.5 l3.4 3.4 l6 -7" fill="none" stroke="#2B3FA8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <line x1="8" y1="63" x2="225" y2="63" stroke="#C9CEF0" strokeWidth="0.8" />
@@ -729,14 +749,16 @@ export function CorporateScene() {
               ].map((p, i) => {
                 const wd = 44;
                 return (
-                  <div
-                    key={p.cx}
-                    className="en-m-in absolute"
-                    style={{ left: pw(p.cx - wd / 2), top: ph(722 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${1.1 + i * 0.3}s both`) }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" />
-                  </div>
+                  <Fragment key={p.cx}>
+                    <Shadow cx={p.cx} y={721} w={wd * 0.95} delay={1.1 + i * 0.3} still={still} />
+                    <div
+                      className="en-m-in absolute"
+                      style={{ left: pw(p.cx - wd / 2), top: ph(722 - hOf(p.n, wd)), width: pw(wd), opacity: still ? 1 : 0, animation: A(`en-s-appear 0.5s ease-out ${1.1 + i * 0.3}s both`) }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`/images/corp/${p.n}.webp`} alt="" draggable={false} className="block h-auto w-full max-w-none" style={{ filter: COOL }} />
+                    </div>
+                  </Fragment>
                 );
               })}
 
@@ -788,13 +810,30 @@ export function CorporateScene() {
                     width: "20%",
                     background: "linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0))",
                     transform: still ? "translateX(-130%)" : undefined,
-                    animation: A("en-s-glint 13s ease-in-out infinite both"),
+                    animation: A("en-s-glint 17s ease-in-out infinite both"),
                   }}
                 />
               </div>
               {/* dua profesional menunggu di depan pintu, dilihat dari belakang */}
-              <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} />
-              <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} />
+              <Shadow cx={734} y={751} w={30} still={still} />
+              <Sp n="stand-a" x={718} y={752 - hOf("stand-a", 32)} w={32} style={{ filter: WARM }} />
+              <Shadow cx={955} y={751} w={28} still={still} />
+              <Sp n="stand-b" x={940} y={752 - hOf("stand-b", 30)} w={30} style={{ filter: WARM }} />
+              {/* papan nama English Now di atas pintu lobi */}
+              <div
+                className="en-m-in pointer-events-none absolute grid place-items-center"
+                style={{
+                  ...box(799, 568, 873, 585),
+                  borderRadius: 3,
+                  background: "linear-gradient(#27399A, #1B2A80)",
+                  boxShadow: "0 0 8px rgba(255,255,255,0.22), inset 0 0 0 1px rgba(255,255,255,0.35)",
+                  opacity: still ? 1 : 0,
+                  animation: A("en-s-appear 0.6s ease-out 1.2s both"),
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/brand/logo-full-white.png" alt="" draggable={false} style={{ height: "74%", width: "auto" }} />
+              </div>
 
               {/* ================= LAMPU TAMAN ================= */}
               {lampX.map((x, i) => (
