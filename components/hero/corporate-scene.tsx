@@ -308,10 +308,6 @@ export function CorporateScene() {
       ref={root}
       aria-hidden
       className={`absolute inset-0 z-[6] overflow-hidden ${inView ? "" : "en-paused"}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: reduce ? 0 : 0.6 }}
       style={{ background: TOP_COLOR }}
     >
       {/* kamera menggeser pelan antar gedung hanya di layar sempit (HP) */}

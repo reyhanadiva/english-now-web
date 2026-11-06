@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
+import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, type PanInfo } from "framer-motion";
 import { CTA, TAGLINE, heroContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
@@ -58,7 +58,7 @@ export function Hero() {
       className="relative isolate h-svh min-h-[660px] overflow-hidden"
     >
       <HeroBackdrop audience={audience} originRef={toggleRef} />
-      <AnimatePresence>{audience === "adult" && <CorporateScene key="corp" />}</AnimatePresence>
+      <SceneReveal on={audience === "adult"} originRef={toggleRef} />
 
       <div className="relative z-10 flex h-full flex-col items-center px-5 pt-[max(7rem,14vh)] text-center">
         <div className="flex w-full max-w-3xl flex-col items-center">
@@ -110,6 +110,66 @@ export function Hero() {
         </div>
       </div>
     </motion.section>
+  );
+}
+
+/**
+ * Hero Dewasa & Bisnis muncul dengan lingkaran yang membesar dari toggle (sama seperti pergantian dunia Anak/Dewasa
+ * sebelumnya). Saat kembali ke Anak, lingkaran membesar membuka lukisan Anak di bawahnya (lubang yang melebar di scene).
+ */
+const REVEAL_S = 1.3;
+function SceneReveal({ on, originRef }: { on: boolean; originRef: RefObject<HTMLElement | null> }) {
+  const reduce = useReducedMotion() ?? false;
+  const ref = useRef<HTMLDivElement>(null);
+  const first = useRef(true);
+  const [prevOn, setPrevOn] = useState(on);
+  const [mounted, setMounted] = useState(on);
+  // saat pindah ke Dewasa & Bisnis, scene langsung dipasang; saat pergi, dilepas setelah lingkaran selesai
+  if (prevOn !== on) {
+    setPrevOn(on);
+    if (on) setMounted(true);
+  }
+  const r = useMotionValue(0);
+  const ox = useMotionValue(0);
+  const oy = useMotionValue(0);
+  const phase = useMotionValue(0); // 0 = diam (tanpa mask), 1 = membuka, 2 = menutup
+  const mask = useTransform([r, ox, oy, phase], ([rv, x, y, ph]: number[]) =>
+    ph === 0 ? "none" : ph === 1
+      ? `radial-gradient(circle at ${x}px ${y}px, #000 ${rv}px, transparent ${rv + 220}px)`
+      : `radial-gradient(circle at ${x}px ${y}px, transparent ${rv}px, #000 ${rv + 220}px)`,
+  );
+
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      if (!on) return;
+    }
+    if (reduce) return;
+    const root = ref.current?.getBoundingClientRect();
+    const o = originRef.current?.getBoundingClientRect();
+    if (root && o) {
+      ox.set(o.left + o.width / 2 - root.left);
+      oy.set(o.top + o.height / 2 - root.top);
+    }
+    const max = root ? Math.hypot(root.width, root.height) : 2000;
+    r.set(0);
+    phase.set(on ? 1 : 2);
+    const ctrl = animate(r, max, {
+      duration: REVEAL_S,
+      ease: [0.65, 0, 0.35, 1],
+      onComplete: () => {
+        phase.set(0);
+        if (!on) setMounted(false);
+      },
+    });
+    return () => ctrl.stop();
+  }, [on, reduce, r, ox, oy, phase, originRef]);
+
+  const show = mounted && (on || !reduce);
+  return (
+    <motion.div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 z-[6]" style={{ WebkitMaskImage: mask, maskImage: mask }}>
+      {show && <CorporateScene />}
+    </motion.div>
   );
 }
 
