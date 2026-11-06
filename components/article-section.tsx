@@ -117,24 +117,27 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
 
 /** awan yang melintas terus dari kiri ke kanan dengan kecepatan berbeda (CSS, otomatis berhenti di luar layar) */
 const DRIFT = [
-  { top: "30%", w: 150, o: 0.95, dur: 30, at: 0.1 },
-  { top: "44%", w: 96, o: 0.7, dur: 44, at: 0.55 },
-  { top: "52%", w: 120, o: 0.6, dur: 38, at: 0.8 },
-  { top: "74%", w: 170, o: 0.8, dur: 34, at: 0.35 },
-  { top: "88%", w: 100, o: 0.55, dur: 50, at: 0.9 },
+  { n: "cloud-2", top: "27%", w: 260, o: 0.95, dur: 46, at: 0.1 },
+  { n: "cirrus-2", top: "42%", w: 210, o: 0.7, dur: 62, at: 0.6 },
+  { n: "strat-1", top: "58%", w: 250, o: 0.65, dur: 54, at: 0.85 },
+  { n: "cloud-1", top: "72%", w: 300, o: 0.85, dur: 50, at: 0.35 },
+  { n: "strat-1", top: "89%", w: 190, o: 0.6, dur: 70, at: 0.95 },
 ];
 function DriftClouds({ reduce }: { reduce: boolean }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       {DRIFT.map((c, i) => (
-        <svg
+        // awan yang sama dengan hero (gambar berlapis), melintas dari kiri ke kanan dengan kecepatan berbeda
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           key={i}
-          viewBox="0 0 120 50"
-          className="en-m-drift absolute left-0 drop-shadow-[0_6px_10px_rgba(8,14,70,0.12)]"
-          style={{ top: c.top, width: c.w, opacity: c.o, animation: reduce ? undefined : `en-drift ${c.dur}s linear ${-(c.dur * c.at).toFixed(1)}s infinite` }}
-        >
-          <path d="M15 40 a14 14 0 0 1 10-22 a18 18 0 0 1 33-6 a16 16 0 0 1 30 4 a12 12 0 0 1 17 24 z" fill="#fff" />
-        </svg>
+          src={`/images/corp/${c.n}.webp`}
+          alt=""
+          draggable={false}
+          decoding="async"
+          className="en-m-drift absolute top-0 left-0 max-w-none select-none"
+          style={{ marginTop: 0, top: c.top, width: c.w, height: "auto", opacity: c.o, animation: reduce ? undefined : `en-drift ${c.dur}s linear ${-(c.dur * c.at).toFixed(1)}s infinite` }}
+        />
       ))}
     </div>
   );
