@@ -31,9 +31,20 @@ export interface ArticleDoc {
   audience: Audience;
   title: string;
   deck: string;
+  /**
+   * FOTO SAMPUL: satu foto saja, dipakai di tiga tempat dengan bentuk berbeda
+   * (hero artikel lebar/landscape, kartu Anak tegak/portrait, kartu Dewasa landscape).
+   * Standar unggah: landscape 16:9, minimal 1600x900 px, WebP/JPG di bawah 300 KB.
+   * Subjek (wajah/objek utama) diletakkan di sekitar tengah supaya aman saat dipotong jadi tegak.
+   * Foto portrait/kotak tidak error, tetapi dipotong otomatis; atur `coverFocus` agar bagian pentingnya tetap terlihat.
+   */
   cover: string;
+  /** titik fokus pemotongan, format CSS object-position, mis. "50% 30%" (tengah-atas). Default: tengah. */
+  coverFocus?: string;
+  /** keterangan foto sampul (opsional; hanya isi bila memberi informasi, mis. kredit foto atau lokasi) */
   coverCaption?: string;
   category: string;
+  /** name = nama akun penulis (mis. "Tim English Now" atau nama pengajar). role = jabatan penulis, opsional; kosongkan untuk akun tim. */
   author: { name: string; role?: string };
   date: string;
   readMin: number;
@@ -52,9 +63,8 @@ export const ARTICLE_DOCS: ArticleDoc[] = [
     title: "Menulis email bisnis dalam English yang jelas dan sopan",
     deck: "Struktur sederhana yang bisa dipakai untuk email permintaan, tindak lanjut, dan balasan ke klien luar negeri.",
     cover: "/programs/business.jpg",
-    coverCaption: "Contoh foto: suasana kelas Business English.",
     category: "Business English",
-    author: { name: "Tim English Now", role: "Penyusun materi" },
+    author: { name: "Tim English Now" },
     date: "2026-10-20",
     readMin: 6,
     sample: true,
@@ -70,7 +80,7 @@ export const ARTICLE_DOCS: ArticleDoc[] = [
       { type: "callout", tone: "tip", title: "Coba ini", text: "Tulis tujuannya dalam bahasa Indonesia dulu, lalu ubah ke English. Kalimat yang pendek hampir selalu lebih mudah diterjemahkan." },
       { type: "h2", text: "Susunan email yang mudah dibaca" },
       { type: "ol", items: ["**Subject** yang spesifik, misalnya “Invoice #123: payment confirmation”.", "**Salam**: Dear Mr. Rahman, untuk formal; Hi Rahman, jika sudah akrab.", "**Tujuan** dalam satu kalimat pembuka.", "**Isi** singkat: hanya hal yang perlu diketahui pembaca.", "**Permintaan** yang jelas, lengkap dengan tenggat bila ada.", "**Penutup** dan nama Anda."] },
-      { type: "image", src: "/why/teachers.jpg", alt: "Peserta kelas berdiskusi dengan pengajar", caption: "Contoh foto. Berlatih dengan pengajar membuat pilihan kata terasa lebih alami." },
+      { type: "image", src: "/why/teachers.jpg", alt: "Peserta kelas berdiskusi dengan pengajar", caption: "Berlatih dengan pengajar membuat pilihan kata terasa lebih alami." },
       { type: "h2", text: "Frasa yang sering dipakai" },
       { type: "p", text: "Ketuk kata bergaris titik untuk melihat artinya, misalnya {{follow up|menindaklanjuti}} atau {{attached|terlampir}}." },
       {
@@ -104,9 +114,8 @@ export const ARTICLE_DOCS: ArticleDoc[] = [
     title: "Lagu dan permainan untuk belajar kosakata",
     deck: "Belajar sambil bergerak, supaya kata baru lebih mudah diingat.",
     cover: "/why/practice.jpg",
-    coverCaption: "Contoh foto: serunya latihan di kelas.",
     category: "Main Sambil Belajar",
-    author: { name: "Tim English Now", role: "Kakak pengajar" },
+    author: { name: "Tim English Now" },
     date: "2026-10-18",
     readMin: 3,
     sample: true,

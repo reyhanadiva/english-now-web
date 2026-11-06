@@ -95,7 +95,7 @@ function KidCard({ a, active, reduce, onPick }: { a: Article; active: boolean; r
         aria-label={a.title}
         className="group relative block h-full cursor-pointer overflow-hidden rounded-[1.5rem] bg-mist shadow-[0_28px_50px_-20px_rgba(8,14,70,0.75)] ring-4 ring-white/90 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-sun"
       >
-        <SafeImage src={a.cover} alt="" fill sizes="(min-width:768px) 300px, 78vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+        <SafeImage src={a.cover} alt="" fill sizes="(min-width:768px) 300px, 78vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: a.coverFocus }} />
         <span className="absolute top-3 left-3 rounded-full bg-white/92 px-3 py-1 text-[11px] font-extrabold tracking-wide text-cobalt-900 shadow-sm">{a.category}</span>
         <div className="absolute inset-x-3 bottom-3 rounded-2xl bg-white/92 p-3 shadow-[0_12px_24px_-12px_rgba(8,14,70,0.6)] backdrop-blur-md">
           <h3 className="line-clamp-2 text-[0.95rem] leading-snug font-bold tracking-[-0.01em] text-cobalt-900">{a.title}</h3>
@@ -370,7 +370,7 @@ function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
         <Link href={lead.href} onPointerMove={trackSpot} className="group relative grid overflow-hidden rounded-2xl bg-white shadow-[0_24px_50px_-30px_rgba(20,32,107,0.45)] ring-1 ring-cobalt-900/8 transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_60px_-28px_rgba(20,32,107,0.6)] hover:ring-cobalt/40 md:h-[clamp(13rem,35vh,21rem)] md:grid-cols-[1.05fr_1fr]">
           <div className="relative aspect-[4/3] overflow-hidden bg-mist md:aspect-auto">
             <div className="en-m-kb absolute inset-0" style={{ animation: reduce ? undefined : "en-kb 20s ease-in-out infinite alternate" }}>
-              <SafeImage src={lead.cover} alt="" fill sizes="(min-width:768px) 560px, 100vw" className="object-cover" />
+              <SafeImage src={lead.cover} alt="" fill sizes="(min-width:768px) 560px, 100vw" className="object-cover" style={{ objectPosition: lead.coverFocus }} />
             </div>
             <Spot />
             <Corners />
@@ -401,7 +401,7 @@ function Editorial({ c, reduce }: { c: C; reduce: boolean }) {
           >
             <Link href={a.href} onPointerMove={trackSpot} className="group block">
               <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-mist md:aspect-auto md:h-[clamp(8.5rem,21vh,12.5rem)]">
-                <SafeImage src={a.cover} alt="" fill sizes="(min-width:640px) 360px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <SafeImage src={a.cover} alt="" fill sizes="(min-width:640px) 360px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: a.coverFocus }} />
                 <Spot />
                 <Corners />
                 <span aria-hidden className="absolute right-3 bottom-3 translate-y-2 rounded-full bg-white px-3 py-1 text-xs font-bold text-cobalt-900 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">Baca →</span>

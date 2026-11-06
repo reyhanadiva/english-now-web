@@ -688,7 +688,10 @@ export interface Article {
   title: string;
   /** ringkasan 1-2 kalimat (Anak: dipotong 2 baris, Dewasa: dipakai di artikel utama) */
   excerpt: string;
+  /** lihat standar foto sampul di ArticleDoc (landscape 16:9, min 1600x900, subjek di tengah) */
   cover: string;
+  /** titik fokus pemotongan, mis. "50% 30%" */
+  coverFocus?: string;
   category: string;
   /** alamat halaman artikel lengkap */
   href: string;

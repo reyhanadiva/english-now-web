@@ -46,7 +46,7 @@ export default async function ArticlePage({ params }: Props) {
   const others = articleContent[doc.audience].list.filter((a) => !a.href.endsWith(doc.slug));
   const related = [...others.filter((a) => a.category === doc.category), ...others.filter((a) => a.category !== doc.category)]
     .slice(0, 3)
-    .map((a) => ({ title: a.title, cover: a.cover, category: a.category, href: a.href.startsWith("#") ? `/?for=${doc.audience}${a.href}` : a.href }));
+    .map((a) => ({ title: a.title, cover: a.cover, coverFocus: a.coverFocus, category: a.category, href: a.href.startsWith("#") ? `/?for=${doc.audience}${a.href}` : a.href }));
 
   const ld = [
     {

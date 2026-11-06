@@ -380,7 +380,7 @@ function Kite({ className = "", style }: { className?: string; style?: React.CSS
   );
 }
 
-export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug?: string; title: string; cover: string; category: string; href: string }[] }) {
+export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug?: string; title: string; cover: string; coverFocus?: string; category: string; href: string }[] }) {
   const kids = doc.audience === "kids";
   const reduce = useReducedMotion() ?? false;
   const progress = useProgress();
@@ -503,7 +503,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
         {/* kepala artikel: foto penuh dengan judul di atasnya, sama di HP dan layar lebar */}
         <div className="print-hero relative flex min-h-[78svh] items-end md:min-h-[min(78vh,43rem)]">
           <div className="hero-media absolute inset-0">
-            <Image src={doc.cover} alt="" fill priority sizes="100vw" className="object-cover" />
+            <Image src={doc.cover} alt="" fill priority sizes="100vw" className="object-cover" style={{ objectPosition: doc.coverFocus }} />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A1140]/92 via-[#14206B]/45 to-[#405FDA]/15" />
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0A1140]/60 to-transparent" />
           </div>
@@ -584,7 +584,7 @@ export function ArticleView({ doc, related }: { doc: ArticleDoc; related: { slug
                   <li key={i}>
                     <Link href={r.href} className="group block">
                       <div className={`relative aspect-[4/3] overflow-hidden bg-mist ${kids ? "rounded-3xl border-4 border-white shadow-[0_6px_0_0_var(--color-mist)]" : "rounded-xl"}`}>
-                        <Image src={r.cover} alt="" fill sizes="360px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <Image src={r.cover} alt="" fill sizes="360px" className="object-cover transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: r.coverFocus }} />
                       </div>
                       <p className={`mt-3 text-xs font-bold tracking-wider uppercase ${kids ? "text-sky" : "text-cobalt"}`}>{r.category}</p>
                       <p className={`mt-1 ${kids ? "font-display text-xl text-cobalt-900" : "text-lg leading-snug font-semibold text-cobalt-900"}`}>{r.title}</p>
