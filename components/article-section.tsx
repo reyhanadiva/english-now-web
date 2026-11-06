@@ -136,7 +136,7 @@ function DriftClouds({ reduce }: { reduce: boolean }) {
           draggable={false}
           decoding="async"
           className="en-m-drift absolute top-0 left-0 max-w-none select-none"
-          style={{ marginTop: 0, top: c.top, width: c.w, height: "auto", opacity: c.o, animation: reduce ? undefined : `en-drift ${c.dur}s linear ${-(c.dur * c.at).toFixed(1)}s infinite` }}
+          style={{ marginTop: 0, top: c.top, width: c.w, height: "auto", opacity: c.o, animation: reduce ? undefined : `en-art-drift ${c.dur}s linear ${-(c.dur * c.at).toFixed(1)}s infinite` }}
         />
       ))}
     </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
-import { CTA, TAGLINE, heroContent, heroCorporate } from "@/lib/content";
+import { CTA, TAGLINE, heroContent } from "@/lib/content";
 import { useAudience } from "./audience-provider";
 import { AudienceToggle } from "./audience-toggle";
 import { HeroBackdrop } from "./hero/hero-backdrop";
@@ -39,9 +39,8 @@ export function Hero() {
   }, []);
 
   const isKids = audience === "kids";
-  const corporate = choice === "corporate";
-  const content = corporate ? heroCorporate : heroContent[audience];
-  const order = ["kids", "adult", "corporate"] as const;
+  const content = heroContent[audience];
+  const order = ["kids", "adult"] as const;
 
   const handlePanEnd = (_: unknown, info: PanInfo) => {
     const { x, y } = info.offset;
@@ -59,7 +58,7 @@ export function Hero() {
       className="relative isolate h-svh min-h-[660px] overflow-hidden"
     >
       <HeroBackdrop audience={audience} originRef={toggleRef} />
-      <AnimatePresence>{corporate && <CorporateScene key="corp" />}</AnimatePresence>
+      <AnimatePresence>{audience === "adult" && <CorporateScene key="corp" />}</AnimatePresence>
 
       <div className="relative z-10 flex h-full flex-col items-center px-5 pt-[max(7rem,14vh)] text-center">
         <div className="flex w-full max-w-3xl flex-col items-center">

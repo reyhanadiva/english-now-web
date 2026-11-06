@@ -76,14 +76,8 @@ export const heroContent: Record<Audience, { title: string; sub: string }> = {
   },
   adult: {
     title: "Satu bahasa, lebih banyak peluang.",
-    sub: "Business class untuk tim perusahaan, juga kelas privat dan persiapan IELTS untuk kerja atau studi ke luar negeri.",
+    sub: "Business class dari kebutuhan kerja nyata tim Anda, plus kelas privat dan persiapan IELTS.",
   },
-};
-
-/** Hero percobaan "Corporate" (ruang rapat lantai atas). Bagian bawah halaman memakai konten Dewasa. */
-export const heroCorporate: { title: string; sub: string } = {
-  title: "Tim Anda, siap berbicara dengan dunia.",
-  sub: "Business class dengan silabus yang disusun dari pekerjaan nyata tim Anda.",
 };
 
 /* ------------------------------------------------------------------ */

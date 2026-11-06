@@ -15,14 +15,9 @@ import { useAudience, type Choice } from "./audience-provider";
 const OPTION_FONT: Record<Choice, string> = {
   kids: "font-display tracking-wide",
   adult: "font-sans font-bold tracking-tight",
-  corporate: "font-sans font-bold tracking-tight",
 };
 
-/** Pilihan ke-3 (percobaan): hero ruang rapat lantai atas. Isi section di bawahnya sama dengan Dewasa. */
-const OPTIONS: { id: Choice; label: string; short: string }[] = [
-  ...AUDIENCE_OPTIONS,
-  { id: "corporate", label: "Corporate", short: "Corporate" },
-];
+const OPTIONS = AUDIENCE_OPTIONS;
 
 function KiteIcon() {
   return (
@@ -42,19 +37,11 @@ function BriefcaseIcon() {
   );
 }
 
-function BuildingIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M4 21V6.5A1.5 1.5 0 0 1 5.5 5H12a1.5 1.5 0 0 1 1.5 1.5V21h-9Zm10.5 0V10H18a2 2 0 0 1 2 2v9h-5.5ZM6.5 8v2h2V8h-2Zm0 4v2h2v-2h-2Zm0 4v2h2v-2h-2Zm4-8v2h1V8h-1Zm0 4v2h1v-2h-1Zm0 4v2h1v-2h-1Z" />
-    </svg>
-  );
-}
-
 type Tone = "stage" | "dark";
 
 function trackClass(tone: Tone, dark = false) {
   if (tone === "stage" && dark) {
-    // di atas hero Corporate (biru tua): kaca gelap supaya tetap terbaca
+    // di atas hero Dewasa & Bisnis (biru tua): kaca gelap supaya tetap terbaca
     return "bg-[#14206B]/45 ring-1 ring-white/25 backdrop-blur-xl shadow-[0_10px_40px_rgba(8,14,70,0.35)]";
   }
   if (tone === "stage") {
@@ -86,7 +73,7 @@ export function AudienceToggle({
     <div
       role="radiogroup"
       aria-label="Pilih kelas untuk siapa"
-      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone, choice === "corporate")} ${isLg ? "w-full max-w-[36rem]" : ""}`}
+      className={`relative inline-flex rounded-full p-1.5 transition-[background-color,box-shadow] duration-500 ${trackClass(tone, audience === "adult")} ${isLg ? "w-full max-w-[36rem]" : ""}`}
     >
       {OPTIONS.map((option) => {
         const active = choice === option.id;
@@ -102,7 +89,7 @@ export function AudienceToggle({
             className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full whitespace-nowrap transition-colors duration-200 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-sky ${
               OPTION_FONT[option.id]
             } ${isLg ? "px-2.5 py-2.5 text-[14px] sm:px-5 sm:text-base" : "px-2 py-1.5 text-[13px] sm:px-3 sm:text-sm"} ${
-              active ? activeText : tone === "stage" && choice === "corporate" ? "text-white/70 hover:text-white" : "text-ink/55 hover:text-ink"
+              active ? activeText : tone === "stage" && audience === "adult" ? "text-white/70 hover:text-white" : "text-ink/55 hover:text-ink"
             }`}
           >
             {active && (
@@ -113,14 +100,12 @@ export function AudienceToggle({
                 transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }}
               />
             )}
-            {option.id === "kids" ? <KiteIcon /> : option.id === "adult" ? <BriefcaseIcon /> : <BuildingIcon />}
+            {option.id === "kids" ? <KiteIcon /> : <BriefcaseIcon />}
             {isLg ? (
               <>
                 <span className="sm:hidden">{option.short}</span>
                 <span className="hidden sm:inline">{option.label}</span>
               </>
-            ) : option.id === "corporate" ? (
-              "Corp."
             ) : (
               option.short
             )}

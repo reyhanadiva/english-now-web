@@ -14,16 +14,16 @@ import type { Audience } from "@/lib/content";
 
 const STORAGE_KEY = "en-audience";
 
-/**
- * "corporate" = percobaan hero ke-3 (ruang rapat lantai atas). Isi section di bawahnya memakai konten Dewasa,
- * jadi untuk semua section `audience` tetap "kids" atau "adult"; hanya hero yang membedakan `choice`.
- */
-export type Choice = Audience | "corporate";
+/** Pilihan toggle sekarang hanya dua: Anak & Remaja, Dewasa & Bisnis (hero Corporate sudah menjadi hero Dewasa & Bisnis). */
+export type Choice = Audience;
 
-function isChoice(value: string | null): value is Choice {
-  return value === "kids" || value === "adult" || value === "corporate";
+/** "corporate" tetap diterima supaya link lama (?for=corporate) dan pilihan tersimpan tidak rusak: dianggap "adult". */
+function parseChoice(value: string | null): Choice | null {
+  if (value === "kids") return "kids";
+  if (value === "adult" || value === "corporate") return "adult";
+  return null;
 }
-const audienceOf = (c: Choice): Audience => (c === "kids" ? "kids" : "adult");
+const audienceOf = (c: Choice): Audience => c;
 
 /* ------------------------------------------------------------------
    Store kecil di luar React: menyimpan pilihan audiens.
@@ -40,8 +40,7 @@ function readChoice(): Choice {
     try {
       const fromUrl = new URLSearchParams(window.location.search).get("for");
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (isChoice(fromUrl)) initial = fromUrl;
-      else if (isChoice(saved)) initial = saved;
+      initial = parseChoice(fromUrl) ?? parseChoice(saved) ?? "kids";
     } catch {
       /* localStorage bisa diblokir, abaikan */
     }
@@ -63,13 +62,13 @@ const getServerSnapshot = (): Choice => "kids";
 
 type AudienceContextValue = {
   audience: Audience;
-  /** pilihan toggle hero: "kids" | "adult" | "corporate" (corporate memakai konten Dewasa) */
+  /** pilihan toggle hero: "kids" | "adult" (sama dengan audience) */
   choice: Choice;
   /** 1 = pindah ke kanan (kids -> adult), -1 = ke kiri. Dipakai untuk arah animasi. */
   direction: 1 | -1;
   /** true sesaat saat transisi seluruh halaman berjalan: section melewati animasi fade-nya sendiri */
   instant: boolean;
-  /** dipakai komponen lain (mis. asisten): tidak menurunkan "corporate" ke "adult" */
+  /** dipakai komponen lain (mis. asisten) */
   setAudience: (next: Audience) => void;
   /** dipakai toggle hero/navbar */
   setChoice: (next: Choice) => void;
@@ -151,7 +150,6 @@ export function AudienceProvider({ children }: { children: React.ReactNode }) {
 
   const setAudience = useCallback(
     (next: Audience) => {
-      if (next === "adult" && readChoice() === "corporate") return;
       setChoice(next);
     },
     [setChoice],
