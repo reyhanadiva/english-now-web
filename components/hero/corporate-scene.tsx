@@ -442,7 +442,7 @@ export function CorporateScene() {
                       animation: A(`${t.dir === "r" ? "en-s-bullet-r" : "en-s-bullet-l"} 24s cubic-bezier(0.3,0.1,0.5,1) ${t.delay}s infinite both`),
                     }}
                   >
-                    <div className="absolute" style={{ left: 0, top: ph(542), width: pw(260), height: ph(14) }}>
+                    <div className="absolute" style={{ left: 0, top: ph(536), width: pw(352), height: ph(20) }}>
                       <div style={{ position: "relative", height: "100%", transform: t.dir === "r" ? undefined : "scaleX(-1)" }}>
                         {/* cahaya: pendar di sekitar kereta, sorot lampu depan, pantulan di rel */}
                         <div className="absolute" style={{ left: "-6%", right: "-6%", top: "-190%", bottom: "-190%", background: "radial-gradient(closest-side, rgba(255,228,140,0.2), rgba(255,228,140,0))" }} />
