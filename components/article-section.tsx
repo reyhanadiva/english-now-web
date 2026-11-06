@@ -140,30 +140,56 @@ function DriftClouds({ reduce }: { reduce: boolean }) {
   );
 }
 
-/** layang-layang (ikon merek) yang melayang naik-turun dengan ekor bergoyang */
-function FlyingKite({ reduce }: { reduce: boolean }) {
+/** unsur dari hero: pesawat berlampu kedip dan kawanan burung (memakai keyframe yang sama dengan hero, jadi pasti jalan) */
+function SkyTraffic() {
+  const birds = [
+    { x: 0, y: 0, s: 26, d: 0 },
+    { x: 34, y: -16, s: 21, d: -0.25 },
+    { x: 66, y: 6, s: 23, d: -0.5 },
+    { x: 98, y: -10, s: 19, d: -0.15 },
+  ];
   return (
-    <motion.div
-      aria-hidden
-      className="pointer-events-none absolute top-[8%] right-[7%] hidden w-16 origin-bottom md:block lg:w-20"
-      animate={reduce ? undefined : { y: [0, -22, 0], x: [0, 12, 0], rotate: [-9, 9, -9] }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    >
-      <svg viewBox="0 0 40 70" className="w-full overflow-visible drop-shadow-[0_8px_10px_rgba(8,14,70,0.35)]">
-        <path d="M20 2 L36 18 L20 38 L4 18 Z" fill="#FFF275" stroke="#1E2F78" strokeWidth="2" strokeLinejoin="round" />
-        <path d="M20 2 V38 M4 18 H36" stroke="#1E2F78" strokeWidth="1.4" />
-        <motion.path
-          d="M20 38 q-7 7 0 13 t0 13"
-          fill="none"
-          stroke="#07A9F8"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          style={{ originX: "20px", originY: "38px" }}
-          animate={reduce ? undefined : { rotate: [10, -10, 10] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </svg>
-    </motion.div>
+    <div aria-hidden className="pointer-events-none absolute inset-0 hidden overflow-hidden md:block">
+      <div className="en-m-plane absolute inset-0" style={{ animation: "en-s-fly-r 34s linear -6s infinite both" }}>
+        <div className="absolute" style={{ left: 0, top: "33%", width: 92, height: 34 }}>
+          <div className="absolute rounded-full" style={{ right: "92%", top: "46%", width: "230%", height: 2, background: "linear-gradient(270deg, rgba(255,255,255,0.55), rgba(255,255,255,0))" }} />
+          <svg viewBox="0 0 44 16" className="absolute inset-0 h-full w-full">
+            <path d="M2 8 L8 6.6 L34 6.6 Q40 6.6 43 8 Q40 9.4 34 9.4 L8 9.4 Z" fill="#F2F4FF" />
+            <polygon points="17,7 27,7 21,1.4 18.6,1.4" fill="#D7DDFF" />
+            <polygon points="3,7 9,7 6.6,2.2 4.4,2.2" fill="#D7DDFF" />
+            <circle className="en-m-blink" cx="19.4" cy="1.5" r="1.3" fill="#FF4D4D" style={{ animation: "en-blink 1.6s linear infinite" }} />
+            <circle className="en-m-blink" cx="5" cy="2.3" r="1.2" fill="#FFFFFF" style={{ animation: "en-blink 1.6s linear -0.8s infinite" }} />
+          </svg>
+        </div>
+      </div>
+      <div className="en-m-birds absolute inset-0" style={{ animation: "en-s-flock 40s linear -12s infinite both" }}>
+        <div className="absolute" style={{ left: 0, top: "62%" }}>
+          {birds.map((b, i) => (
+            <svg key={i} viewBox="0 0 16 8" className="en-m-flap absolute" style={{ left: b.x, top: b.y, width: b.s, height: "auto", transformOrigin: "50% 100%", animation: `en-flap 0.9s ease-in-out ${b.d}s infinite` }}>
+              <path d="M1 6 Q4.5 0.6 8 5 Q11.5 0.6 15 6" fill="none" stroke="#F4F6FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** layang-layang (ikon merek): melayang naik-turun, ekor menempel di ujung bawah dan bergoyang (semua CSS) */
+function FlyingKite() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute top-[7%] right-[7%] hidden w-16 md:block lg:w-20">
+      <div className="en-m-kite origin-bottom" style={{ animation: "en-kite 5s ease-in-out infinite" }}>
+        <svg viewBox="0 0 40 80" className="w-full overflow-visible drop-shadow-[0_8px_10px_rgba(8,14,70,0.35)]">
+          <g className="en-m-tail" style={{ transformOrigin: "20px 46px", animation: "en-tail 1.8s ease-in-out infinite" }}>
+            <path d="M20 46 C12 52 28 58 20 64 C12 70 26 74 20 78" fill="none" stroke="#07A9F8" strokeWidth="2.4" strokeLinecap="round" />
+            <path d="M14 56 L20 59 L14 62 Z M26 68 L20 71 L26 74 Z" fill="#FFF275" />
+          </g>
+          <path d="M20 0 L35 17 L20 46 L5 17 Z" fill="#FFF275" stroke="#1E2F78" strokeWidth="2" strokeLinejoin="round" />
+          <path d="M20 0 V46 M5 17 H35" stroke="#1E2F78" strokeWidth="1.4" />
+        </svg>
+      </div>
+    </div>
   );
 }
 
@@ -195,7 +221,8 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
   return (
     <div className="relative mx-3 max-w-6xl overflow-hidden rounded-[2.2rem] bg-gradient-to-b from-[#3552D0] to-[#1E2F78] [container-type:inline-size] py-10 sm:mx-6 md:py-[clamp(1.5rem,4.5vh,3.2rem)] lg:mx-auto">
       <DriftClouds reduce={reduce} />
-      <FlyingKite reduce={reduce} />
+      <SkyTraffic />
+      <FlyingKite />
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <h2 className="font-display text-[2.4rem] leading-[1.03] text-balance md:text-[clamp(2rem,5.6vh,3.7rem)]">
           <span className="text-sun">{c.titleSoft}</span>
@@ -233,13 +260,9 @@ function KidsTrio({ c: full, reduce }: { c: C; reduce: boolean }) {
                 style={{ zIndex: d === 0 ? 3 : vis ? 2 : 0, pointerEvents: vis ? "auto" : "none" }}
                 aria-hidden={!vis}
               >
-                <motion.div
-                  className="h-full"
-                  animate={reduce ? undefined : { y: [0, -13, 0], rotate: [-0.9, 0.9, -0.9] }}
-                  transition={{ duration: 3 + (i % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.45 }}
-                >
+                <div className="en-m-bob h-full" style={{ animation: `en-card-bob ${(3 + (i % 3) * 0.5).toFixed(1)}s ease-in-out ${(-i * 0.9).toFixed(1)}s infinite` }}>
                   <KidCard a={a} active={d === 0} reduce={reduce} onPick={() => setActive(i)} />
-                </motion.div>
+                </div>
               </motion.div>
             );
           })}

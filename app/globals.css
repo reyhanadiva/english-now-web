@@ -296,3 +296,16 @@ body {
   from { transform: translateX(-30cqw); }
   to { transform: translateX(110cqw); }
 }
+
+@keyframes en-card-bob {
+  0%, 100% { transform: translateY(0) rotate(-0.9deg); }
+  50% { transform: translateY(-13px) rotate(0.9deg); }
+}
+@keyframes en-kite {
+  0%, 100% { transform: translate(0, 0) rotate(-9deg); }
+  50% { transform: translate(12px, -22px) rotate(9deg); }
+}
+@keyframes en-tail {
+  0%, 100% { transform: rotate(9deg); }
+  50% { transform: rotate(-9deg); }
+}
